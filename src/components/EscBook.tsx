@@ -131,36 +131,6 @@ export const EscBook: React.FC<EscBookProps> = ({
     }
   };
 
-  // Turn to previous spread
-  const flipPrevSpread = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    try {
-      const pf = bookRef.current?.pageFlip();
-      if (!pf) return;
-      const cur = pf.getCurrentPageIndex();
-      if (cur <= 0) return;
-      const target = Math.max(0, cur - 2);
-      pf.flip(target);
-    } catch {}
-  };
-
-  // Turn to next spread
-  const flipNextSpread = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    try {
-      const pf = bookRef.current?.pageFlip();
-      if (!pf) return;
-      const cur = pf.getCurrentPageIndex();
-      if (cur >= 8) {
-        // Loop back to Cover
-        pf.flip(0);
-        return;
-      }
-      const target = Math.min(8, cur <= 0 ? 2 : cur + 2);
-      pf.flip(target);
-    } catch {}
-  };
-
   // Automatic page-turner feature (requested by user)
   useEffect(() => {
     if (!autoFlipActive || isLoaderMode) return;
@@ -270,30 +240,6 @@ export const EscBook: React.FC<EscBookProps> = ({
     <div className={`esc-book-container ${isLoaderMode ? 'loader-book' : 'desk-book'}`}>
       {/* Decorative Book Ribbon Bookmark */}
       <div className="book-spine-ribbon" aria-hidden="true"></div>
-
-      {/* Floating Edge Turn Buttons for intuitive manual page navigation */}
-      {!isLoaderMode && (
-        <>
-          <button
-            type="button"
-            className="book-edge-nav prev-edge"
-            onClick={flipPrevSpread}
-            title="Turn to previous page"
-            aria-label="Previous Page"
-          >
-            ‹
-          </button>
-          <button
-            type="button"
-            className="book-edge-nav next-edge"
-            onClick={flipNextSpread}
-            title="Turn to next page"
-            aria-label="Next Page"
-          >
-            ›
-          </button>
-        </>
-      )}
 
       {/* @ts-ignore - react-pageflip typed children */}
       <HTMLFlipBook
@@ -611,17 +557,9 @@ export const EscBook: React.FC<EscBookProps> = ({
         </PageCover>
       </HTMLFlipBook>
 
-      {/* Archival Book Controls: Prev / Auto-Flip / Next */}
+      {/* Archival Book Controls: Auto-Flip Toggle & Page Indicator (No Arrows) */}
       {!isLoaderMode && (
         <div className="book-archival-bar">
-          <button
-            type="button"
-            className="book-archival-btn"
-            onClick={flipPrevSpread}
-            title="Turn to previous spread"
-          >
-            ‹ Prev
-          </button>
           <button
             type="button"
             className={`book-archival-btn autoflip-btn ${autoFlipActive ? 'active' : ''}`}
@@ -633,14 +571,6 @@ export const EscBook: React.FC<EscBookProps> = ({
           <span className="book-page-indicator">
             {currentPage === 0 ? 'Cover' : currentPage >= 8 ? 'Logo' : `p. ${currentPage}–${currentPage + 1}`}
           </span>
-          <button
-            type="button"
-            className="book-archival-btn"
-            onClick={flipNextSpread}
-            title="Turn to next spread"
-          >
-            Next ›
-          </button>
         </div>
       )}
     </div>
