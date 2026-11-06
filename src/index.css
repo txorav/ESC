@@ -1777,186 +1777,392 @@ html {
 }
 
 /* ============================================================
-   7. TIMELINE: OPTION WHEEL & FILM CLIP
+/* ============================================================
+   7. TIMELINE: CONTINUOUS 35mm FILM REEL & FLOATING GALLERY CLIP
    ============================================================ */
 #tl {
-  display: grid;
-  grid-template-columns: minmax(220px, 320px) 1fr;
-  gap: 5vw;
-  padding: 12vh 6vw;
-  background: var(--ind);
   position: relative;
+  min-height: 280vh;
+  padding: 10vh 0 20vh;
+  background-color: var(--film-bg, #1C1E4B);
+  transition: background-color 0.6s ease;
+  overflow: clip;
 }
 
-.timeline-sidebar {
+/* STICKY LAYERS OVERLAY (Pinned viewport-wide while scrolling) */
+.timeline-pinned-overlay {
   position: sticky;
-  top: 100px;
-  height: fit-content;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
   z-index: 20;
-}
-
-.wheel-container {
-  height: 220px;
-  overflow: hidden;
-  position: relative;
-  border-radius: 20px;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  overflow-y: auto;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
-}
-.wheel-track {
-  list-style: none;
-  padding: 0;
-  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.wheel-track li {
-  height: 55px;
-  display: grid;
-  place-items: center;
-  font-family: 'Fraunces', serif;
-  font-weight: 800;
-  font-size: 26px;
-  color: var(--white);
-  opacity: 0.35;
-  transition: opacity 0.3s, font-size 0.3s, color 0.3s;
-}
-.wheel-track li.active {
-  opacity: 1;
-  font-size: 42px;
-  color: var(--gold);
-  text-shadow: 0 0 20px rgba(244, 196, 48, 0.5);
-}
-
-.film-row-wrap {
-  margin-top: 24px;
-  background: rgba(0, 0, 0, 0.55);
-  border-radius: 14px;
-  padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-.film-row-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
-  margin-bottom: 8px;
-}
-.film-row-clip {
+  margin-bottom: -100vh;
   display: flex;
-  gap: 12px;
-  overflow-x: hidden;
-  height: 140px;
-  padding: 4px;
-  border-radius: 8px;
+  align-items: center;
+  position: -webkit-sticky;
 }
-.film-row-clip.vintage {
-  background: #1c150c;
-  border: 4px solid #000;
-  border-style: solid dashed;
+
+/* LAYER 3 (TOP, z-index: 30): Big Year Selector in the Center-Left */
+/* Pure typography, NO BOX, NO BACKGROUND, NO BORDER */
+.timeline-year-stage {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 3vw;
+  width: 260px;
+  height: 380px;
+  z-index: 30;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
-.film-row-clip.modern {
-  background: rgba(40, 63, 195, 0.15);
-  border: 1px solid var(--peri);
-}
-.film-row-clip .row-img {
-  flex: 0 0 170px;
+
+.year-wheel-clean {
+  width: 100%;
   height: 100%;
-  border-radius: 6px;
-  display: grid;
-  place-items: center;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--white);
-  position: relative;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
 }
 
-.film-column {
+.year-wheel-clean .option-wheel__item {
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+/* LAYER 2 (MIDDLE, z-index: 20): Gallery Film Clip */
+/* Comes from the other side under the year thing (as a layer!), above the main reel, ends once gallery photos end */
+.film-gallery-floating-track {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 8vw;
+  z-index: 20;
+  pointer-events: none;
   display: flex;
-  flex-direction: column;
-  gap: 16vh;
   align-items: center;
 }
 
-.film-card {
-  width: min(620px, 100%);
-  min-height: 64vh;
-  display: flex;
+.film-gallery-clip {
+  pointer-events: auto;
+  display: inline-flex;
   flex-direction: column;
-  transition: transform 0.4s ease, filter 0.4s ease;
+  background-color: #0d0c0a;
+  border-top: 2px solid #1c1812;
+  border-bottom: 2px solid #1c1812;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+  position: relative;
+  width: fit-content;
+  max-width: calc(100vw - 12vw);
 }
 
-.film-card.vintage {
-  background-color: #251d14;
-  padding: 30px 42px;
-  border-radius: 4px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
-  border: 2px solid #111;
-  color: #ede2cd;
-  font-family: 'Special Elite', monospace;
+/* Top & Bottom Sprocket Rails */
+.sprocket-rail {
+  background-color: #0d0c0a;
+  padding: 4px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  user-select: none;
 }
-.film-card.vintage .film-media {
-  height: 320px;
+.sprocket-rail.top-rail {
+  border-bottom: 1px solid #1a1712;
+}
+.sprocket-rail.bottom-rail {
+  border-top: 1px solid #1a1712;
+}
+
+.sprocket-track {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  overflow: hidden;
+  height: 14px;
+}
+.sprocket-hole {
+  width: 9px;
+  height: 13px;
+  background-color: var(--film-bg, #1C1E4B);
   border-radius: 2px;
-  filter: sepia(0.85) contrast(1.2) brightness(0.9);
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  transition: background-color 0.6s ease;
+}
+
+.film-edge-markings {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  color: #d4a046;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+/* Gallery Photo Frames in the Film Clip */
+.film-gallery-frames {
+  display: flex;
+  background-color: #070706;
+  padding: 6px 8px;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.film-gallery-photo-frame {
+  flex: 0 0 210px;
+  display: flex;
+  flex-direction: column;
+  background-color: #0d0c0a;
+  border: 1px solid #1f1b14;
+  padding: 6px;
+  border-right: 6px solid #000000;
+}
+
+.gallery-photo-aperture {
+  height: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 2px;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.7);
+  color: #ffffff;
   position: relative;
   overflow: hidden;
-  display: grid;
-  place-items: center;
 }
-.film-card.vintage .film-media::after {
-  content: "KODAK 400 · EXP 2017";
+
+.gallery-photo-aperture .photo-tag {
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.gallery-photo-aperture .photo-sub {
+  font-family: 'Special Elite', monospace;
+  font-size: 9.5px;
+  letter-spacing: 2px;
+  opacity: 0.8;
+}
+
+.frame-footer-code {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-family: 'Special Elite', monospace;
+  font-size: 8.5px;
+  color: #9e7f3d;
+  letter-spacing: 1.5px;
+}
+
+/* Cut End of Film Strip: indicates the film clip physically ends once photos end */
+.film-clip-cut-end {
   position: absolute;
-  bottom: 8px;
-  right: 12px;
+  top: 0;
+  right: -24px;
+  width: 24px;
+  height: 100%;
+  background-color: #0d0c0a;
+  clip-path: polygon(0 0, 100% 25%, 60% 75%, 0 100%);
+  border-left: 1px solid #1a1712;
+}
+
+/* LAYER 1 (BASE, z-index: 10): Continuous Main Film Reel */
+/* One unbroken continuous 35mm film strip running through the timeline */
+.film-reel-continuous-column {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 6vw;
+  position: relative;
+  z-index: 10;
+}
+
+.film-reel-strip {
+  width: min(680px, 88vw);
+  display: grid;
+  grid-template-columns: 28px 1fr 28px;
+  background-color: #0b0a09;
+  border-left: 2px solid #18140f;
+  border-right: 2px solid #18140f;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9);
+  position: relative;
+}
+
+/* Continuous Side Sprocket Rails */
+.continuous-sprocket-rail {
+  background-color: #0b0a09;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px 0;
+  align-items: center;
+  user-select: none;
+}
+.continuous-sprocket-rail.left-rail {
+  border-right: 1px solid #1a1610;
+}
+.continuous-sprocket-rail.right-rail {
+  border-left: 1px solid #1a1610;
+}
+
+.continuous-sprocket-rail .sprocket-hole {
+  width: 14px;
+  height: 10px;
+}
+
+/* Unbroken Stream of Frames inside the continuous reel */
+.film-reel-frames-stream {
+  display: flex;
+  flex-direction: column;
+  background-color: #090807;
+}
+
+.film-reel-frame {
+  padding: 36px 36px 24px;
+  display: flex;
+  flex-direction: column;
+  background-color: #0e0d0b;
+  position: relative;
+  transition: opacity 0.3s ease;
+}
+
+.film-reel-frame.vintage {
+  color: #ede2cd;
+}
+
+.film-reel-frame.modern {
+  color: #f1f4fc;
+}
+
+/* Film Cell Aperture (Archival photo window) */
+.film-cell-aperture {
+  height: 320px;
+  border-radius: 2px;
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #000000;
+}
+
+.reel-stamp {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Special Elite', monospace;
+  font-size: 18px;
+  color: #ede2cd;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+.reel-stamp.modern {
+  flex-direction: column;
+  gap: 6px;
+}
+
+.film-badge-modern {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  background-color: var(--rb);
+  color: #ffffff;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.film-stock-stamp {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  font-family: 'Special Elite', monospace;
   font-size: 10px;
-  color: #ff9900;
+  color: #d4a046;
   letter-spacing: 2px;
 }
 
-.film-card.modern {
-  background: rgba(255, 255, 255, 0.96);
-  color: var(--navy);
-  border-radius: 28px;
-  padding: 20px;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-.film-card.modern .film-media {
-  height: 340px;
-  border-radius: 20px;
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-  position: relative;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-.film-card.modern .film-badge {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  background: var(--rb);
-  color: var(--white);
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+.film-reel-story {
+  padding: 20px 8px 12px;
 }
 
-.film-info {
-  padding: 16px 8px 4px;
-}
-.film-year-head {
+.film-frame-heading {
   font-family: 'Fraunces', serif;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 800;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
 }
-.film-desc {
+
+.film-frame-desc {
+  font-family: 'Work Sans', sans-serif;
   font-size: 15px;
-  line-height: 1.5;
+  line-height: 1.6;
   opacity: 0.9;
+}
+
+/* Continuous Reel Frame Divider (marks the edge between 35mm frames) */
+.film-reel-frame-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 6px solid #000000;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: #241e16;
+}
+
+.divider-code {
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  color: #8c7241;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .timeline-pinned-overlay {
+    position: relative;
+    height: auto;
+    margin-bottom: 0;
+    flex-direction: column;
+  }
+  .timeline-year-stage {
+    position: relative;
+    top: 0;
+    transform: none;
+    left: 0;
+    width: 100%;
+    height: 160px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .film-gallery-floating-track {
+    position: relative;
+    top: 0;
+    transform: none;
+    left: 0;
+    margin-bottom: 24px;
+  }
+  .film-reel-continuous-column {
+    padding-right: 0;
+    justify-content: center;
+  }
 }
 
 /* ============================================================
