@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Loader } from './components/Loader';
 import { Navbar } from './components/Navbar';
 import { HeroDesk } from './components/HeroDesk';
 import { IntroClouds } from './components/IntroClouds';
@@ -15,6 +14,7 @@ import './App.css';
 export const App: React.FC = () => {
   const [activeModal, setActiveModal] = useState<ModalContent | null>(null);
   const [toastMessage, setToastMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -45,9 +45,12 @@ export const App: React.FC = () => {
 
   return (
     <>
-      <Loader />
-      <Navbar />
-      <HeroDesk onOpenModal={setActiveModal} onShowToast={showToast} />
+      <Navbar hidden={isLoading} />
+      <HeroDesk
+        onOpenModal={setActiveModal}
+        onShowToast={showToast}
+        onLoadingChange={setIsLoading}
+      />
       <IntroClouds />
       <Timeline />
       <StatsSection />

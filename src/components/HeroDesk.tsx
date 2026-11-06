@@ -1,17 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import type { WordData, DeskItemState, ModalContent } from '../types';
+import type { WordData, DeskItemInstance, DeskItemType, ModalContent } from '../types';
 import { EscBook } from './EscBook';
 
 interface HeroDeskProps {
   onOpenModal: (content: ModalContent) => void;
   onShowToast: (message: string) => void;
+  onLoadingChange?: (loading: boolean) => void;
 }
 
 const TABLE_W = 2800;
 const TABLE_H = 1700;
-const STORAGE_KEY = 'esc-state';
+const STORAGE_KEY = 'esc-state-v2';
 
-export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) => {
+export const HeroDesk: React.FC<HeroDeskProps> = ({
+  onOpenModal,
+  onShowToast,
+  onLoadingChange
+}) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [loaderFinished, setLoaderFinished] = useState(false);
+
   const [wordData, setWordData] = useState<WordData>({
     word: 'serendipity',
     phonetic: '/ˌser.ənˈdɪp.ə.ti/',
@@ -34,28 +42,24 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
 
   const [pan, setPan] = useState<{ x: number; y: number }>(() => getCenteredPan());
 
-  const centerViewport = () => {
-    setPan(getCenteredPan());
-    onShowToast('🎯 Viewport centered on ESC Archive Book');
-  };
-
-  // Ensure viewport is reset to book in the center on mount
+  // Always reset viewport to center on the book on mount
   useEffect(() => {
     setPan(getCenteredPan());
   }, []);
 
-  const [items, setItems] = useState<{ [id: string]: DeskItemState }>(() => {
-    const defaults: { [id: string]: DeskItemState } = {
-      radio: { x: 1880, y: 520, gone: false },
-      mic: { x: 2040, y: 840, gone: false },
-      pen: { x: 1820, y: 1140, gone: false },
-      dict: { x: 480, y: 560, gone: false },
-      gram: { x: 620, y: 980, gone: false },
-      prn: { x: 320, y: 870, gone: false }
-    };
+  // Multi-instance desk items: initial set on desk + unlimited new items from book
+  const [items, setItems] = useState<DeskItemInstance[]>(() => {
+    const defaults: DeskItemInstance[] = [
+      { instanceId: 'radio-1', type: 'radio', x: 1880, y: 520 },
+      { instanceId: 'mic-1', type: 'mic', x: 2040, y: 840 },
+      { instanceId: 'pen-1', type: 'pen', x: 1820, y: 1140 },
+      { instanceId: 'dict-1', type: 'dict', x: 480, y: 560 },
+      { instanceId: 'gram-1', type: 'gram', x: 620, y: 980 },
+      { instanceId: 'prn-1', type: 'prn', x: 320, y: 870 }
+    ];
     try {
       const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      return { ...defaults, ...s.items };
+      if (Array.isArray(s.items) && s.items.length > 0) return s.items;
     } catch {}
     return defaults;
   });
@@ -86,12 +90,12 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
       .catch(() => {});
   }, []);
 
-  // Save to localStorage
+  // Save items state to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ pan, items }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ items }));
     } catch {}
-  }, [pan, items]);
+  }, [items]);
 
   const isNearEdge = (pos: { x: number; y: number }) =>
     pos.x < 180 || pos.y < 180 || pos.x > TABLE_W - 340 || pos.y > TABLE_H - 300;
@@ -99,9 +103,19 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
   const isOffTable = (pos: { x: number; y: number }) =>
     pos.x < 70 || pos.y < 70 || pos.x > TABLE_W - 220 || pos.y > TABLE_H - 180;
 
-  // Pan canvas
+  // Handle loader finish: smooth dissolve of loader curtain without moving book
+  const handleLoaderFinished = () => {
+    setLoaderFinished(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      if (onLoadingChange) onLoadingChange(false);
+    }, 400);
+  };
+
+  // Pan canvas (table dragging)
   const handlePanStart = (e: React.PointerEvent) => {
-    if ((e.target as HTMLElement).closest('.it, .bookwrap')) return;
+    if (isLoading) return; // Prevent panning during loader flip sequence
+    if ((e.target as HTMLElement).closest('.it, .bookwrap, .desk-controls-bar')) return;
     const startX = e.clientX;
     const startY = e.clientY;
     const origX = pan.x;
@@ -122,12 +136,67 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
     window.addEventListener('pointerup', onUp);
   };
 
-  // Drag item
-  const handleItemDrag = (id: string, e: React.PointerEvent) => {
-    if ((e.target as HTMLElement).closest('.play-btn')) return;
+  // Full grab experience: Spawn and take a brand new item from the book onto the desk!
+  const handleGrabNewItemFromBook = (type: DeskItemType, e: React.PointerEvent) => {
     e.stopPropagation();
 
-    const current = items[id] || { x: 500, y: 500, gone: false };
+    // Spawn at cursor position translated to table world coordinates
+    const tableX = Math.round(e.clientX - pan.x - 70);
+    const tableY = Math.round(e.clientY - pan.y - 60);
+
+    const newInstanceId = `${type}-${Date.now()}`;
+    const newItem: DeskItemInstance = {
+      instanceId: newInstanceId,
+      type,
+      x: tableX,
+      y: tableY
+    };
+
+    setItems((prev) => [...prev, newItem]);
+    onShowToast(`✨ Grabbed ${getItemName(type)} from book onto desk!`);
+
+    // Immediately attach dragging so the item glides with the cursor
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const origX = tableX;
+    const origY = tableY;
+
+    const onMove = (ev: PointerEvent) => {
+      const curX = origX + (ev.clientX - startX);
+      const curY = origY + (ev.clientY - startY);
+      setItems((prev) =>
+        prev.map((it) => (it.instanceId === newInstanceId ? { ...it, x: curX, y: curY } : it))
+      );
+      setWarningActive(isNearEdge({ x: curX, y: curY }));
+    };
+
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      setWarningActive(false);
+
+      setItems((prev) => {
+        const item = prev.find((it) => it.instanceId === newInstanceId);
+        if (item && isOffTable(item)) {
+          onShowToast(`⚠️ ${getItemName(type)} fell off table!`);
+          return prev.filter((it) => it.instanceId !== newInstanceId);
+        }
+        return prev;
+      });
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  };
+
+  // Drag existing item on the desk
+  const handleItemDrag = (instanceId: string, e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest('.play-btn, .mini-play-speaker')) return;
+    e.stopPropagation();
+
+    const current = items.find((it) => it.instanceId === instanceId);
+    if (!current) return;
+
     const startX = e.clientX;
     const startY = e.clientY;
     const origX = current.x;
@@ -139,10 +208,9 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
     const onMove = (ev: PointerEvent) => {
       const curX = origX + (ev.clientX - startX);
       const curY = origY + (ev.clientY - startY);
-      setItems((prev) => ({
-        ...prev,
-        [id]: { ...prev[id], x: curX, y: curY }
-      }));
+      setItems((prev) =>
+        prev.map((it) => (it.instanceId === instanceId ? { ...it, x: curX, y: curY } : it))
+      );
       setWarningActive(isNearEdge({ x: curX, y: curY }));
     };
 
@@ -153,17 +221,14 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
       setWarningActive(false);
 
       setItems((prev) => {
-        const itemState = prev[id];
-        if (isOffTable(itemState)) {
+        const item = prev.find((it) => it.instanceId === instanceId);
+        if (item && isOffTable(item)) {
           el.classList.add('fall');
-          onShowToast(`⚠️ ${getItemName(id)} fell off the table! Restore it from the book.`);
+          onShowToast(`⚠️ ${getItemName(item.type)} fell off table!`);
           setTimeout(() => {
-            el.classList.remove('fall');
-          }, 900);
-          return {
-            ...prev,
-            [id]: { ...itemState, gone: true }
-          };
+            setItems((curr) => curr.filter((it) => it.instanceId !== instanceId));
+          }, 800);
+          return prev;
         }
         return prev;
       });
@@ -173,15 +238,15 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
     window.addEventListener('pointerup', onUp);
   };
 
-  const getItemName = (id: string) => {
-    switch (id) {
-      case 'radio': return 'Radio (ECHO Podcasts)';
+  const getItemName = (type: DeskItemType) => {
+    switch (type) {
+      case 'radio': return 'Vintage Radio (ECHO Podcasts)';
       case 'mic': return 'Microphone (Discussion Group)';
       case 'pen': return 'Pen & Paper (Classes)';
       case 'dict': return 'Dictionary (Word of the Day)';
       case 'gram': return 'Grammar Paper';
-      case 'prn': return 'Pronunciation Radio';
-      default: return 'Object';
+      case 'prn': return 'Voice Pronunciation Radio';
+      default: return 'Desk Object';
     }
   };
 
@@ -215,38 +280,13 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
     }
   };
 
-  const restoreItem = (id: string) => {
-    const defaultCoords: { [k: string]: { x: number; y: number } } = {
-      radio: { x: 1880, y: 520 },
-      mic: { x: 2040, y: 840 },
-      pen: { x: 1820, y: 1140 },
-      dict: { x: 480, y: 560 },
-      gram: { x: 620, y: 980 },
-      prn: { x: 320, y: 870 }
-    };
-    const c = defaultCoords[id] || { x: 600, y: 600 };
-    setItems((prev) => ({
-      ...prev,
-      [id]: { x: c.x, y: c.y, gone: false }
-    }));
-    onShowToast(`✨ Restored ${getItemName(id)} to desk!`);
-  };
-
-  return (
-    <section id="home" ref={homeRef} onPointerDown={handlePanStart}>
-      <div
-        id="world"
-        ref={worldRef}
-        style={{ transform: `translate3d(${pan.x}px, ${pan.y}px, 0)` }}
-      >
-        <div id="table"></div>
-
-        {/* 1. RADIO (RIGHT) */}
-        {!items.radio?.gone && (
+  // Render individual desk item based on its type
+  const renderItemContent = (item: DeskItemInstance) => {
+    switch (item.type) {
+      case 'radio':
+        return (
           <div
-            className="it"
-            style={{ left: `${items.radio?.x || 1880}px`, top: `${items.radio?.y || 520}px` }}
-            onPointerDown={(e) => handleItemDrag('radio', e)}
+            className="vintage-radio-wrap obj"
             onPointerEnter={(e) => showItemTooltip('ECHO podcasts', 'Listen to recorded student episodes, debates, and talks.', e)}
             onPointerLeave={hideItemTooltip}
             onDoubleClick={() =>
@@ -257,23 +297,19 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
               })
             }
           >
-            <div className="vintage-radio-wrap obj">
-              <img
-                src="/vintage-radio.avif"
-                alt="Vintage Radio"
-                className="vintage-radio-desk-img"
-                draggable={false}
-              />
-            </div>
+            <img
+              src="/vintage-radio.avif"
+              alt="Vintage Radio"
+              className="vintage-radio-desk-img"
+              draggable={false}
+            />
           </div>
-        )}
+        );
 
-        {/* 2. MICROPHONE (RIGHT) */}
-        {!items.mic?.gone && (
+      case 'mic':
+        return (
           <div
-            className="it"
-            style={{ left: `${items.mic?.x || 2040}px`, top: `${items.mic?.y || 840}px` }}
-            onPointerDown={(e) => handleItemDrag('mic', e)}
+            className="mic-wrap obj"
             onPointerEnter={(e) => showItemTooltip('Discussion group', 'Join weekly debate rounds and conversational circles.', e)}
             onPointerLeave={hideItemTooltip}
             onDoubleClick={() =>
@@ -284,20 +320,16 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
               })
             }
           >
-            <div className="mic-wrap obj">
-              <div className="mic-head"></div>
-              <div className="mic-stem"></div>
-              <div className="mic-base"></div>
-            </div>
+            <div className="mic-head"></div>
+            <div className="mic-stem"></div>
+            <div className="mic-base"></div>
           </div>
-        )}
+        );
 
-        {/* 3. PEN & PAPER (RIGHT) */}
-        {!items.pen?.gone && (
+      case 'pen':
+        return (
           <div
-            className="it"
-            style={{ left: `${items.pen?.x || 1820}px`, top: `${items.pen?.y || 1140}px` }}
-            onPointerDown={(e) => handleItemDrag('pen', e)}
+            className="paper-sheet pen-note obj type"
             onPointerEnter={(e) => showItemTooltip('Classes', 'Masterclasses, speech lab, and accent refinement.', e)}
             onPointerLeave={hideItemTooltip}
             onDoubleClick={() =>
@@ -308,113 +340,128 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
               })
             }
           >
-            <div className="paper-sheet pen-note obj type">
-              ESC is the best english club ever
-              <div className="fountain-pen"></div>
+            ESC is the best english club ever
+            <div className="fountain-pen"></div>
+          </div>
+        );
+
+      case 'dict':
+        return (
+          <div className="dict-book obj">
+            <div className="dict-page">
+              <div className="dict-tag">ESC DICTIONARY · WORD OF THE DAY</div>
+              <h3 className="dict-word">{wordData.word}</h3>
+              <div className="dict-phonetic">{wordData.phonetic}</div>
+              <div className="dict-pos">{wordData.pos}</div>
+              <p><strong>Origin:</strong> {wordData.origin}</p>
+            </div>
+            <div className="dict-page">
+              <p><strong>Definition:</strong><br />{wordData.def}</p>
+              <br />
+              <p><strong>Example:</strong><br />“{wordData.ex}”</p>
+              <br />
+              <p><strong>Synonyms:</strong><br />{wordData.syn?.join(', ')}</p>
             </div>
           </div>
-        )}
+        );
 
-        {/* 4. DICTIONARY (LEFT) */}
-        {!items.dict?.gone && (
-          <div
-            className="it"
-            style={{ left: `${items.dict?.x || 480}px`, top: `${items.dict?.y || 560}px` }}
-            onPointerDown={(e) => handleItemDrag('dict', e)}
-          >
-            <div className="dict-book obj">
-              <div className="dict-page">
-                <div className="dict-tag">ESC DICTIONARY · WORD OF THE DAY</div>
-                <h3 className="dict-word">{wordData.word}</h3>
-                <div className="dict-phonetic">{wordData.phonetic}</div>
-                <div className="dict-pos">{wordData.pos}</div>
-                <p><strong>Origin:</strong> {wordData.origin}</p>
-              </div>
-              <div className="dict-page">
-                <p><strong>Definition:</strong><br />{wordData.def}</p>
-                <br />
-                <p><strong>Example:</strong><br />“{wordData.ex}”</p>
-                <br />
-                <p><strong>Synonyms:</strong><br />{wordData.syn?.join(', ')}</p>
-              </div>
+      case 'gram':
+        return (
+          <div className="paper-sheet gram-note obj type">
+            <b style={{ color: 'var(--br)', display: 'block', marginBottom: '6px' }}>
+              Grammar Rule of the Day
+            </b>
+            {wordData.rule}
+          </div>
+        );
+
+      case 'prn':
+        return (
+          <div className="prn-box obj">
+            <div className="radio-card" style={{ width: '170px', height: '110px' }}>
+              <div className="radio-dial" style={{ width: '46px', height: '46px' }}>VOICE</div>
+              <div className="radio-grill" style={{ width: '58px', height: '60px' }}></div>
+            </div>
+            <button
+              className="play-btn"
+              onClick={playPronunciation}
+              aria-label="Play Word Pronunciation"
+            >
+              ▶
+            </button>
+            <div className={`wave-bars ${isPlayingAudio ? 'active' : ''}`}>
+              <div className="wave-bar"></div>
+              <div className="wave-bar"></div>
+              <div className="wave-bar"></div>
+              <div className="wave-bar"></div>
             </div>
           </div>
-        )}
+        );
 
-        {/* 5. GRAMMAR NOTE (LEFT) */}
-        {!items.gram?.gone && (
-          <div
-            className="it"
-            style={{ left: `${items.gram?.x || 620}px`, top: `${items.gram?.y || 980}px` }}
-            onPointerDown={(e) => handleItemDrag('gram', e)}
-          >
-            <div className="paper-sheet gram-note obj type">
-              <b style={{ color: 'var(--br)', display: 'block', marginBottom: '6px' }}>
-                Grammar Rule of the Day
-              </b>
-              {wordData.rule}
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <section id="home" ref={homeRef} onPointerDown={handlePanStart}>
+      {/* 1. SOLID COLOR LOADING CURTAIN (#111744 - NO GRADIENT, NO PROGRESS BAR) */}
+      <div
+        id="loader-curtain"
+        className={`${loaderFinished ? 'finished' : 'active'} ${!isLoading ? 'gone' : ''}`}
+        aria-hidden={!isLoading}
+      >
+        <div className="loader-title-clean">
+          {loaderFinished ? '✦ ESC ARCHIVE OPENED ✦' : 'OPENING ESC ARCHIVE…'}
+        </div>
+      </div>
+
+      {/* 2. INFINITE 3D STUDY DESK CANVAS */}
+      <div
+        id="world"
+        ref={worldRef}
+        style={{ transform: `translate3d(${pan.x}px, ${pan.y}px, 0)` }}
+      >
+        {/* Vintage Wooden Table Top: dissolves in smoothly underneath the book */}
+        <div
+          id="table"
+          className={isLoading ? 'table-concealed' : 'table-revealed'}
+        ></div>
+
+        {/* Desk Items Layer: fades in on the table around the book */}
+        <div
+          className={`desk-items-layer ${isLoading ? 'items-concealed' : 'items-revealed'}`}
+        >
+          {items.map((item) => (
+            <div
+              key={item.instanceId}
+              className="it"
+              style={{ left: `${item.x}px`, top: `${item.y}px` }}
+              onPointerDown={(e) => handleItemDrag(item.instanceId, e)}
+            >
+              {renderItemContent(item)}
             </div>
-          </div>
-        )}
+          ))}
+        </div>
 
-        {/* 6. PRONUNCIATION RADIO (LEFT) */}
-        {!items.prn?.gone && (
-          <div
-            className="it"
-            style={{ left: `${items.prn?.x || 320}px`, top: `${items.prn?.y || 870}px` }}
-            onPointerDown={(e) => handleItemDrag('prn', e)}
-          >
-            <div className="prn-box obj">
-              <div className="radio-card" style={{ width: '170px', height: '110px' }}>
-                <div className="radio-dial" style={{ width: '46px', height: '46px' }}>VOICE</div>
-                <div className="radio-grill" style={{ width: '58px', height: '60px' }}></div>
-              </div>
-              <button
-                className="play-btn"
-                onClick={playPronunciation}
-                aria-label="Play Word Pronunciation"
-              >
-                ▶
-              </button>
-              <div className={`wave-bars ${isPlayingAudio ? 'active' : ''}`}>
-                <div className="wave-bar"></div>
-                <div className="wave-bar"></div>
-                <div className="wave-bar"></div>
-                <div className="wave-bar"></div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 7. CENTER 3D BOOK & CLUB LOGO (REACT-PAGEFLIP) */}
+        {/* 3. CENTER 3D ARCHIVE BOOK (THE ONE AND ONLY BOOK - NEVER MOVES OR JUMPS) */}
         <div className="bookwrap">
           <EscBook
-            startPage={8}
+            startPage={0}
             wordData={wordData}
-            items={items}
-            onTakeItemToDesk={restoreItem}
+            onGrabNewItem={handleGrabNewItemFromBook}
             onPlayPronunciation={playPronunciation}
             isPlayingAudio={isPlayingAudio}
+            isLoaderMode={isLoading}
+            onLoaderFinished={handleLoaderFinished}
             width={350}
             height={480}
           />
         </div>
       </div>
 
-      {/* Viewport Recenter & Navigation Bar */}
-      <div className="desk-controls-bar">
-        <button
-          type="button"
-          className="recenter-btn"
-          onClick={centerViewport}
-          title="Reset viewport to center on the book"
-        >
-          🎯 Center View on Book
-        </button>
-      </div>
-
-      <div className="desk-nav-hint">
-        ✦ Click &amp; drag table to explore · Turn book pages · Move objects freely · Scroll down to enter clouds ✦
+      <div className={`desk-nav-hint ${isLoading ? 'hidden' : ''}`}>
+        ✦ Turn book pages · Grab new elements directly from pages onto the table · Pan desk freely ✦
       </div>
 
       {/* Floating Hover Tooltip */}
@@ -442,3 +489,5 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
     </section>
   );
 };
+
+export default HeroDesk;

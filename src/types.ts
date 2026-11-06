@@ -9,10 +9,14 @@ export interface WordData {
   rule: string;
 }
 
-export interface DeskItemState {
+export type DeskItemType = 'radio' | 'mic' | 'pen' | 'dict' | 'gram' | 'prn';
+
+export interface DeskItemInstance {
+  instanceId: string;
+  type: DeskItemType;
   x: number;
   y: number;
-  gone: boolean;
+  rotation?: number;
 }
 
 export interface ModalContent {

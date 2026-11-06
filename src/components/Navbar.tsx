@@ -1,8 +1,12 @@
 import React from 'react';
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  hidden?: boolean;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ hidden = false }) => {
   return (
-    <nav>
+    <nav className={hidden ? 'nav-hidden' : 'nav-visible'}>
       <div className="paper-bar">
         <a href="#home">Home</a>
         <a href="#intro">About</a>
@@ -15,3 +19,5 @@ export const Navbar: React.FC = () => {
     </nav>
   );
 };
+
+export default Navbar;

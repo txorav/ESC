@@ -48,30 +48,24 @@ h1, h2, h3, .serif {
 }
 
 /* ============================================================
-   1. LOADING SCREEN (SOLID COLOR, NO GRADIENT, NO PROGRESS BAR)
+   1. LOADING SCREEN (SOLID COLOR #111744, NO GRADIENT, NO PROGRESS BAR)
    ============================================================ */
-#loader {
+#loader-curtain {
   position: fixed;
   inset: 0;
-  z-index: 9999;
-  background: #111744; /* Solid Deep Navy from Figma palette - no gradient */
+  z-index: 15;
+  background: #111744; /* Solid Deep Navy - pure flat color, no gradient */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  justify-content: flex-end;
+  padding-bottom: 36px;
+  pointer-events: auto;
+  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1);
 }
-#loader.out {
+#loader-curtain.gone {
   opacity: 0;
   pointer-events: none;
-}
-
-.loader-book-stage {
-  perspective: 1600px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  filter: drop-shadow(0 25px 35px rgba(0, 0, 0, 0.75));
 }
 
 .loader-title-clean {
@@ -79,14 +73,10 @@ h1, h2, h3, .serif {
   font-size: 14px;
   letter-spacing: 3px;
   color: #F1C40F;
-  margin-top: 24px;
   text-transform: uppercase;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
   opacity: 0.95;
-}
-
-@keyframes load-slide {
-  to { transform: translateX(0%); }
+  transition: opacity 0.4s ease;
 }
 
 /* ============================================================
@@ -102,6 +92,16 @@ nav {
   justify-content: center;
   padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 0;
   pointer-events: none;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+nav.nav-hidden {
+  opacity: 0;
+  transform: translateY(-24px);
+  pointer-events: none;
+}
+nav.nav-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 nav .paper-bar {
@@ -169,7 +169,7 @@ nav a.cta:hover {
   height: 100vh;
   overflow: hidden;
   touch-action: none;
-  background: radial-gradient(circle at center, #171b3e 0%, #080a1c 100%);
+  background: #111744; /* Pure solid Deep Navy - no gradient */
   cursor: grab;
   user-select: none;
 }
@@ -200,6 +200,24 @@ nav a.cta:hover {
     linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.35)),
     url("/wood-table.jpg") center/cover no-repeat;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#table.table-concealed {
+  opacity: 0;
+}
+#table.table-revealed {
+  opacity: 1;
+}
+
+.desk-items-layer {
+  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.desk-items-layer.items-concealed {
+  opacity: 0;
+  pointer-events: none;
+}
+.desk-items-layer.items-revealed {
+  opacity: 1;
 }
 
 /* Desk Corner Brass Brackets */
@@ -802,116 +820,309 @@ nav a.cta:hover {
   color: #8c6a2b;
 }
 
-/* Grammar Rule inside Book */
-.parchment-rule-card {
-  background: rgba(132, 104, 44, 0.08);
-  border-left: 3px solid #BF2026;
-  padding: 10px 12px;
-  margin: 8px 0;
-  border-radius: 0 4px 4px 0;
-}
-.rule-badge {
-  font-size: 9px;
-  letter-spacing: 1.5px;
-  font-weight: 800;
-  color: #BF2026;
-  margin-bottom: 4px;
-}
-.rule-body-text {
-  font-size: 11.5px;
-  line-height: 1.5;
-  color: #2e2112;
+/* Typography enhancements on parchment */
+.origin-note {
+  font-size: 11px;
+  color: #6a4c28;
+  border-top: 1px dotted rgba(132, 104, 44, 0.25);
+  padding-top: 5px;
+  margin-top: 4px;
 }
 
-/* Audio Pronunciation inside Book */
-.audio-voice-box {
-  background: rgba(40, 63, 195, 0.06);
-  border: 1px dashed rgba(40, 63, 195, 0.3);
-  border-radius: 6px;
-  padding: 12px;
-  text-align: center;
-  margin: 10px 0;
+.rule-focus-text {
+  background: rgba(132, 104, 44, 0.08);
+  border-left: 3px solid #BF2026;
+  padding: 8px 10px;
+  margin: 8px 0;
+  font-size: 12px;
+  line-height: 1.5;
 }
-.voice-word-display {
+.rule-accent {
+  color: #BF2026;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.pronounce-word-strip {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 6px 0 8px;
+}
+.pronounce-lead {
+  font-size: 11px;
+  color: #8c6a2b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.pronounce-target {
   font-family: 'Fraunces', serif;
   font-size: 22px;
   font-weight: 800;
   color: #111744;
-  margin-bottom: 8px;
-}
-.voice-play-trigger {
-  font-family: 'Work Sans', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 6px 14px;
-  border-radius: 99px;
-  background: #283FC3;
-  color: #ffffff;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.voice-play-trigger.active {
-  background: #27ae60;
 }
 
-/* Department Highlights */
-.dept-highlight-card {
-  background: rgba(132, 104, 44, 0.07);
-  border-radius: 4px;
-  padding: 8px 12px;
-  margin: 8px 0;
-  font-size: 11px;
-}
-.parchment-note-preview {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px dashed rgba(132, 104, 44, 0.35);
-  padding: 12px;
-  margin: 10px 0;
-  transform: rotate(-1.5deg);
-  text-align: center;
-}
-.note-handwritten {
-  font-family: 'Special Elite', cursive, serif;
-  font-size: 15px;
-  color: #111744;
-  font-weight: 700;
+.dept-bullet-line {
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: #3f2f1a;
+  margin: 6px 0;
+  padding-left: 2px;
 }
 
-/* Take/Restore Button inside Book */
-.book-action-zone {
+/* ============================================================
+   GRABBABLE BOOK ELEMENTS (FULL PHYSICAL DRAG EXPERIENCE)
+   ============================================================ */
+.book-grabbable-zone {
   margin-top: auto;
-  padding-top: 10px;
+  padding: 8px 4px 4px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.22s ease;
+}
+.book-grabbable-zone:hover {
+  transform: translateY(-4px) scale(1.04);
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.45));
+}
+.book-grabbable-zone:active {
+  cursor: grabbing;
+  transform: scale(0.97);
+}
+
+.grabbable-object-wrapper {
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
-.book-take-btn {
-  font-family: 'Work Sans', sans-serif;
+
+.grabbable-prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: 99px;
+  background: rgba(140, 106, 43, 0.14);
+  border: 1px dashed rgba(140, 106, 43, 0.4);
+  margin-top: 8px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.book-grabbable-zone:hover .grabbable-prompt {
+  background: rgba(40, 63, 195, 0.15);
+  border-color: #283FC3;
+}
+.grab-hand-icon {
+  font-size: 13px;
+}
+.grab-text {
+  font-family: 'Special Elite', monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #2e2112;
+  letter-spacing: 0.5px;
+}
+.book-grabbable-zone:hover .grab-text {
+  color: #283FC3;
+}
+
+/* 1. Mini Dictionary Object in Book */
+.mini-dict-object {
+  width: 140px;
+  height: 72px;
+  background: linear-gradient(135deg, #441416, #2b0b0d);
+  border: 2px solid #8f6c32;
+  border-radius: 4px;
+  box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.45), inset 0 0 10px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  position: relative;
+}
+.mini-dict-spine {
+  width: 10px;
+  height: 100%;
+  border-right: 2px solid #8f6c32;
+  margin-right: 8px;
+  background: repeating-linear-gradient(180deg, #8f6c32 0 2px, transparent 2px 8px);
+}
+.mini-dict-cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.mini-dict-label {
+  font-family: 'Fraunces', serif;
+  font-size: 12px;
+  font-weight: 800;
+  color: #F1C40F;
+  letter-spacing: 1px;
+}
+.mini-dict-sub {
+  font-family: 'Special Elite', monospace;
+  font-size: 8.5px;
+  color: #d8c29d;
+  letter-spacing: 0.5px;
+}
+
+/* 2. Mini Grammar Sheet in Book */
+.mini-grammar-sheet {
+  width: 180px;
+  padding: 8px 12px;
+  background: #fbf7ee;
+  border: 1px solid #d4c39e;
+  box-shadow: 3px 6px 14px rgba(0, 0, 0, 0.35);
+  transform: rotate(-1deg);
+  position: relative;
+}
+.mini-paper-crease {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(135deg, #d6c39a 50%, #fbf7ee 50%);
+}
+.mini-paper-title {
+  font-family: 'Special Elite', monospace;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.5px;
-  padding: 7px 16px;
-  border-radius: 99px;
-  border: 1px solid #283FC3;
+  color: #BF2026;
+  margin-bottom: 2px;
+}
+.mini-paper-body {
+  font-family: 'Special Elite', monospace;
+  font-size: 10px;
+  color: #3b2a15;
+  line-height: 1.35;
+}
+
+/* 3. Mini Pronunciation Radio in Book */
+.mini-prn-module {
+  width: 150px;
+  height: 64px;
+  background: linear-gradient(135deg, #784820, #4a280e);
+  border: 2px solid #2e1708;
+  border-radius: 8px;
+  box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+}
+.mini-radio-grill {
+  width: 50px;
+  height: 38px;
+  background: repeating-linear-gradient(90deg, #1f1106 0 2px, transparent 2px 5px);
+  border-radius: 4px;
+}
+.mini-radio-knob {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff, #ebd39f 40%, #7d6439);
+  border: 2px solid #222;
+}
+.mini-play-speaker {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   background: #283FC3;
-  color: #ffffff;
+  color: #fff;
+  border: none;
+  font-size: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 10px rgba(40, 63, 195, 0.35);
+  display: grid;
+  place-items: center;
+  transition: transform 0.2s, background 0.2s;
 }
-.book-take-btn:hover {
+.mini-play-speaker:hover {
+  transform: scale(1.1);
   background: #4E55D3;
-  border-color: #4E55D3;
-  transform: translateY(-1px);
 }
-.book-take-btn.lost {
-  background: #BF2026;
-  border-color: #BF2026;
-  box-shadow: 0 4px 10px rgba(191, 32, 38, 0.35);
+.mini-play-speaker.playing {
+  background: #27ae60;
+  animation: pulse 1s infinite;
 }
-.book-take-btn.lost:hover {
-  background: #CD202A;
-  border-color: #CD202A;
+
+/* 4. Mini Microphone in Book */
+.mini-mic-object {
+  width: 48px;
+  height: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(3px 6px 12px rgba(0, 0, 0, 0.4));
+}
+.mini-mic-grille {
+  width: 28px;
+  height: 34px;
+  background: linear-gradient(135deg, #d4af37, #855818);
+  border-radius: 14px 14px 8px 8px;
+  border: 2px solid #52380d;
+}
+.mini-mic-neck {
+  width: 6px;
+  height: 18px;
+  background: #444;
+}
+.mini-mic-stand {
+  width: 38px;
+  height: 8px;
+  background: #222;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* 5. Mini Radio Asset Box in Book */
+.mini-radio-asset-box {
+  width: 140px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(4px 8px 14px rgba(0, 0, 0, 0.5));
+}
+.mini-radio-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* 6. Mini Pen & Sheet Note in Book */
+.mini-pen-sheet-object {
+  width: 180px;
+  padding: 8px 10px;
+  background: #faf4e6;
+  border: 1px solid #cfbe95;
+  box-shadow: 3px 6px 14px rgba(0, 0, 0, 0.35);
+  position: relative;
+  transform: rotate(1deg);
+}
+.mini-script-line {
+  font-family: 'Special Elite', cursive, serif;
+  font-size: 12px;
+  color: #111744;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.mini-fountain-pen-nib {
+  position: absolute;
+  right: -8px;
+  bottom: -4px;
+  width: 28px;
+  height: 10px;
+  background: linear-gradient(90deg, #d4af37, #111);
+  transform: rotate(-35deg);
+  border-radius: 2px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 /* Page 8: The Official Logo Page (The Last Page of the Book) */
