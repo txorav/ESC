@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import OptionWheel from './reactbits/OptionWheel';
 
 interface EventYear {
@@ -84,6 +84,7 @@ const TIMELINE_DATA: EventYear[] = [
 
 export const Timeline: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const galleryRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -106,6 +107,30 @@ export const Timeline: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Auto-advance photos for active multi-picture frame
+  useEffect(() => {
+    const currentEvent = TIMELINE_DATA[activeIndex];
+    if (!currentEvent || currentEvent.photos <= 1) return;
+
+    const el = galleryRefs.current[activeIndex];
+    if (!el) return;
+
+    el.scrollLeft = 0;
+    let photoIdx = 0;
+    const total = currentEvent.photos;
+
+    const interval = setInterval(() => {
+      photoIdx = (photoIdx + 1) % total;
+      const target = photoIdx * el.clientWidth;
+      el.scrollTo({
+        left: target,
+        behavior: 'smooth'
+      });
+    }, 2800);
+
+    return () => clearInterval(interval);
+  }, [activeIndex]);
+
   const currentEvent = TIMELINE_DATA[activeIndex] || TIMELINE_DATA[0];
   const currentBg = currentEvent.isVintage ? '#1C1E4B' : '#283FC3';
 
@@ -115,7 +140,7 @@ export const Timeline: React.FC = () => {
       style={{ '--film-bg': currentBg } as React.CSSProperties}
       data-bg={currentBg}
     >
-      {/* LAYER 3 (TOP, z-index: 30): Big Year Selector on Left with Progressive Blur (No Box) */}
+      {/* LAYER 3 (TOP, z-index: 30): Big Year Selector in Center-Left with Progressive Blur (No Box) */}
       <aside className="timeline-year-stage">
         <div className="year-wheel-clean">
           <OptionWheel
@@ -159,96 +184,104 @@ export const Timeline: React.FC = () => {
               return (
                 <article
                   key={item.year}
-                  className={`film-reel-frame ${isVintage ? 'vintage' : 'modern'} ${isActive ? 'active-frame' : ''}`}
+                  className={`film-reel-frame ${isVintage ? 'vintage' : 'modern'} ${isActive ? 'active-frame' : ''} ${hasMulti ? 'has-multi' : 'single-photo'}`}
                   data-index={idx}
                 >
-                  {/* Column Base Film Cell */}
-                  <div
-                    className="film-cell-aperture"
-                    style={{
-                      background: isVintage ? '#1e1710' : '#141d47'
-                    }}
-                  >
-                    {isVintage ? (
-                      <div className="reel-stamp">
-                        <span className="stamp-star">✦</span>
-                        <span className="stamp-title">ARCHIVE REEL #{item.year}</span>
-                        <span className="stamp-star">✦</span>
-                      </div>
-                    ) : (
-                      <div className="reel-stamp modern">
-                        <span className="film-badge-modern">MODERN CHAPTER</span>
-                        <span className="stamp-title">ESC · {item.year}</span>
-                      </div>
-                    )}
-                    <div className="film-stock-stamp">KODAK 400 · EXP 2017</div>
-                  </div>
+                  {/* PICTURE CONTAINER: Holds picture placeholder, and when multi-pictures, the row clip sits directly above it */}
+                  <div className="film-cell-picture-container">
+                    {/* Base Column Picture Placeholder */}
+                    <div
+                      className="film-cell-aperture"
+                      style={{
+                        background: isVintage ? '#1e1710' : '#141d47'
+                      }}
+                    >
+                      {isVintage ? (
+                        <div className="reel-stamp">
+                          <span className="stamp-star">✦</span>
+                          <span className="stamp-title">ARCHIVE REEL #{item.year}</span>
+                          <span className="stamp-star">✦</span>
+                        </div>
+                      ) : (
+                        <div className="reel-stamp modern">
+                          <span className="film-badge-modern">MODERN CHAPTER</span>
+                          <span className="stamp-title">ESC · {item.year}</span>
+                        </div>
+                      )}
+                      <div className="film-stock-stamp">KODAK 400 · EXP 2017</div>
+                    </div>
 
-                  {/* LAYER 2 (MIDDLE, z-index: 20): Gallery Film Clip (NOT persistent; scrolls with event; only when multi-pictures!) */}
-                  {hasMulti && (
-                    <div className="event-gallery-clip-layer">
-                      <div className="film-gallery-clip-viewport">
+                    {/* ROW CLIP: Comes directly above the picture placeholder, does NOT cover writing */}
+                    {hasMulti && (
+                      <div className="row-film-clip-overlay">
                         <div
-                          className={`film-gallery-clip ${isVintage ? 'vintage-film' : 'modern-film'}`}
+                          className="film-gallery-clip-viewport"
+                          ref={(el) => {
+                            galleryRefs.current[idx] = el;
+                          }}
                         >
-                          {/* Top Sprocket Rail */}
-                          <div className="sprocket-rail top-rail">
-                            <div className="sprocket-track">
-                              {Array.from({ length: item.photos * 26 + 12 }).map((_, i) => (
-                                <span key={i} className="sprocket-hole" />
-                              ))}
+                          <div
+                            className={`film-gallery-clip ${isVintage ? 'vintage-film' : 'modern-film'}`}
+                          >
+                            {/* Top Sprocket Rail */}
+                            <div className="sprocket-rail top-rail">
+                              <div className="sprocket-track">
+                                {Array.from({ length: item.photos * 26 + 12 }).map((_, i) => (
+                                  <span key={i} className="sprocket-hole" />
+                                ))}
+                              </div>
+                              <div className="film-edge-markings">
+                                <span>✦ KODAK 500T 7219 · SAFETY FILM · 35mm</span>
+                                <span>EXP {item.year}</span>
+                              </div>
                             </div>
-                            <div className="film-edge-markings">
-                              <span>✦ KODAK 500T 7219 · SAFETY FILM · 35mm</span>
-                              <span>EXP {item.year}</span>
-                            </div>
-                          </div>
 
-                          {/* Gallery Frames matching column picture dimensions */}
-                          <div className="film-gallery-frames">
-                            {Array.from({ length: item.photos }, (_, p) => {
-                              const hue = 215 + idx * 14 + p * 22;
-                              return (
-                                <div key={p} className="film-gallery-photo-frame">
-                                  <div
-                                    className="gallery-photo-aperture"
-                                    style={{ background: `hsl(${hue}, 40%, 28%)` }}
-                                  >
-                                    <div className="aperture-inner-tag">
-                                      <span className="photo-tag">Photo #{p + 1}</span>
-                                      <span className="photo-sub">35mm ARCHIVE REEL</span>
+                            {/* Gallery Frames in the row */}
+                            <div className="film-gallery-frames">
+                              {Array.from({ length: item.photos }, (_, p) => {
+                                const hue = 215 + idx * 14 + p * 22;
+                                return (
+                                  <div key={p} className="film-gallery-photo-frame">
+                                    <div
+                                      className="gallery-photo-aperture"
+                                      style={{ background: `hsl(${hue}, 40%, 28%)` }}
+                                    >
+                                      <div className="aperture-inner-tag">
+                                        <span className="photo-tag">Photo #{p + 1}</span>
+                                        <span className="photo-sub">35mm ARCHIVE REEL</span>
+                                      </div>
+                                    </div>
+                                    <div className="frame-footer-code">
+                                      <span>▸ {p + 1}A</span>
+                                      <span>{item.year} GALLERY · FRAME 0{p + 1}</span>
                                     </div>
                                   </div>
-                                  <div className="frame-footer-code">
-                                    <span>▸ {p + 1}A</span>
-                                    <span>{item.year} GALLERY · FRAME 0{p + 1}</span>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-
-                          {/* Bottom Sprocket Rail */}
-                          <div className="sprocket-rail bottom-rail">
-                            <div className="sprocket-track">
-                              {Array.from({ length: item.photos * 26 + 12 }).map((_, i) => (
-                                <span key={i} className="sprocket-hole" />
-                              ))}
+                                );
+                              })}
                             </div>
-                            <div className="film-edge-markings">
-                              <span>EASTMAN KODAK CO · EMULSION #8402</span>
-                              <span>{item.photos} FRAMES TOTAL ✦</span>
-                            </div>
-                          </div>
 
-                          {/* Cut End marker */}
-                          <div className="film-clip-cut-end" title="End of Gallery Reel" />
+                            {/* Bottom Sprocket Rail */}
+                            <div className="sprocket-rail bottom-rail">
+                              <div className="sprocket-track">
+                                {Array.from({ length: item.photos * 26 + 12 }).map((_, i) => (
+                                  <span key={i} className="sprocket-hole" />
+                                ))}
+                              </div>
+                              <div className="film-edge-markings">
+                                <span>EASTMAN KODAK CO · EMULSION #8402</span>
+                                <span>{item.photos} FRAMES TOTAL ✦</span>
+                              </div>
+                            </div>
+
+                            {/* Cut End marker */}
+                            <div className="film-clip-cut-end" title="End of Gallery Reel" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
-                  {/* Narrative Headline & Story */}
+                  {/* Narrative Headline & Story - Sits CLEANLY below the picture area, NEVER covered! */}
                   <div className="film-reel-story">
                     <h3 className="film-frame-heading">
                       {item.year} · {item.title}

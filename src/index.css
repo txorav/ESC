@@ -1831,29 +1831,39 @@ html {
   letter-spacing: -1px;
 }
 
-/* LAYER 2 (MIDDLE, z-index: 20): Event Gallery Film Clip */
-/* Attached to event frame (not viewport persistent!), comes from other side under year thing */
-.event-gallery-clip-layer {
+/* LAYER 2 (MIDDLE, z-index: 20): Row Film Clip Overlay */
+/* Comes STRICTLY above the picture placeholder, NEVER covering the writing */
+.film-cell-picture-container {
+  position: relative;
+  width: var(--film-aperture-width);
+  height: 320px;
+  margin: 0 auto;
+}
+
+.row-film-clip-overlay {
   position: absolute;
-  top: 36px;
-  left: -120px;
+  inset: 0;
   z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: auto;
 }
 
-/* Row one width equals the column one picture width */
+/* Row one viewport exactly bounds the film clip */
 .film-gallery-clip-viewport {
-  width: var(--film-aperture-width);
-  overflow-x: auto;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
   overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  scroll-behavior: smooth;
   border-top: 2px solid #1c1812;
   border-bottom: 2px solid #1c1812;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
   display: flex;
   position: relative;
+  background-color: #0d0c0a;
 }
 .film-gallery-clip-viewport::-webkit-scrollbar {
   display: none;
@@ -1865,6 +1875,7 @@ html {
   flex-direction: column;
   background-color: #0d0c0a;
   position: relative;
+  height: 100%;
   width: fit-content;
   flex-shrink: 0;
 }
@@ -1872,11 +1883,13 @@ html {
 /* Top & Bottom Sprocket Rails */
 .sprocket-rail {
   background-color: #0d0c0a;
-  padding: 4px 10px;
+  padding: 3px 10px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   user-select: none;
+  height: 22px;
+  flex-shrink: 0;
 }
 .sprocket-rail.top-rail {
   border-bottom: 1px solid #1a1712;
@@ -1890,11 +1903,11 @@ html {
   gap: 12px;
   align-items: center;
   overflow: hidden;
-  height: 14px;
+  height: 12px;
 }
 .sprocket-hole {
   width: 9px;
-  height: 13px;
+  height: 11px;
   background-color: var(--film-bg, #1C1E4B);
   border-radius: 2px;
   flex-shrink: 0;
@@ -1906,41 +1919,44 @@ html {
   display: flex;
   justify-content: space-between;
   font-family: 'Special Elite', monospace;
-  font-size: 9px;
+  font-size: 8.5px;
   color: #d4a046;
   letter-spacing: 2px;
   text-transform: uppercase;
-  line-height: 1.2;
+  line-height: 1;
 }
 
 /* Gallery Photo Frames in the Film Clip: Full scale matching column picture */
 .film-gallery-frames {
   display: flex;
   background-color: #070706;
-  padding: 6px 8px;
+  padding: 4px 6px;
   gap: 6px;
+  flex: 1;
+  height: calc(100% - 44px);
 }
 
 .film-gallery-photo-frame {
-  flex: 0 0 var(--film-aperture-width);
-  width: var(--film-aperture-width);
+  flex: 0 0 calc(var(--film-aperture-width) - 12px);
+  width: calc(var(--film-aperture-width) - 12px);
+  height: 100%;
   display: flex;
   flex-direction: column;
   background-color: #0d0c0a;
   border: 1px solid #1f1b14;
-  padding: 12px 16px;
+  padding: 6px 10px;
   border-right: 8px solid #000000;
   box-sizing: border-box;
 }
 
 .gallery-photo-aperture {
-  height: 320px;
+  flex: 1;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   border-radius: 2px;
   box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.85);
   color: #ffffff;
@@ -1950,23 +1966,23 @@ html {
 
 .gallery-photo-aperture .photo-tag {
   font-family: 'Fraunces', serif;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: 1px;
 }
 .gallery-photo-aperture .photo-sub {
   font-family: 'Special Elite', monospace;
-  font-size: 11px;
-  letter-spacing: 2.5px;
+  font-size: 10px;
+  letter-spacing: 2px;
   opacity: 0.85;
 }
 
 .frame-footer-code {
   display: flex;
   justify-content: space-between;
-  margin-top: 8px;
+  margin-top: 4px;
   font-family: 'Special Elite', monospace;
-  font-size: 9px;
+  font-size: 8px;
   color: #9e7f3d;
   letter-spacing: 1.5px;
 }
@@ -2042,6 +2058,12 @@ html {
   transition: opacity 0.3s ease;
 }
 
+/* Freeze frame in viewport when it has multiple pictures */
+.film-reel-frame.has-multi {
+  position: sticky;
+  top: 14vh;
+}
+
 .film-reel-frame.vintage {
   color: #ede2cd;
 }
@@ -2052,9 +2074,8 @@ html {
 
 /* Film Cell Aperture (Archival photo window) - width matched with row gallery */
 .film-cell-aperture {
-  width: var(--film-aperture-width);
+  width: 100%;
   height: 320px;
-  margin: 0 auto;
   border-radius: 2px;
   box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9);
   position: relative;
