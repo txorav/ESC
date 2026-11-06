@@ -1787,6 +1787,7 @@ html {
   background-color: var(--film-bg, #1C1E4B);
   transition: background-color 0.6s ease;
   overflow: clip;
+  --film-aperture-width: min(580px, calc(88vw - 128px));
 }
 
 /* STICKY LAYERS OVERLAY (Pinned viewport-wide while scrolling) */
@@ -1805,7 +1806,7 @@ html {
 }
 
 /* LAYER 3 (TOP, z-index: 30): Big Year Selector in the Center-Left */
-/* Pure typography, NO BOX, NO BACKGROUND, NO BORDER */
+/* Pure typography, soft blur behind text, NO BOX, NO BACKGROUND, NO BORDER */
 .timeline-year-stage {
   position: absolute;
   top: 50%;
@@ -1818,6 +1819,12 @@ html {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .year-wheel-clean {
@@ -1828,6 +1835,8 @@ html {
   box-shadow: none;
   border-radius: 0;
   overflow: visible;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .year-wheel-clean .option-wheel__item {
@@ -1837,7 +1846,7 @@ html {
 }
 
 /* LAYER 2 (MIDDLE, z-index: 20): Gallery Film Clip */
-/* Comes from the other side under the year thing (as a layer!), above the main reel, ends once gallery photos end */
+/* Width matched to column picture, auto-scrolls when multi-pictures, passes under year selector */
 .film-gallery-floating-track {
   position: absolute;
   top: 50%;
@@ -1849,17 +1858,31 @@ html {
   align-items: center;
 }
 
+/* Row one width equals the column one picture width */
+.film-gallery-clip-viewport {
+  width: var(--film-aperture-width);
+  overflow-x: hidden;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border-top: 2px solid #1c1812;
+  border-bottom: 2px solid #1c1812;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+  display: flex;
+  position: relative;
+}
+.film-gallery-clip-viewport::-webkit-scrollbar {
+  display: none;
+}
+
 .film-gallery-clip {
   pointer-events: auto;
   display: inline-flex;
   flex-direction: column;
   background-color: #0d0c0a;
-  border-top: 2px solid #1c1812;
-  border-bottom: 2px solid #1c1812;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
   position: relative;
   width: fit-content;
-  max-width: calc(100vw - 12vw);
+  flex-shrink: 0;
 }
 
 /* Top & Bottom Sprocket Rails */
@@ -1912,7 +1935,6 @@ html {
   background-color: #070706;
   padding: 6px 8px;
   gap: 6px;
-  overflow-x: auto;
 }
 
 .film-gallery-photo-frame {
@@ -2041,9 +2063,11 @@ html {
   color: #f1f4fc;
 }
 
-/* Film Cell Aperture (Archival photo window) */
+/* Film Cell Aperture (Archival photo window) - width matched with row gallery */
 .film-cell-aperture {
+  width: var(--film-aperture-width);
   height: 320px;
+  margin: 0 auto;
   border-radius: 2px;
   box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9);
   position: relative;
