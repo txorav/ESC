@@ -1,0 +1,52 @@
+[
+  {
+    "word": "serendipity",
+    "phonetic": "/ˌser.ənˈdɪp.ə.ti/",
+    "pos": "noun",
+    "def": "The occurrence and development of events by chance in a happy or beneficial way.",
+    "ex": "Joining ESC was pure serendipity; it completely transformed my confidence on stage.",
+    "syn": ["fortune", "happy chance", "providence", "fluke"],
+    "origin": "Coined by Horace Walpole in 1754 from the Persian fairy tale 'The Three Princes of Serendip'.",
+    "rule": "Present Perfect vs. Past Simple: Use Present Perfect for experiences with no specific past time ('I have attended three sessions') and Past Simple for finished times ('I joined in 2021')."
+  },
+  {
+    "word": "eloquent",
+    "phonetic": "/ˈel.ə.kwənt/",
+    "pos": "adjective",
+    "def": "Fluent or persuasive in speaking or writing; clearly expressing feelings or meaning.",
+    "ex": "Her eloquent debate rebuttal won unanimous acclaim from the university judges.",
+    "syn": ["articulate", "persuasive", "expressive", "fluent"],
+    "origin": "From Latin eloquens, present participle of eloqui ('to speak out').",
+    "rule": "Subject-Verb Agreement with Collective Nouns: 'The board meets weekly' (treated as a unit) vs. 'The board members debate passionately' (treated as individuals)."
+  },
+  {
+    "word": "resilient",
+    "phonetic": "/rɪˈzɪl.jənt/",
+    "pos": "adjective",
+    "def": "Able to withstand or recover quickly from difficult conditions; adaptable and buoyant.",
+    "ex": "The club remained resilient during virtual semesters, expanding into weekly online podcasts.",
+    "syn": ["tenacious", "adaptable", "buoyant", "robust"],
+    "origin": "From Latin resilire, meaning 'to leap back or rebound'.",
+    "rule": "Third Conditional for Past Regrets: If + past perfect, would have + past participle ('If you had come to discussion group, you would have loved the debate!')."
+  },
+  {
+    "word": "mellifluous",
+    "phonetic": "/meˈlɪf.lu.əs/",
+    "pos": "adjective",
+    "def": "Sweet or musical; pleasant to hear; smoothly flowing.",
+    "ex": "The ECHO podcast host captivated thousands of listeners with her mellifluous voice.",
+    "syn": ["dulcet", "euphonious", "melodious", "smooth"],
+    "origin": "From Late Latin mellifluus, from mel ('honey') + fluere ('to flow').",
+    "rule": "Inversion for Emphasis: After negative or restrictive adverbs at the sentence beginning, invert auxiliary and subject ('Rarely have I heard such a captivating speech')."
+  },
+  {
+    "word": "catalyst",
+    "phonetic": "/ˈkæt.əl.ɪst/",
+    "pos": "noun",
+    "def": "A person, event, or thing that precipitates change or inspires rapid action.",
+    "ex": "ESC acted as the catalyst for our team to launch international public speaking initiatives.",
+    "syn": ["spark", "impetus", "driver", "inspiration"],
+    "origin": "From Greek katalusis ('dissolution'), introduced to chemistry in 1835.",
+    "rule": "Gerund vs. Infinitive: Verbs of preference like 'enjoy', 'admit', 'avoid' take gerunds ('enjoy speaking'), whereas 'decide', 'hope', 'plan' take infinitives ('plan to attend')."
+  }
+]
