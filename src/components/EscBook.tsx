@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, forwardRef } from 'react';
+import React, { useRef, useState, useEffect, forwardRef } from 'react';
 import HTMLFlipBook from 'react-pageflip';
 import type { WordData, DeskItemType } from '../types';
 
@@ -70,12 +70,54 @@ export const EscBook: React.FC<EscBookProps> = ({
   const finishedRef = useRef(false);
   const startedRef = useRef(false);
 
+  const [currentPage, setCurrentPage] = useState<number>(startPage);
+  const [autoFlipActive, setAutoFlipActive] = useState<boolean>(false);
+
+  // Expose instance and ensure mouse events are ALWAYS active
   useEffect(() => {
     (window as any).__escBookRef = bookRef.current;
+    try {
+      const pf = bookRef.current?.pageFlip();
+      if (pf) {
+        const s = pf.getSettings();
+        if (s) {
+          s.useMouseEvents = true;
+          s.showPageCorners = true;
+          s.disableFlipByClick = false;
+        }
+      }
+    } catch {}
   });
+
+  // Backup 60fps ticker to ensure animation frames advance smoothly even if rAF throttles
+  useEffect(() => {
+    const timer = setInterval(() => {
+      try {
+        const pf = bookRef.current?.pageFlip();
+        if (pf) {
+          const render = pf.getRender();
+          if (render && render.animation) {
+            render.render(performance.now());
+          }
+        }
+      } catch {}
+    }, 16);
+    return () => clearInterval(timer);
+  }, []);
 
   // Handle initialization of the book
   const handleInit = () => {
+    try {
+      const pf = bookRef.current?.pageFlip();
+      if (pf) {
+        const s = pf.getSettings();
+        if (s) {
+          s.useMouseEvents = true;
+          s.showPageCorners = true;
+        }
+      }
+    } catch {}
+
     if (isLoaderMode && !startedRef.current) {
       startedRef.current = true;
       setTimeout(() => {
@@ -89,36 +131,97 @@ export const EscBook: React.FC<EscBookProps> = ({
     }
   };
 
+  // Turn to previous spread
+  const flipPrevSpread = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    try {
+      const pf = bookRef.current?.pageFlip();
+      if (!pf) return;
+      const cur = pf.getCurrentPageIndex();
+      if (cur <= 0) return;
+      const target = Math.max(0, cur - 2);
+      pf.flip(target);
+    } catch {}
+  };
+
+  // Turn to next spread
+  const flipNextSpread = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    try {
+      const pf = bookRef.current?.pageFlip();
+      if (!pf) return;
+      const cur = pf.getCurrentPageIndex();
+      if (cur >= 8) {
+        // Loop back to Cover
+        pf.flip(0);
+        return;
+      }
+      const target = Math.min(8, cur <= 0 ? 2 : cur + 2);
+      pf.flip(target);
+    } catch {}
+  };
+
+  // Automatic page-turner feature (requested by user)
+  useEffect(() => {
+    if (!autoFlipActive || isLoaderMode) return;
+
+    const timer = setInterval(() => {
+      try {
+        const pf = bookRef.current?.pageFlip();
+        if (!pf) return;
+        const cur = pf.getCurrentPageIndex();
+        if (cur >= 8) {
+          // Loop back to spread 1 (Charter & Word of the Day)
+          pf.flip(1);
+        } else {
+          const nextTarget = cur <= 0 ? 2 : cur + 2;
+          pf.flip(Math.min(8, nextTarget));
+        }
+      } catch {}
+    }, 3400);
+
+    return () => clearInterval(timer);
+  }, [autoFlipActive, isLoaderMode]);
+
   // Handle book flipping state changes ('flipping', 'read', etc.)
   const handleChangeState = (e: any) => {
     const state = typeof e?.data === 'string' ? e.data : '';
-    if (state === 'read' && isLoaderMode) {
+    if (state === 'read') {
       try {
         const pf = bookRef.current?.pageFlip();
         if (!pf) return;
         const page = pf.getCurrentPageIndex();
-        if (page >= 7) {
-          // Reached Spread 4 (Page 7 & Page 8 - THE OFFICIAL LOGO PAGE!) - STOP!
-          if (!finishedRef.current) {
-            finishedRef.current = true;
+        setCurrentPage(page);
+
+        if (isLoaderMode) {
+          if (page >= 7) {
+            // Reached Spread 4 (Page 7 & Page 8 - THE OFFICIAL LOGO PAGE!) - STOP!
+            if (!finishedRef.current) {
+              finishedRef.current = true;
+              setTimeout(() => {
+                onLoaderFinished?.();
+              }, 800);
+            }
+          } else {
+            // Pause briefly between page turns so the animation is clearly visible
             setTimeout(() => {
-              onLoaderFinished?.();
-            }, 800);
+              try {
+                if (finishedRef.current) return;
+                const cur = bookRef.current?.pageFlip()?.getCurrentPageIndex();
+                if (typeof cur === 'number' && cur < 7) {
+                  bookRef.current?.pageFlip()?.flipNext();
+                }
+              } catch {}
+            }, 350);
           }
-        } else {
-          // Pause briefly between page turns so the animation is clearly visible
-          setTimeout(() => {
-            try {
-              if (finishedRef.current) return;
-              const cur = bookRef.current?.pageFlip()?.getCurrentPageIndex();
-              if (typeof cur === 'number' && cur < 7) {
-                bookRef.current?.pageFlip()?.flipNext();
-              }
-            } catch {}
-          }, 350);
         }
       } catch {}
     }
+  };
+
+  const handleFlip = (e: any) => {
+    const pageIndex = typeof e?.data === 'number' ? e.data : (typeof e === 'number' ? e : 0);
+    setCurrentPage(pageIndex);
   };
 
   // Fallback trigger in case onInit fired before listener was attached
@@ -168,6 +271,30 @@ export const EscBook: React.FC<EscBookProps> = ({
       {/* Decorative Book Ribbon Bookmark */}
       <div className="book-spine-ribbon" aria-hidden="true"></div>
 
+      {/* Floating Edge Turn Buttons for intuitive manual page navigation */}
+      {!isLoaderMode && (
+        <>
+          <button
+            type="button"
+            className="book-edge-nav prev-edge"
+            onClick={flipPrevSpread}
+            title="Turn to previous page"
+            aria-label="Previous Page"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            className="book-edge-nav next-edge"
+            onClick={flipNextSpread}
+            title="Turn to next page"
+            aria-label="Next Page"
+          >
+            ›
+          </button>
+        </>
+      )}
+
       {/* @ts-ignore - react-pageflip typed children */}
       <HTMLFlipBook
         ref={bookRef}
@@ -186,8 +313,9 @@ export const EscBook: React.FC<EscBookProps> = ({
         startPage={startPage}
         showPageCorners={true}
         clickEventForward={true}
-        useMouseEvents={!isLoaderMode}
+        useMouseEvents={true}
         onInit={handleInit}
+        onFlip={handleFlip}
         onChangeState={handleChangeState}
         className="esc-flip-book"
         style={{ margin: '0 auto' }}
@@ -482,6 +610,39 @@ export const EscBook: React.FC<EscBookProps> = ({
           </div>
         </PageCover>
       </HTMLFlipBook>
+
+      {/* Archival Book Controls: Prev / Auto-Flip / Next */}
+      {!isLoaderMode && (
+        <div className="book-archival-bar">
+          <button
+            type="button"
+            className="book-archival-btn"
+            onClick={flipPrevSpread}
+            title="Turn to previous spread"
+          >
+            ‹ Prev
+          </button>
+          <button
+            type="button"
+            className={`book-archival-btn autoflip-btn ${autoFlipActive ? 'active' : ''}`}
+            onClick={() => setAutoFlipActive(!autoFlipActive)}
+            title="Toggle automatic page-turning"
+          >
+            {autoFlipActive ? '⏸ Pause Auto-Flip' : '⟳ Auto-Flip Pages'}
+          </button>
+          <span className="book-page-indicator">
+            {currentPage === 0 ? 'Cover' : currentPage >= 8 ? 'Logo' : `p. ${currentPage}–${currentPage + 1}`}
+          </span>
+          <button
+            type="button"
+            className="book-archival-btn"
+            onClick={flipNextSpread}
+            title="Turn to next spread"
+          >
+            Next ›
+          </button>
+        </div>
+      )}
     </div>
   );
 };
