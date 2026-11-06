@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { WordData, DeskItemState, ModalContent } from '../types';
+import { EscBook } from './EscBook';
 
 interface HeroDeskProps {
   onOpenModal: (content: ModalContent) => void;
@@ -22,16 +23,26 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
     rule: "Present Perfect vs. Past Simple: Use Present Perfect for experiences without a specific past time ('I have attended three sessions')."
   });
 
-  const [pan, setPan] = useState<{ x: number; y: number }>(() => {
-    try {
-      const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      if (s.pan) return s.pan;
-    } catch {}
+  const getCenteredPan = () => {
+    const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const h = typeof window !== 'undefined' ? window.innerHeight : 800;
     return {
-      x: typeof window !== 'undefined' ? window.innerWidth / 2 - 1400 : -500,
-      y: typeof window !== 'undefined' ? window.innerHeight / 2 - 850 : -300
+      x: Math.round(w / 2 - 1400),
+      y: Math.round(h / 2 - 850)
     };
-  });
+  };
+
+  const [pan, setPan] = useState<{ x: number; y: number }>(() => getCenteredPan());
+
+  const centerViewport = () => {
+    setPan(getCenteredPan());
+    onShowToast('🎯 Viewport centered on ESC Archive Book');
+  };
+
+  // Ensure viewport is reset to book in the center on mount
+  useEffect(() => {
+    setPan(getCenteredPan());
+  }, []);
 
   const [items, setItems] = useState<{ [id: string]: DeskItemState }>(() => {
     const defaults: { [id: string]: DeskItemState } = {
@@ -49,7 +60,6 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
     return defaults;
   });
 
-  const [bookFlipped, setBookFlipped] = useState(false);
   const [warningActive, setWarningActive] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [tooltip, setTooltip] = useState<{
@@ -376,82 +386,32 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
         )}
 
         {/* 7. CENTER 3D BOOK & LOST & FOUND */}
+        {/* 7. CENTER 3D BOOK & CLUB LOGO (REACT-PAGEFLIP) */}
         <div className="bookwrap">
-          <div className="book">
-            <div className="book-left type">
-              <h4 style={{ fontFamily: 'Fraunces, serif', fontSize: '19px', color: 'var(--navy)', marginBottom: '8px' }}>
-                Welcome to ESC
-              </h4>
-              <p>Founded in 2017, English Speaking Club is a student-led scientific &amp; cultural club dedicated to eloquence, leadership, and debate.</p>
-              <br />
-              <p><strong>Desk Guide:</strong></p>
-              <ul style={{ paddingLeft: '16px', marginTop: '4px' }}>
-                <li>Drag &amp; arrange desk items freely.</li>
-                <li>Double-click items for details.</li>
-                <li>Click the book page to view Lost &amp; Found.</li>
-              </ul>
-            </div>
-            <div className="book-right type">
-              <div style={{ textAlign: 'center' }}>
-                <div className="book-logo-box" style={{ margin: '0 auto 10px' }}>
-                  <img src="/logo.svg" alt="ESC Logo" onError={(e) => { e.currentTarget.src = '/logo.png'; }} />
-                </div>
-                <div style={{ fontWeight: 700, color: 'var(--navy)', fontSize: '15px' }}>ENGLISH SPEAKING CLUB</div>
-                <div style={{ fontSize: '12px', color: 'var(--br)' }}>OFFICIAL ARCHIVE</div>
-                <div className="turn-hint">✦ Click page to flip ✦</div>
-              </div>
-            </div>
-            <div className="book-spine-line"></div>
-            <div
-              className={`leaf ${bookFlipped ? 'flipped' : ''}`}
-              onClick={() => setBookFlipped(!bookFlipped)}
-              tabIndex={0}
-              role="button"
-              aria-label="Turn Book Page"
-            >
-              <div className="front">
-                <div className="book-logo-box">
-                  <img src="/logo.svg" alt="ESC Logo" onError={(e) => { e.currentTarget.src = '/logo.png'; }} />
-                </div>
-                <b style={{ fontFamily: 'Fraunces, serif', fontSize: '17px', color: 'var(--navy)' }}>ESC MEMORABILIA</b>
-                <div className="turn-hint">Click to open Lost &amp; Found →</div>
-              </div>
-              <div className="back type" onClick={(e) => e.stopPropagation()}>
-                <div className="lost-title">Lost &amp; Found Desk Ledger</div>
-                <div style={{ width: '100%', maxHeight: '200px', overflowY: 'auto' }}>
-                  {fallenItems.length === 0 ? (
-                    <p style={{ color: '#665', fontSize: '13px' }}>
-                      All objects are safe on the table. Drop an item off the edge to test gravity!
-                    </p>
-                  ) : (
-                    fallenItems.map(([id]) => (
-                      <div key={id} className="lost-item-row">
-                        <span>{getItemName(id)}</span>
-                        <button
-                          className="restore-btn"
-                          onClick={() => restoreItem(id)}
-                        >
-                          ✨ Restore
-                        </button>
-                      </div>
-                    ))
-                  )}
-                </div>
-                <div
-                  className="turn-hint"
-                  style={{ marginTop: 'auto', cursor: 'pointer' }}
-                  onClick={() => setBookFlipped(false)}
-                >
-                  ← Click to close page
-                </div>
-              </div>
-            </div>
-          </div>
+          <EscBook
+            startPage={2}
+            fallenItems={fallenItems}
+            onRestoreItem={restoreItem}
+            width={340}
+            height={470}
+          />
         </div>
       </div>
 
+      {/* Viewport Recenter & Navigation Bar */}
+      <div className="desk-controls-bar">
+        <button
+          type="button"
+          className="recenter-btn"
+          onClick={centerViewport}
+          title="Reset viewport to center on the book"
+        >
+          🎯 Center View on Book
+        </button>
+      </div>
+
       <div className="desk-nav-hint">
-        ✦ Click &amp; drag table to explore · Move objects freely · Scroll down to enter clouds ✦
+        ✦ Click &amp; drag table to explore · Turn book pages · Move objects freely · Scroll down to enter clouds ✦
       </div>
 
       {/* Floating Hover Tooltip */}
