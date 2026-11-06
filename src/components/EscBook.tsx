@@ -212,7 +212,7 @@ export const EscBook: React.FC<EscBookProps> = ({
     return () => clearTimeout(timer);
   }, [isLoaderMode]);
 
-  // Grabbable element renderer (Always ready to spawn new items onto the table)
+  // Grabbable element renderer (Always ready to spawn new items onto the table without triggering book page turns)
   const renderGrabbableItem = (type: DeskItemType, label: string, visualElement: React.ReactNode) => {
     return (
       <div
@@ -222,6 +222,18 @@ export const EscBook: React.FC<EscBookProps> = ({
           if (onGrabNewItem) {
             onGrabNewItem(type, e);
           }
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+        }}
+        onTouchStart={(e) => {
+          e.stopPropagation();
+        }}
+        onMouseUp={(e) => {
+          e.stopPropagation();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
         }}
         title={`Grab new ${label} onto the desk`}
       >

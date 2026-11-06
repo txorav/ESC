@@ -140,6 +140,16 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
   const handleGrabNewItemFromBook = (type: DeskItemType, e: React.PointerEvent) => {
     e.stopPropagation();
 
+    // Temporarily pause book mouse tracking so grabbing the item never triggers a page fold/flip
+    try {
+      const pf = (window as any).__escBookRef?.pageFlip();
+      if (pf) {
+        pf.getSettings().useMouseEvents = false;
+        pf.getFlipController()?.stopMove();
+        pf.getFlipController()?.reset();
+      }
+    } catch {}
+
     // Spawn at cursor position translated to table world coordinates
     const tableX = Math.round(e.clientX - pan.x - 70);
     const tableY = Math.round(e.clientY - pan.y - 60);
@@ -175,6 +185,16 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
       window.removeEventListener('pointerup', onUp);
       setWarningActive(false);
 
+      // Re-enable book mouse tracking when done dragging
+      try {
+        const pf = (window as any).__escBookRef?.pageFlip();
+        if (pf) {
+          pf.getSettings().useMouseEvents = true;
+          pf.getFlipController()?.stopMove();
+          pf.getFlipController()?.reset();
+        }
+      } catch {}
+
       setItems((prev) => {
         const item = prev.find((it) => it.instanceId === newInstanceId);
         if (item && isOffTable(item)) {
@@ -193,6 +213,16 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
   const handleItemDrag = (instanceId: string, e: React.PointerEvent) => {
     if ((e.target as HTMLElement).closest('.play-btn, .mini-play-speaker')) return;
     e.stopPropagation();
+
+    // Temporarily pause book mouse tracking while dragging desk items
+    try {
+      const pf = (window as any).__escBookRef?.pageFlip();
+      if (pf) {
+        pf.getSettings().useMouseEvents = false;
+        pf.getFlipController()?.stopMove();
+        pf.getFlipController()?.reset();
+      }
+    } catch {}
 
     const current = items.find((it) => it.instanceId === instanceId);
     if (!current) return;
@@ -219,6 +249,16 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
       window.removeEventListener('pointerup', onUp);
       el.classList.remove('drag');
       setWarningActive(false);
+
+      // Re-enable book mouse tracking when done dragging
+      try {
+        const pf = (window as any).__escBookRef?.pageFlip();
+        if (pf) {
+          pf.getSettings().useMouseEvents = true;
+          pf.getFlipController()?.stopMove();
+          pf.getFlipController()?.reset();
+        }
+      } catch {}
 
       setItems((prev) => {
         const item = prev.find((it) => it.instanceId === instanceId);
