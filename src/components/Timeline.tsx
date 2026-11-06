@@ -110,7 +110,7 @@ export const Timeline: React.FC = () => {
   const currentEvent = TIMELINE_DATA[activeIndex] || TIMELINE_DATA[0];
   const currentBg = currentEvent.isVintage ? '#1C1E4B' : '#283FC3';
 
-  // Smooth automatic scrolling when event has multiple photos (no manual scrollbars)
+  // Smooth, calm cinematic auto-slide through gallery photos without erratic jitter
   useEffect(() => {
     const el = galleryViewportRef.current;
     if (!el) return;
@@ -118,34 +118,19 @@ export const Timeline: React.FC = () => {
     el.scrollLeft = 0;
     if (currentEvent.photos <= 1) return;
 
-    let frameId: number;
-    let pos = 0;
-    let dir = 1;
-    let pauseUntil = performance.now() + 800; // initial pause before gliding
-    const speed = 0.9;
+    let photoIdx = 0;
+    const total = currentEvent.photos;
 
-    const step = (timestamp: number) => {
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      if (maxScroll > 2) {
-        if (timestamp >= pauseUntil) {
-          pos += speed * dir;
-          if (pos >= maxScroll) {
-            pos = maxScroll;
-            dir = -1;
-            pauseUntil = timestamp + 1200; // pause for 1.2s at end
-          } else if (pos <= 0) {
-            pos = 0;
-            dir = 1;
-            pauseUntil = timestamp + 1200; // pause for 1.2s at start
-          }
-          el.scrollLeft = pos;
-        }
-      }
-      frameId = requestAnimationFrame(step);
-    };
+    const interval = setInterval(() => {
+      photoIdx = (photoIdx + 1) % total;
+      const target = photoIdx * el.clientWidth;
+      el.scrollTo({
+        left: target,
+        behavior: 'smooth'
+      });
+    }, 2800);
 
-    frameId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frameId);
+    return () => clearInterval(interval);
   }, [activeIndex, currentEvent.photos]);
 
   return (
@@ -156,7 +141,7 @@ export const Timeline: React.FC = () => {
     >
       {/* STICKY LAYERS OVERLAY (Pinned viewport-wide while scrolling) */}
       <div className="timeline-pinned-overlay">
-        {/* LAYER 3 (TOP, z-index: 30): Big Year Selector in the center on the left (NO BOX, soft blur behind text) */}
+        {/* LAYER 3 (TOP, z-index: 30): Big Year Selector in center-left with PROGRESSIVE BLUR (NO BOX) */}
         <div className="timeline-year-stage">
           <div className="year-wheel-clean">
             <OptionWheel
@@ -181,7 +166,7 @@ export const Timeline: React.FC = () => {
         </div>
 
         {/* LAYER 2 (MIDDLE, z-index: 20): Gallery Film Clip */}
-        {/* Width equals the column picture width, passes under the year selector, auto-scrolls when multi-pictures */}
+        {/* Width equals the column picture width, full-size photos, auto-advances smoothly */}
         <div className="film-gallery-floating-track">
           <div className="film-gallery-clip-viewport" ref={galleryViewportRef}>
             <div
@@ -190,7 +175,7 @@ export const Timeline: React.FC = () => {
               {/* Top Sprocket Rail with perforations & film edge text */}
               <div className="sprocket-rail top-rail">
                 <div className="sprocket-track">
-                  {Array.from({ length: currentEvent.photos * 10 + 6 }).map((_, i) => (
+                  {Array.from({ length: currentEvent.photos * 26 + 12 }).map((_, i) => (
                     <span key={i} className="sprocket-hole" />
                   ))}
                 </div>
@@ -200,7 +185,7 @@ export const Timeline: React.FC = () => {
                 </div>
               </div>
 
-              {/* Film Frames: Contains only this year's photos, ending cleanly */}
+              {/* Film Frames: Full scale photos matching column aperture size */}
               <div className="film-gallery-frames">
                 {Array.from({ length: currentEvent.photos }, (_, p) => {
                   const hue = 215 + activeIndex * 14 + p * 22;
@@ -211,11 +196,11 @@ export const Timeline: React.FC = () => {
                         style={{ background: `hsl(${hue}, 40%, 28%)` }}
                       >
                         <span className="photo-tag">Photo #{p + 1}</span>
-                        <span className="photo-sub">35mm ARCHIVE</span>
+                        <span className="photo-sub">35mm ARCHIVE REEL</span>
                       </div>
                       <div className="frame-footer-code">
                         <span>▸ {p + 1}A</span>
-                        <span>{currentEvent.year} GALLERY</span>
+                        <span>{currentEvent.year} GALLERY · FRAME 0{p + 1}</span>
                       </div>
                     </div>
                   );
@@ -225,7 +210,7 @@ export const Timeline: React.FC = () => {
               {/* Bottom Sprocket Rail with perforations & frame numbers */}
               <div className="sprocket-rail bottom-rail">
                 <div className="sprocket-track">
-                  {Array.from({ length: currentEvent.photos * 10 + 6 }).map((_, i) => (
+                  {Array.from({ length: currentEvent.photos * 26 + 12 }).map((_, i) => (
                     <span key={i} className="sprocket-hole" />
                   ))}
                 </div>
@@ -264,7 +249,7 @@ export const Timeline: React.FC = () => {
                   className={`film-reel-frame ${isVintage ? 'vintage' : 'modern'} ${isActive ? 'active-frame' : ''}`}
                   data-index={idx}
                 >
-                  {/* Real Film Cell Aperture Window (exact same width as the row gallery clip) */}
+                  {/* Real Film Cell Aperture Window (exact same size as row gallery photo) */}
                   <div
                     className="film-cell-aperture"
                     style={{
