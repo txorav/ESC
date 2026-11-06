@@ -107,30 +107,6 @@ export const Timeline: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Auto-advance photos for active multi-picture frame
-  useEffect(() => {
-    const currentEvent = TIMELINE_DATA[activeIndex];
-    if (!currentEvent || currentEvent.photos <= 1) return;
-
-    const el = galleryRefs.current[activeIndex];
-    if (!el) return;
-
-    el.scrollLeft = 0;
-    let photoIdx = 0;
-    const total = currentEvent.photos;
-
-    const interval = setInterval(() => {
-      photoIdx = (photoIdx + 1) % total;
-      const target = photoIdx * el.clientWidth;
-      el.scrollTo({
-        left: target,
-        behavior: 'smooth'
-      });
-    }, 2800);
-
-    return () => clearInterval(interval);
-  }, [activeIndex]);
-
   const currentEvent = TIMELINE_DATA[activeIndex] || TIMELINE_DATA[0];
   const currentBg = currentEvent.isVintage ? '#1C1E4B' : '#283FC3';
 
