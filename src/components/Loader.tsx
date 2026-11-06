@@ -11,10 +11,11 @@ export const Loader: React.FC<LoaderProps> = ({ onFinish }) => {
 
   const handleBookFinished = () => {
     setDone(true);
+    // Smooth dissolve into the identical hero desk book
     setTimeout(() => {
       setOut(true);
       if (onFinish) onFinish();
-    }, 700);
+    }, 450);
   };
 
   if (out) return null;
@@ -25,21 +26,14 @@ export const Loader: React.FC<LoaderProps> = ({ onFinish }) => {
         <EscBook
           isLoaderMode={true}
           onLoaderFinished={handleBookFinished}
-          width={320}
-          height={440}
+          startPage={0}
+          width={350}
+          height={480}
         />
       </div>
 
-      <div className="loader-info-box">
-        <div className="loader-title">
-          {done ? '✦ Archive Opened at ESC Logo ✦' : 'Flipping through ESC Archive…'}
-        </div>
-        <div className="loader-bar">
-          <div className={`loader-progress ${done ? 'complete' : ''}`}></div>
-        </div>
-        <div className="loader-subhint">
-          {done ? 'Entering Study Desk…' : 'Seeking Official Club Insignia'}
-        </div>
+      <div className="loader-title-clean">
+        {done ? '✦ ESC ARCHIVE OPENED ✦' : 'OPENING ESC ARCHIVE…'}
       </div>
     </div>
   );

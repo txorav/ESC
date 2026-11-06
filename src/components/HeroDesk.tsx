@@ -232,8 +232,6 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
     onShowToast(`✨ Restored ${getItemName(id)} to desk!`);
   };
 
-  const fallenItems = Object.entries(items).filter(([_, state]) => state.gone);
-
   return (
     <section id="home" ref={homeRef} onPointerDown={handlePanStart}>
       <div
@@ -259,10 +257,13 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
               })
             }
           >
-            <div className="radio-card obj">
-              <div className="radio-antenna"></div>
-              <div className="radio-dial">ECHO FM</div>
-              <div className="radio-grill"></div>
+            <div className="vintage-radio-wrap obj">
+              <img
+                src="/vintage-radio.avif"
+                alt="Vintage Radio"
+                className="vintage-radio-desk-img"
+                draggable={false}
+              />
             </div>
           </div>
         )}
@@ -385,15 +386,17 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({ onOpenModal, onShowToast }) 
           </div>
         )}
 
-        {/* 7. CENTER 3D BOOK & LOST & FOUND */}
         {/* 7. CENTER 3D BOOK & CLUB LOGO (REACT-PAGEFLIP) */}
         <div className="bookwrap">
           <EscBook
-            startPage={2}
-            fallenItems={fallenItems}
-            onRestoreItem={restoreItem}
-            width={340}
-            height={470}
+            startPage={8}
+            wordData={wordData}
+            items={items}
+            onTakeItemToDesk={restoreItem}
+            onPlayPronunciation={playPronunciation}
+            isPlayingAudio={isPlayingAudio}
+            width={350}
+            height={480}
           />
         </div>
       </div>

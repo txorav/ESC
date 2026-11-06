@@ -1,11 +1,14 @@
 import React, { useRef, useEffect, forwardRef } from 'react';
 import HTMLFlipBook from 'react-pageflip';
+import type { WordData, DeskItemState } from '../types';
 
 export interface EscBookProps {
   startPage?: number;
-  onPageChange?: (page: number) => void;
-  fallenItems?: [string, any][];
-  onRestoreItem?: (id: string) => void;
+  wordData?: WordData;
+  items?: { [id: string]: DeskItemState };
+  onTakeItemToDesk?: (id: string) => void;
+  onPlayPronunciation?: () => void;
+  isPlayingAudio?: boolean;
   isLoaderMode?: boolean;
   onLoaderFinished?: () => void;
   width?: number;
@@ -45,64 +48,104 @@ const Page = forwardRef<HTMLDivElement, PageProps>(({ children, className = '', 
 Page.displayName = 'Page';
 
 export const EscBook: React.FC<EscBookProps> = ({
-  startPage = 2,
-  onPageChange,
-  fallenItems = [],
-  onRestoreItem,
+  startPage = 8,
+  wordData = {
+    word: 'serendipity',
+    phonetic: '/ˌser.ənˈdɪp.ə.ti/',
+    pos: 'noun',
+    def: 'The occurrence and development of events by chance in a happy or beneficial way.',
+    ex: 'Joining ESC was pure serendipity; it completely transformed my confidence on stage.',
+    syn: ['fortune', 'happy chance', 'providence', 'fluke'],
+    origin: "Coined by Horace Walpole in 1754 from 'The Three Princes of Serendip'.",
+    rule: "Present Perfect vs. Past Simple: Use Present Perfect for experiences without a specific past time ('I have attended three sessions')."
+  },
+  items = {},
+  onTakeItemToDesk,
+  onPlayPronunciation,
+  isPlayingAudio = false,
   isLoaderMode = false,
   onLoaderFinished,
-  width = 340,
-  height = 470
+  width = 350,
+  height = 480
 }) => {
   const bookRef = useRef<any>(null);
 
-  const getItemName = (id: string) => {
-    switch (id) {
-      case 'radio': return 'Radio (ECHO Podcasts)';
-      case 'mic': return 'Microphone (Discussion Group)';
-      case 'pen': return 'Pen & Paper (Classes)';
-      case 'dict': return 'Dictionary (Word of the Day)';
-      case 'gram': return 'Grammar Paper';
-      case 'prn': return 'Pronunciation Radio';
-      default: return 'Desk Object';
-    }
-  };
-
-  // Fast page flipping for loader mode
+  // Fast realistic page flipping sequence for loader mode
   useEffect(() => {
     if (!isLoaderMode) return;
 
-    let timer: ReturnType<typeof setTimeout>;
-    let step = 0;
+    let timeoutIds: ReturnType<typeof setTimeout>[] = [];
 
-    // Flip rapidly through pages until we stop open at the Logo page (pages 2-3)
-    const runFlipSequence = () => {
-      timer = setTimeout(() => {
-        try {
-          const pf = bookRef.current?.pageFlip();
-          if (pf) {
-            if (step === 0) {
-              pf.flip(2); // Flips to page 2 (open spread of pages 2 & 3: Logo Page)
-              step++;
-              timer = setTimeout(() => {
-                if (onLoaderFinished) onLoaderFinished();
-              }, 700);
-              return;
-            }
-          }
-        } catch {
-          if (onLoaderFinished) onLoaderFinished();
+    // Flip sequentially through the book pages to simulate fast flipping until landing at the Logo Page (Page 8)
+    const t1 = setTimeout(() => {
+      try {
+        const pf = bookRef.current?.pageFlip();
+        if (pf) {
+          pf.flip(2); // Flips to pages 1-2
         }
-      }, 500);
-    };
+      } catch {}
+    }, 280);
 
-    runFlipSequence();
-    return () => clearTimeout(timer);
+    const t2 = setTimeout(() => {
+      try {
+        const pf = bookRef.current?.pageFlip();
+        if (pf) {
+          pf.flip(4); // Flips to pages 3-4
+        }
+      } catch {}
+    }, 600);
+
+    const t3 = setTimeout(() => {
+      try {
+        const pf = bookRef.current?.pageFlip();
+        if (pf) {
+          pf.flip(6); // Flips to pages 5-6
+        }
+      } catch {}
+    }, 920);
+
+    const t4 = setTimeout(() => {
+      try {
+        const pf = bookRef.current?.pageFlip();
+        if (pf) {
+          pf.flip(8); // Lands at final spread: Page 7 & Page 8 (The Official Logo Page!)
+        }
+      } catch {}
+    }, 1250);
+
+    const t5 = setTimeout(() => {
+      if (onLoaderFinished) {
+        onLoaderFinished();
+      }
+    }, 1850);
+
+    timeoutIds = [t1, t2, t3, t4, t5];
+
+    return () => {
+      timeoutIds.forEach(clearTimeout);
+    };
   }, [isLoaderMode, onLoaderFinished]);
+
+  const renderTakeButton = (id: string, label: string) => {
+    const isGone = items[id]?.gone;
+    return (
+      <button
+        type="button"
+        className={`book-take-btn ${isGone ? 'lost' : 'active'}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (onTakeItemToDesk) onTakeItemToDesk(id);
+        }}
+        title={`Take or restore ${label} on the desk`}
+      >
+        {isGone ? `⚠️ Lost · Place ${label} on Desk` : `✓ Take ${label} to Desk`}
+      </button>
+    );
+  };
 
   return (
     <div className={`esc-book-container ${isLoaderMode ? 'loader-book' : 'desk-book'}`}>
-      {/* Decorative Book Ribbon */}
+      {/* Decorative Book Ribbon Bookmark */}
       <div className="book-spine-ribbon" aria-hidden="true"></div>
 
       {/* @ts-ignore - react-pageflip typed children */}
@@ -111,22 +154,19 @@ export const EscBook: React.FC<EscBookProps> = ({
         width={width}
         height={height}
         size="fixed"
-        minWidth={280}
+        minWidth={300}
         maxWidth={460}
-        minHeight={380}
+        minHeight={400}
         maxHeight={580}
-        maxShadowOpacity={0.75}
+        maxShadowOpacity={0.8}
         showCover={true}
         drawShadow={true}
-        flippingTime={isLoaderMode ? 450 : 750}
+        flippingTime={isLoaderMode ? 320 : 750}
         usePortrait={false}
         startPage={isLoaderMode ? 0 : startPage}
         showPageCorners={true}
         clickEventForward={true}
         useMouseEvents={!isLoaderMode}
-        onFlip={(e: any) => {
-          if (onPageChange) onPageChange(e.data);
-        }}
         className="esc-flip-book"
         style={{ margin: '0 auto' }}
       >
@@ -141,265 +181,259 @@ export const EscBook: React.FC<EscBookProps> = ({
             <div className="cover-seal">
               <img
                 src="/logo.svg"
-                alt="ESC Emblem"
-                onError={(e) => { e.currentTarget.src = '/logo.png'; }}
+                alt="ESC Official Emblem"
               />
             </div>
 
             <h1 className="cover-title">ENGLISH SPEAKING CLUB</h1>
-            <div className="cover-subtitle">OFFICIAL ARCHIVE &amp; MEMORABILIA</div>
+            <div className="cover-subtitle">OFFICIAL ARCHIVE &amp; REGISTRY</div>
             <div className="cover-rule">════ ✦ ════</div>
             <div className="cover-year">ESTABLISHED 2017</div>
-            <div className="cover-hint">✦ Click or drag corner to open ✦</div>
+            <div className="cover-hint">✦ Turn page to inspect departments &amp; desk items ✦</div>
           </div>
         </PageCover>
 
-        {/* PAGE 1: CHARTER & TABLE OF CONTENTS */}
+        {/* PAGE 1: ESC OVERVIEW & CLUB CHARTER */}
         <Page number={1} className="page-parchment">
           <div className="parchment-border">
-            <div className="archive-header">ESC OFFICIAL CHARTER</div>
+            <div className="archive-header">OFFICIAL CHARTER · EST. 2017</div>
             <h3 className="parchment-heading">The Archive</h3>
             <p className="parchment-text drop-cap">
-              Founded in 2017 by passionate university scholars, the English Speaking Club fosters fluency, debate, and transformative rhetoric across generations.
+              The English Speaking Club (ESC) was founded in 2017 by passionate university students to foster fluency, debate, and transformative rhetorical leadership.
+            </p>
+            <p className="parchment-text">
+              Every object on this study desk represents an active club department. You can take any element from these pages or arrange them freely across the wooden table.
             </p>
             <div className="parchment-divider"></div>
-            <h4 className="toc-title">LEDGER CONTENTS</h4>
-            <ul className="toc-list">
-              <li>
-                <span>✦ Page 2–3</span>
-                <strong>Welcome &amp; Club Logo</strong>
-              </li>
-              <li>
-                <span>✦ Page 4–5</span>
-                <strong>Lost &amp; Found Ledger</strong>
-              </li>
-              <li>
-                <span>✦ Page 6–7</span>
-                <strong>Pillars &amp; Decade Horizon</strong>
-              </li>
-            </ul>
-            <div className="motto-box">
+            <h4 className="parchment-subhead">Archive Contents</h4>
+            <div className="index-list">
+              <div><span>p. 2</span> <strong>Word of the Day</strong></div>
+              <div><span>p. 3</span> <strong>Grammar of the Day</strong></div>
+              <div><span>p. 4</span> <strong>Pronunciation Radio</strong></div>
+              <div><span>p. 5</span> <strong>Microphone &amp; Debate</strong></div>
+              <div><span>p. 6</span> <strong>Radio &amp; ECHO Podcasts</strong></div>
+              <div><span>p. 7</span> <strong>Pen &amp; Note (Classes)</strong></div>
+              <div><span>p. 8</span> <strong>Official Club Logo</strong></div>
+            </div>
+            <div className="parchment-footer-motto">
               “Eloquentia, Veritas, et Sapientia”
             </div>
           </div>
         </Page>
 
-        {/* PAGE 2: WELCOME & DESK GUIDE */}
+        {/* PAGE 2: WORD OF THE DAY (VOCABULARY DEPARTMENT) */}
         <Page number={2} className="page-parchment">
           <div className="parchment-border">
-            <div className="archive-header">DESK FIELD GUIDE</div>
-            <h3 className="parchment-heading">Welcome to ESC</h3>
+            <div className="archive-header">VOCABULARY &amp; RHETORIC DEPARTMENT</div>
+            <h3 className="parchment-heading">Word of the Day</h3>
+            
+            <div className="word-entry-block">
+              <div className="word-headline">{wordData.word}</div>
+              <div className="word-phonetics">{wordData.phonetic} · <span className="word-pos">{wordData.pos}</span></div>
+            </div>
+
             <p className="parchment-text">
-              You are exploring the infinite desktop of ESC. You can move every object freely on the table:
+              <strong>Definition:</strong> {wordData.def}
             </p>
-            <div className="guide-items-grid">
-              <div className="guide-item">
-                <span className="guide-icon">📻</span>
-                <div>
-                  <strong>ECHO Radio</strong>
-                  <p>Hover for podcast player · Double-click to listen</p>
-                </div>
-              </div>
-              <div className="guide-item">
-                <span className="guide-icon">🎙️</span>
-                <div>
-                  <strong>Microphone</strong>
-                  <p>Discussion Group · Weekly debate rounds</p>
-                </div>
-              </div>
-              <div className="guide-item">
-                <span className="guide-icon">✒️</span>
-                <div>
-                  <strong>Pen &amp; Note</strong>
-                  <p>“ESC is the best english club ever” · Classes</p>
-                </div>
-              </div>
-              <div className="guide-item">
-                <span className="guide-icon">📖</span>
-                <div>
-                  <strong>Dictionary</strong>
-                  <p>Word of the day, phonetics &amp; etymology</p>
-                </div>
-              </div>
+            <p className="parchment-text">
+              <strong>Example:</strong> “{wordData.ex}”
+            </p>
+            {wordData.origin && (
+              <p className="parchment-text" style={{ fontSize: '11px', color: '#5a4325' }}>
+                <strong>Etymology:</strong> {wordData.origin}
+              </p>
+            )}
+
+            <div className="book-action-zone">
+              {renderTakeButton('dict', 'Dictionary')}
             </div>
-            <div className="turn-corner-hint">Flip to Logo Page →</div>
           </div>
         </Page>
 
-        {/* PAGE 3: OFFICIAL LOGO PAGE (CENTERPIECE OF ARCHIVE) */}
-        <Page number={3} className="page-parchment logo-showcase-page">
-          <div className="parchment-border logo-frame">
-            <div className="archive-header">OFFICIAL INSIGNIA</div>
+        {/* PAGE 3: GRAMMAR OF THE DAY (LANGUAGE DEPARTMENT) */}
+        <Page number={3} className="page-parchment">
+          <div className="parchment-border">
+            <div className="archive-header">LANGUAGE &amp; GRAMMAR DEPARTMENT</div>
+            <h3 className="parchment-heading">Grammar Rule</h3>
 
-            <div className="official-logo-stage">
-              <div className="logo-glow-ring"></div>
-              <div className="logo-graphic-wrap">
-                <img
-                  src="/logo.svg"
-                  alt="ESC Official Club Logo"
-                  className="showcase-logo"
-                  onError={(e) => { e.currentTarget.src = '/logo.png'; }}
-                />
-              </div>
-            </div>
-
-            <h2 className="showcase-club-title">ENGLISH SPEAKING CLUB</h2>
-            <div className="showcase-badge">CAMPUS CHAPTER · ARCHIVE SEAL</div>
-
-            <div className="showcase-specs">
-              <div className="spec-col">
-                <span className="spec-label">FOUNDED</span>
-                <span className="spec-val">2017</span>
-              </div>
-              <div className="spec-divider">·</div>
-              <div className="spec-col">
-                <span className="spec-label">MOTTO</span>
-                <span className="spec-val">SPEAK TO LEAD</span>
-              </div>
-              <div className="spec-divider">·</div>
-              <div className="spec-col">
-                <span className="spec-label">STATUS</span>
-                <span className="spec-val">ACTIVE</span>
-              </div>
-            </div>
-
-            <p className="showcase-footer-quote">
-              The official seal of the English Speaking Club, symbol of eloquence, critical dialogue, and student excellence.
+            <p className="parchment-text">
+              Mastering nuance in spoken and written English elevates persuasive arguments and clarity in parliamentary debate.
             </p>
+
+            <div className="parchment-rule-card">
+              <div className="rule-badge">TODAY’S LINGUISTIC FOCUS</div>
+              <div className="rule-body-text">{wordData.rule}</div>
+            </div>
+
+            <p className="parchment-text" style={{ marginTop: '10px' }}>
+              Each week our language workshop examines common rhetorical slips, syntax patterns, and formal register.
+            </p>
+
+            <div className="book-action-zone">
+              {renderTakeButton('gram', 'Grammar Paper')}
+            </div>
           </div>
         </Page>
 
-        {/* PAGE 4: LOST & FOUND LEDGER - LEFT */}
+        {/* PAGE 4: PRONUNCIATION RADIO & PHONETICS LAB */}
         <Page number={4} className="page-parchment">
           <div className="parchment-border">
-            <div className="archive-header">DESK GRAVITATIONAL LEDGER</div>
-            <h3 className="parchment-heading">Lost &amp; Found</h3>
+            <div className="archive-header">PHONETICS &amp; SPEECH LAB</div>
+            <h3 className="parchment-heading">Voice Pronunciation</h3>
+
             <p className="parchment-text">
-              The desk is suspended above the cloudy infinite expanse. When an item is dragged beyond the wooden edge, it falls into the abyss.
+              Vocal clarity, syllable stress, and natural cadence are essential for impactful public speaking.
             </p>
-            <div className="gravity-warning-card">
-              <div className="warn-icon">⚠️</div>
-              <div className="warn-text">
-                <strong>Edge Boundary Rule:</strong>
-                <p>Items dropped off the edge disappear from the table and are registered in this archive ledger.</p>
+
+            <div className="audio-voice-box">
+              <div className="voice-word-display">
+                “{wordData.word}”
               </div>
+              <button
+                type="button"
+                className={`voice-play-trigger ${isPlayingAudio ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onPlayPronunciation) onPlayPronunciation();
+                }}
+              >
+                {isPlayingAudio ? '🔊 Playing Audio…' : '▶ Hear Pronunciation'}
+              </button>
             </div>
-            <div className="desk-stats-box">
-              <div className="desk-stat-row">
-                <span>Total Desk Objects:</span>
-                <b>6 items</b>
-              </div>
-              <div className="desk-stat-row">
-                <span>Fallen Objects:</span>
-                <b style={{ color: fallenItems.length > 0 ? '#BF2026' : '#27ae60' }}>
-                  {fallenItems.length} lost
-                </b>
-              </div>
-            </div>
-            <p className="parchment-subtext">
-              Look to page 5 to inspect lost objects and restore them to the desk with a single click.
+
+            <p className="parchment-text" style={{ fontSize: '11px', marginTop: '10px' }}>
+              ESC members practice minimal pairs, diaphragmatic projection, and international phonetic transcription weekly.
             </p>
+
+            <div className="book-action-zone">
+              {renderTakeButton('prn', 'Pronunciation Radio')}
+            </div>
           </div>
         </Page>
 
-        {/* PAGE 5: LOST & FOUND LEDGER - RIGHT (RESTORATION PAGE) */}
+        {/* PAGE 5: MICROPHONE & DEBATE (DISCUSSION GROUP DEPARTMENT) */}
         <Page number={5} className="page-parchment">
           <div className="parchment-border">
-            <div className="archive-header">ITEM RESTORATION REGISTRY</div>
-            <h4 className="parchment-subhead">Abyss Recovery Chamber</h4>
+            <div className="archive-header">DEBATE &amp; DISCUSSION GROUP</div>
+            <h3 className="parchment-heading">Discussion Group</h3>
 
-            <div className="ledger-items-container">
-              {fallenItems.length === 0 ? (
-                <div className="ledger-empty-state">
-                  <div className="empty-sparkle">✨</div>
-                  <b>All items are safe on the table.</b>
-                  <p>Drag any radio, pen, mic, or paper past the table boundary to test desk gravity!</p>
-                </div>
-              ) : (
-                <div className="ledger-fallen-list">
-                  {fallenItems.map(([id]) => (
-                    <div key={id} className="ledger-item-card">
-                      <div className="ledger-item-info">
-                        <span className="ledger-dot"></span>
-                        <span className="ledger-item-name">{getItemName(id)}</span>
-                      </div>
-                      <button
-                        type="button"
-                        className="ledger-restore-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (onRestoreItem) onRestoreItem(id);
-                        }}
-                      >
-                        ✨ Restore to Desk
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+            <p className="parchment-text">
+              Discussion Group (DG) is ESC’s longest-running flagship activity since 2017. Every Wednesday, students take the floor for spontaneous debate and conversational rounds.
+            </p>
+
+            <div className="dept-highlight-card">
+              <strong>Flagship Activities:</strong>
+              <ul style={{ paddingLeft: '16px', margin: '4px 0 0', lineHeight: '1.5' }}>
+                <li>British Parliamentary sparring rounds</li>
+                <li>Oxford-style resolution debates</li>
+                <li>Philosophy &amp; policy roundtables</li>
+              </ul>
             </div>
 
-            <div className="parchment-divider"></div>
-            <div className="ledger-quick-tip">
-              ✦ Tip: Restored items reappear at their primary coordinates on the desk.
+            <p className="parchment-text" style={{ fontSize: '11px', marginTop: '8px' }}>
+              Grab the vintage microphone on the desk to step onto the amphitheater floor.
+            </p>
+
+            <div className="book-action-zone">
+              {renderTakeButton('mic', 'Microphone')}
             </div>
           </div>
         </Page>
 
-        {/* PAGE 6: PILLARS & CONSTITUTION */}
+        {/* PAGE 6: RADIO & ECHO PODCASTS (MEDIA DEPARTMENT) */}
         <Page number={6} className="page-parchment">
           <div className="parchment-border">
-            <div className="archive-header">CONSTITUTION</div>
-            <h3 className="parchment-heading">Four Pillars of ESC</h3>
-            <div className="pillars-list">
-              <div className="pillar-row">
-                <b>I. Competitive Debate</b>
-                <p>Developing logical precision, argumentation structures, and poise under competitive pressure.</p>
-              </div>
-              <div className="pillar-row">
-                <b>II. Public Oratory</b>
-                <p>Mastering voice modulation, empathetic storytelling, and keynote charisma.</p>
-              </div>
-              <div className="pillar-row">
-                <b>III. Media &amp; Podcasts</b>
-                <p>Distributing student discourse through high-production audio broadcasts.</p>
-              </div>
-              <div className="pillar-row">
-                <b>IV. Community &amp; Culture</b>
-                <p>An inclusive brotherhood fostering leadership across academic disciplines.</p>
-              </div>
+            <div className="archive-header">MEDIA &amp; AUDIO BROADCASTING</div>
+            <h3 className="parchment-heading">ECHO Podcasts</h3>
+
+            <p className="parchment-text">
+              Launched in 2022, ECHO is ESC’s official student podcast studio. Members write, host, sound-engineer, and syndicate monthly episodes across student platforms.
+            </p>
+
+            <div className="dept-highlight-card">
+              <strong>Studio Disciplines:</strong>
+              <ul style={{ paddingLeft: '16px', margin: '4px 0 0', lineHeight: '1.5' }}>
+                <li>Roundtable interview hosting</li>
+                <li>Sound design &amp; audio mixing</li>
+                <li>Guest leader &amp; alumni dialogues</li>
+              </ul>
+            </div>
+
+            <p className="parchment-text" style={{ fontSize: '11px', marginTop: '8px' }}>
+              Double-click the vintage radio on the table to access all syndicated episodes.
+            </p>
+
+            <div className="book-action-zone">
+              {renderTakeButton('radio', 'Vintage Radio')}
             </div>
           </div>
         </Page>
 
-        {/* PAGE 7: HISTORICAL SUMMARY */}
+        {/* PAGE 7: PEN & PAPER — CLASSES & MASTERCLASSES */}
         <Page number={7} className="page-parchment">
           <div className="parchment-border">
-            <div className="archive-header">HISTORIC CHRONICLE</div>
-            <h3 className="parchment-heading">The Decade Horizon</h3>
+            <div className="archive-header">EDUCATION &amp; MASTERCLASSES</div>
+            <h3 className="parchment-heading">ESC Classes</h3>
+
             <p className="parchment-text">
-              From our vintage origins in 2017 to the modern era of 2026, ESC has hosted 120+ tournaments, 48 workshops, and empowered over 1,250 members.
+              Our structured educational tracks guide communicators from beginner confidence to national tournament laureates.
             </p>
-            <div className="scroll-timeline-cta-box">
-              <div className="cta-sparkle">📜</div>
-              <b>Explore the Full Interactive Story</b>
-              <p>Scroll down past the table edge to watch the years roll from 2017 to 2026 on the film strip.</p>
+
+            <div className="parchment-note-preview">
+              <span className="note-handwritten">“ESC is the best english club ever”</span>
             </div>
-            <div className="seal-bottom">
-              <div className="certified-text">CERTIFIED OFFICIAL RECORD</div>
-              <div className="archive-reg">ESC-ARCHIVE-REG-2026</div>
+
+            <p className="parchment-text" style={{ fontSize: '11.5px', marginTop: '8px' }}>
+              Covers rhetoric, academic argumentation, critical analysis, and stage presence.
+            </p>
+
+            <div className="book-action-zone">
+              {renderTakeButton('pen', 'Pen & Note')}
             </div>
           </div>
         </Page>
 
-        {/* PAGE 8: BACK COVER (HARD) */}
+        {/* PAGE 8: THE OFFICIAL LOGO PAGE (THE LAST PAGE OF THE BOOK) */}
+        <Page number={8} className="page-parchment logo-final-page">
+          <div className="parchment-border logo-stage-border">
+            <div className="archive-header">OFFICIAL INSIGNIA · ARCHIVE FINALE</div>
+
+            <div className="official-logo-display">
+              <img
+                src="/logo.svg"
+                alt="English Speaking Club Official Logo"
+                className="esc-official-vector-logo"
+              />
+            </div>
+
+            <h2 className="logo-club-name">ENGLISH SPEAKING CLUB</h2>
+            <div className="logo-archive-seal">OFFICIAL CLUB EMBLEM · EST. 2017</div>
+
+            <div className="logo-tenure-strip">
+              <span>LEADERSHIP</span>
+              <span>·</span>
+              <span>DEBATE</span>
+              <span>·</span>
+              <span>ELOQUENCE</span>
+            </div>
+
+            <p className="logo-manifesto-text">
+              The official insignia of the English Speaking Club, representing unity, intellect, and collegiate eloquence across Algeria and beyond.
+            </p>
+
+            <div className="archive-completed-mark">
+              ✦ ARCHIVE DISCOVERY COMPLETE ✦
+            </div>
+          </div>
+        </Page>
+
+        {/* PAGE 9: BACK COVER (HARD) */}
         <PageCover className="back-cover">
           <div className="cover-border">
             <div className="cover-seal small">
               <img
                 src="/logo.svg"
                 alt="ESC Seal"
-                onError={(e) => { e.currentTarget.src = '/logo.png'; }}
               />
             </div>
             <div className="back-cover-title">ENGLISH SPEAKING CLUB</div>
