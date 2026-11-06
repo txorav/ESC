@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, forwardRef } from 'react';
+import React, { useRef, useEffect, forwardRef } from 'react';
 import HTMLFlipBook from 'react-pageflip';
 import type { WordData, DeskItemType } from '../types';
 
@@ -70,9 +70,6 @@ export const EscBook: React.FC<EscBookProps> = ({
   const finishedRef = useRef(false);
   const startedRef = useRef(false);
 
-  const [currentPage, setCurrentPage] = useState<number>(startPage);
-  const [autoFlipActive, setAutoFlipActive] = useState<boolean>(false);
-
   // Expose instance and ensure mouse events are ALWAYS active
   useEffect(() => {
     (window as any).__escBookRef = bookRef.current;
@@ -131,28 +128,6 @@ export const EscBook: React.FC<EscBookProps> = ({
     }
   };
 
-  // Automatic page-turner feature (requested by user)
-  useEffect(() => {
-    if (!autoFlipActive || isLoaderMode) return;
-
-    const timer = setInterval(() => {
-      try {
-        const pf = bookRef.current?.pageFlip();
-        if (!pf) return;
-        const cur = pf.getCurrentPageIndex();
-        if (cur >= 8) {
-          // Loop back to spread 1 (Charter & Word of the Day)
-          pf.flip(1);
-        } else {
-          const nextTarget = cur <= 0 ? 2 : cur + 2;
-          pf.flip(Math.min(8, nextTarget));
-        }
-      } catch {}
-    }, 3400);
-
-    return () => clearInterval(timer);
-  }, [autoFlipActive, isLoaderMode]);
-
   // Handle book flipping state changes ('flipping', 'read', etc.)
   const handleChangeState = (e: any) => {
     const state = typeof e?.data === 'string' ? e.data : '';
@@ -161,7 +136,6 @@ export const EscBook: React.FC<EscBookProps> = ({
         const pf = bookRef.current?.pageFlip();
         if (!pf) return;
         const page = pf.getCurrentPageIndex();
-        setCurrentPage(page);
 
         if (isLoaderMode) {
           if (page >= 7) {
@@ -189,10 +163,7 @@ export const EscBook: React.FC<EscBookProps> = ({
     }
   };
 
-  const handleFlip = (e: any) => {
-    const pageIndex = typeof e?.data === 'number' ? e.data : (typeof e === 'number' ? e : 0);
-    setCurrentPage(pageIndex);
-  };
+  const handleFlip = () => {};
 
   // Fallback trigger in case onInit fired before listener was attached
   useEffect(() => {
@@ -568,23 +539,6 @@ export const EscBook: React.FC<EscBookProps> = ({
           </div>
         </PageCover>
       </HTMLFlipBook>
-
-      {/* Archival Book Controls: Auto-Flip Toggle & Page Indicator (No Arrows) */}
-      {!isLoaderMode && (
-        <div className="book-archival-bar">
-          <button
-            type="button"
-            className={`book-archival-btn autoflip-btn ${autoFlipActive ? 'active' : ''}`}
-            onClick={() => setAutoFlipActive(!autoFlipActive)}
-            title="Toggle automatic page-turning"
-          >
-            {autoFlipActive ? '⏸ Pause Auto-Flip' : '⟳ Auto-Flip Pages'}
-          </button>
-          <span className="book-page-indicator">
-            {currentPage === 0 ? 'Cover' : currentPage >= 8 ? 'Logo' : `p. ${currentPage}–${currentPage + 1}`}
-          </span>
-        </div>
-      )}
     </div>
   );
 };
