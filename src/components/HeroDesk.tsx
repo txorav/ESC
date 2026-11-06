@@ -466,7 +466,13 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
         <div
           id="table"
           className={isLoading ? 'table-concealed' : 'table-revealed'}
-        ></div>
+        >
+          {/* Visible heavy wooden tabletop finished bottom edge */}
+          <div className="table-slab-bottom-edge">
+            <div className="table-slab-bevel"></div>
+            <div className="table-slab-wood-trim"></div>
+          </div>
+        </div>
 
         {/* Desk Items Layer: fades in on the table around the book */}
         <div
@@ -498,10 +504,6 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
             height={480}
           />
         </div>
-      </div>
-
-      <div className={`desk-nav-hint ${isLoading ? 'hidden' : ''}`}>
-        ✦ Turn book pages · Grab new elements directly from pages onto the table · Pan desk freely ✦
       </div>
 
       {/* Floating Hover Tooltip */}
