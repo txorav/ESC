@@ -109,15 +109,14 @@ export const Timeline: React.FC = () => {
 
   const currentEvent = TIMELINE_DATA[activeIndex] || TIMELINE_DATA[0];
   const currentBg = currentEvent.isVintage ? '#1C1E4B' : '#283FC3';
+  const hasMultiplePhotos = currentEvent.photos > 1;
 
-  // Smooth cinematic auto-advance for gallery photos
+  // Smooth cinematic auto-advance for gallery photos (only active when multiple photos exist)
   useEffect(() => {
     const el = galleryViewportRef.current;
-    if (!el) return;
+    if (!el || !hasMultiplePhotos) return;
 
     el.scrollLeft = 0;
-    if (currentEvent.photos <= 1) return;
-
     let photoIdx = 0;
     const total = currentEvent.photos;
 
@@ -131,7 +130,7 @@ export const Timeline: React.FC = () => {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [activeIndex, currentEvent.photos]);
+  }, [activeIndex, hasMultiplePhotos, currentEvent.photos]);
 
   return (
     <section
@@ -165,9 +164,9 @@ export const Timeline: React.FC = () => {
           </div>
         </div>
 
-        {/* LAYER 2 (MIDDLE, z-index: 20): Persistent Gallery Film Clip */}
-        {/* Comes from the other side under the year thing, above main reel, ends once photos end */}
-        <div className="film-gallery-floating-track">
+        {/* LAYER 2 (MIDDLE, z-index: 20): Gallery Film Clip */}
+        {/* ONLY SHOWS WHEN THERE ARE MULTIPLE PICTURES (hasMultiplePhotos) */}
+        <div className={`film-gallery-floating-track ${hasMultiplePhotos ? 'visible' : 'hidden'}`}>
           <div className="film-gallery-clip-viewport" ref={galleryViewportRef}>
             <div
               className={`film-gallery-clip ${currentEvent.isVintage ? 'vintage-film' : 'modern-film'}`}

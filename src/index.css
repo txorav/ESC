@@ -1846,16 +1846,33 @@ html {
 }
 
 /* LAYER 2 (MIDDLE, z-index: 20): Gallery Film Clip */
-/* Width matched to column picture, auto-scrolls when multi-pictures, passes under year selector */
+/* ONLY SHOWS WHEN THERE ARE MULTIPLE PICTURES (photos > 1) */
 .film-gallery-floating-track {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
   left: 8vw;
   z-index: 20;
   pointer-events: none;
   display: flex;
   align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-50%) translateX(40px);
+  transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.film-gallery-floating-track.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(-50%) translateX(0);
+}
+
+.film-gallery-floating-track.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-50%) translateX(40px);
 }
 
 /* Row one width equals the column one picture width */
