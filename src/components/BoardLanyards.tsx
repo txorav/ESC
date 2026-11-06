@@ -7,14 +7,12 @@ export const BoardLanyards: React.FC = () => {
       <h2 className="sec-heading">Board Members</h2>
       <p className="sec-subheading">
         Three visionary leaders orchestrating our debate tournaments, podcasts, and cultural exchanges.
-        <br />
-        <span style={{ fontSize: '13px', opacity: 0.7 }}>✦ Grab, drag, or swing each 3D credential badge ✦</span>
       </p>
 
       <div className="board-trio-layout">
         {/* TOP: PRESIDENT */}
         <div className="board-trio-top">
-          <div className="lanyard-stage-card lead">
+          <div className="board-member-item lead">
             <div className="lanyard-3d-box">
               <Lanyard
                 frontImage="/badges/president.svg"
@@ -26,7 +24,7 @@ export const BoardLanyards: React.FC = () => {
                 breeze={0.3}
               />
             </div>
-            <div className="board-info-pill">
+            <div className="board-info-pure">
               <span className="board-role-tag president">PRESIDENT</span>
               <h3 className="board-name">Amine Belkacem</h3>
               <p className="board-bio">
@@ -39,7 +37,7 @@ export const BoardLanyards: React.FC = () => {
         {/* SIDES: VP & SECRETARY GENERAL */}
         <div className="board-trio-sides">
           {/* LEFT: VICE PRESIDENT */}
-          <div className="lanyard-stage-card">
+          <div className="board-member-item">
             <div className="lanyard-3d-box">
               <Lanyard
                 frontImage="/badges/vp.svg"
@@ -51,7 +49,7 @@ export const BoardLanyards: React.FC = () => {
                 breeze={0.25}
               />
             </div>
-            <div className="board-info-pill">
+            <div className="board-info-pure">
               <span className="board-role-tag vp">VICE PRESIDENT</span>
               <h3 className="board-name">Lina Haddad</h3>
               <p className="board-bio">
@@ -61,7 +59,7 @@ export const BoardLanyards: React.FC = () => {
           </div>
 
           {/* RIGHT: SECRETARY GENERAL */}
-          <div className="lanyard-stage-card">
+          <div className="board-member-item">
             <div className="lanyard-3d-box">
               <Lanyard
                 frontImage="/badges/sg.svg"
@@ -73,7 +71,7 @@ export const BoardLanyards: React.FC = () => {
                 breeze={0.25}
               />
             </div>
-            <div className="board-info-pill">
+            <div className="board-info-pure">
               <span className="board-role-tag sg">SECRETARY GENERAL</span>
               <h3 className="board-name">Yacine Mansouri</h3>
               <p className="board-bio">

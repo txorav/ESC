@@ -158,13 +158,12 @@ export const Timeline: React.FC = () => {
           >
             {Array.from({ length: currentEvent.photos }, (_, p) => {
               const h1 = 220 + activeIndex * 12 + p * 18;
-              const h2 = 350 - activeIndex * 8 + p * 14;
               return (
                 <div
                   key={p}
                   className="row-img"
                   style={{
-                    background: `linear-gradient(135deg, hsl(${h1}, 65%, 40%), hsl(${h2}, 75%, 45%))`
+                    background: `hsl(${h1}, 45%, 32%)`
                   }}
                 >
                   <span>Photo #{p + 1}</span>
@@ -188,7 +187,7 @@ export const Timeline: React.FC = () => {
               <div
                 className="film-media"
                 style={{
-                  background: `linear-gradient(135deg, hsl(${210 + idx * 14}, 60%, 35%), hsl(${340 - idx * 10}, 70%, 35%))`
+                  background: isVintage ? '#251d14' : '#1C1E4B'
                 }}
               >
                 {isVintage ? (
