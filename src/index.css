@@ -1842,12 +1842,28 @@ html {
 
 .row-film-clip-overlay {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: -180px; /* extends from the left side under the year stage */
   z-index: 20;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   pointer-events: auto;
+  transform: translateX(0);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+}
+
+/* Animate coming in from the left side when active */
+.film-reel-frame .row-film-clip-overlay {
+  transform: translateX(-120px);
+  opacity: 0.6;
+}
+
+.film-reel-frame.active-frame .row-film-clip-overlay {
+  transform: translateX(0);
+  opacity: 1;
 }
 
 /* Row one viewport exactly bounds the film clip */
