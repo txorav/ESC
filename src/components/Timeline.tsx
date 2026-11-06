@@ -110,7 +110,7 @@ export const Timeline: React.FC = () => {
   const currentEvent = TIMELINE_DATA[activeIndex] || TIMELINE_DATA[0];
   const currentBg = currentEvent.isVintage ? '#1C1E4B' : '#283FC3';
 
-  // Smooth, calm cinematic auto-slide through gallery photos without erratic jitter
+  // Smooth cinematic auto-advance for gallery photos
   useEffect(() => {
     const el = galleryViewportRef.current;
     if (!el) return;
@@ -128,7 +128,7 @@ export const Timeline: React.FC = () => {
         left: target,
         behavior: 'smooth'
       });
-    }, 2800);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [activeIndex, currentEvent.photos]);
@@ -139,9 +139,9 @@ export const Timeline: React.FC = () => {
       style={{ '--film-bg': currentBg } as React.CSSProperties}
       data-bg={currentBg}
     >
-      {/* STICKY LAYERS OVERLAY (Pinned viewport-wide while scrolling) */}
+      {/* PERSISTENT STICKY OVERLAY (Stays pinned for the whole timeline) */}
       <div className="timeline-pinned-overlay">
-        {/* LAYER 3 (TOP, z-index: 30): Big Year Selector in center-left with PROGRESSIVE BLUR (NO BOX) */}
+        {/* LAYER 3 (TOP, z-index: 30): Big Year Selector on Left with Progressive Blur (No Box) */}
         <div className="timeline-year-stage">
           <div className="year-wheel-clean">
             <OptionWheel
@@ -165,14 +165,14 @@ export const Timeline: React.FC = () => {
           </div>
         </div>
 
-        {/* LAYER 2 (MIDDLE, z-index: 20): Gallery Film Clip */}
-        {/* Width equals the column picture width, full-size photos, auto-advances smoothly */}
+        {/* LAYER 2 (MIDDLE, z-index: 20): Persistent Gallery Film Clip */}
+        {/* Comes from the other side under the year thing, above main reel, ends once photos end */}
         <div className="film-gallery-floating-track">
           <div className="film-gallery-clip-viewport" ref={galleryViewportRef}>
             <div
               className={`film-gallery-clip ${currentEvent.isVintage ? 'vintage-film' : 'modern-film'}`}
             >
-              {/* Top Sprocket Rail with perforations & film edge text */}
+              {/* Top Sprocket Rail */}
               <div className="sprocket-rail top-rail">
                 <div className="sprocket-track">
                   {Array.from({ length: currentEvent.photos * 26 + 12 }).map((_, i) => (
@@ -185,7 +185,7 @@ export const Timeline: React.FC = () => {
                 </div>
               </div>
 
-              {/* Film Frames: Full scale photos matching column aperture size */}
+              {/* Gallery Frames with full authentic film clip visuals */}
               <div className="film-gallery-frames">
                 {Array.from({ length: currentEvent.photos }, (_, p) => {
                   const hue = 215 + activeIndex * 14 + p * 22;
@@ -195,8 +195,10 @@ export const Timeline: React.FC = () => {
                         className="gallery-photo-aperture"
                         style={{ background: `hsl(${hue}, 40%, 28%)` }}
                       >
-                        <span className="photo-tag">Photo #{p + 1}</span>
-                        <span className="photo-sub">35mm ARCHIVE REEL</span>
+                        <div className="aperture-inner-tag">
+                          <span className="photo-tag">Photo #{p + 1}</span>
+                          <span className="photo-sub">35mm ARCHIVE REEL</span>
+                        </div>
                       </div>
                       <div className="frame-footer-code">
                         <span>▸ {p + 1}A</span>
@@ -207,7 +209,7 @@ export const Timeline: React.FC = () => {
                 })}
               </div>
 
-              {/* Bottom Sprocket Rail with perforations & frame numbers */}
+              {/* Bottom Sprocket Rail */}
               <div className="sprocket-rail bottom-rail">
                 <div className="sprocket-track">
                   {Array.from({ length: currentEvent.photos * 26 + 12 }).map((_, i) => (
@@ -220,7 +222,7 @@ export const Timeline: React.FC = () => {
                 </div>
               </div>
 
-              {/* Authentic Film Cut Edge (ends once gallery photos end) */}
+              {/* Cut End marker */}
               <div className="film-clip-cut-end" title="End of Gallery Reel" />
             </div>
           </div>
@@ -228,7 +230,6 @@ export const Timeline: React.FC = () => {
       </div>
 
       {/* LAYER 1 (BASE, z-index: 10): Continuous Main Film Reel */}
-      {/* One continuous 35mm film reel with connected frames and uninterrupted sprocket rails */}
       <div className="film-reel-continuous-column">
         <div className="film-reel-strip">
           {/* Continuous Left Sprocket Rail */}
@@ -238,7 +239,7 @@ export const Timeline: React.FC = () => {
             ))}
           </div>
 
-          {/* Film Reel Body with Unbroken Sequence of Frames */}
+          {/* Connected Stream of Frames */}
           <div className="film-reel-frames-stream">
             {TIMELINE_DATA.map((item, idx) => {
               const isVintage = item.isVintage;
@@ -249,7 +250,7 @@ export const Timeline: React.FC = () => {
                   className={`film-reel-frame ${isVintage ? 'vintage' : 'modern'} ${isActive ? 'active-frame' : ''}`}
                   data-index={idx}
                 >
-                  {/* Real Film Cell Aperture Window (exact same size as row gallery photo) */}
+                  {/* Column Film Cell Aperture */}
                   <div
                     className="film-cell-aperture"
                     style={{
@@ -271,7 +272,7 @@ export const Timeline: React.FC = () => {
                     <div className="film-stock-stamp">KODAK 400 · EXP 2017</div>
                   </div>
 
-                  {/* Frame Narrative Story */}
+                  {/* Narrative Headline & Story */}
                   <div className="film-reel-story">
                     <h3 className="film-frame-heading">
                       {item.year} · {item.title}
@@ -279,7 +280,7 @@ export const Timeline: React.FC = () => {
                     <p className="film-frame-desc">{item.desc}</p>
                   </div>
 
-                  {/* Real Continuous Film Frame Divider (no gaps/separate boxes) */}
+                  {/* Frame Divider */}
                   <div className="film-reel-frame-divider">
                     <span className="divider-line" />
                     <span className="divider-code">REEL #{item.year} // 35mm SAFETY</span>
