@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 900" width="600" height="900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111744" />
+      <stop offset="60%" stop-color="#1C1E4B" />
+      <stop offset="100%" stop-color="#283FC3" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F39C12" />
+      <stop offset="100%" stop-color="#F1C40F" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="900" rx="36" fill="url(#bg)" />
+  <rect x="16" y="16" width="568" height="868" rx="28" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="3" />
+
+  <!-- Clip Hole -->
+  <rect x="250" y="32" width="100" height="18" rx="9" fill="#0A0D24" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
+
+  <!-- Club Header -->
+  <text x="300" y="110" font-family="'Fraunces', serif" font-weight="900" font-size="34" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">ESC · EST. 2017</text>
+  <text x="300" y="140" font-family="'Work Sans', sans-serif" font-weight="600" font-size="14" fill="#F1C40F" text-anchor="middle" letter-spacing="4">ENGLISH SPEAKING CLUB</text>
+
+  <!-- Avatar Photo -->
+  <circle cx="300" cy="290" r="110" fill="#283FC3" stroke="#F1C40F" stroke-width="6" />
+  <!-- Stylized silhouette/avatar -->
+  <circle cx="300" cy="255" r="46" fill="#EDE2CD" />
+  <path d="M220 370 C230 310, 370 310, 380 370 Z" fill="#EDE2CD" />
+
+  <!-- Badge Pill -->
+  <rect x="180" y="430" width="240" height="42" rx="21" fill="#BF2026" />
+  <text x="300" y="457" font-family="'Work Sans', sans-serif" font-weight="800" font-size="18" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">EXECUTIVE BOARD</text>
+
+  <!-- Name & Title -->
+  <text x="300" y="525" font-family="'Fraunces', serif" font-weight="800" font-size="38" fill="#FFFFFF" text-anchor="middle">Amine Belkacem</text>
+  <text x="300" y="565" font-family="'Work Sans', sans-serif" font-weight="700" font-size="24" fill="#F1C40F" text-anchor="middle" letter-spacing="1">CLUB PRESIDENT</text>
+  <text x="300" y="605" font-family="'Work Sans', sans-serif" font-weight="400" font-size="15" fill="#A8B4D8" text-anchor="middle">Faculty of Science &amp; Technology</text>
+
+  <!-- Divider -->
+  <line x1="80" y1="640" x2="520" y2="640" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+
+  <!-- Info Grid -->
+  <text x="140" y="680" font-family="'Work Sans', sans-serif" font-size="12" fill="#7C8DB5" letter-spacing="1">MEMBER ID</text>
+  <text x="140" y="708" font-family="monospace" font-weight="700" font-size="18" fill="#FFFFFF">ESC-2026-001</text>
+
+  <text x="460" y="680" font-family="'Work Sans', sans-serif" font-size="12" fill="#7C8DB5" text-anchor="end" letter-spacing="1">ACCESS LEVEL</text>
+  <text x="460" y="708" font-family="'Work Sans', sans-serif" font-weight="700" font-size="18" fill="#F1C40F" text-anchor="end">PRESIDENTIAL</text>
+
+  <!-- Barcode -->
+  <g transform="translate(120, 760)">
+    <rect x="0" y="0" width="360" height="50" fill="#FFFFFF" rx="6" />
+    <!-- Barcode lines -->
+    <rect x="20" y="8" width="6" height="34" fill="#000" />
+    <rect x="32" y="8" width="3" height="34" fill="#000" />
+    <rect x="42" y="8" width="8" height="34" fill="#000" />
+    <rect x="56" y="8" width="4" height="34" fill="#000" />
+    <rect x="66" y="8" width="12" height="34" fill="#000" />
+    <rect x="84" y="8" width="4" height="34" fill="#000" />
+    <rect x="94" y="8" width="6" height="34" fill="#000" />
+    <rect x="108" y="8" width="10" height="34" fill="#000" />
+    <rect x="126" y="8" width="4" height="34" fill="#000" />
+    <rect x="136" y="8" width="8" height="34" fill="#000" />
+    <rect x="150" y="8" width="3" height="34" fill="#000" />
+    <rect x="160" y="8" width="12" height="34" fill="#000" />
+    <rect x="180" y="8" width="6" height="34" fill="#000" />
+    <rect x="194" y="8" width="4" height="34" fill="#000" />
+    <rect x="206" y="8" width="8" height="34" fill="#000" />
+    <rect x="220" y="8" width="3" height="34" fill="#000" />
+    <rect x="230" y="8" width="10" height="34" fill="#000" />
+    <rect x="246" y="8" width="6" height="34" fill="#000" />
+    <rect x="260" y="8" width="4" height="34" fill="#000" />
+    <rect x="272" y="8" width="12" height="34" fill="#000" />
+    <rect x="290" y="8" width="8" height="34" fill="#000" />
+    <rect x="306" y="8" width="4" height="34" fill="#000" />
+    <rect x="318" y="8" width="8" height="34" fill="#000" />
+    <rect x="332" y="8" width="8" height="34" fill="#000" />
+  </g>
+
+  <text x="300" y="845" font-family="'Work Sans', sans-serif" font-size="12" fill="rgba(255,255,255,0.4)" text-anchor="middle">OFFICIAL CREDENTIAL · 2026 TENURE</text>
+</svg>

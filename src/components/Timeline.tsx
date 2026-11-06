@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import OptionWheel from './reactbits/OptionWheel';
 
 interface EventYear {
   year: number;
@@ -126,16 +127,24 @@ export const Timeline: React.FC = () => {
       <aside className="timeline-sidebar">
         {/* ReactBits OptionWheel Year Counter */}
         <div className="wheel-container">
-          <ul
-            className="wheel-track"
-            style={{ transform: `translateY(${82 - activeIndex * 55}px)` }}
-          >
-            {TIMELINE_DATA.map((item, idx) => (
-              <li key={item.year} className={idx === activeIndex ? 'active' : ''}>
-                {item.year}
-              </li>
-            ))}
-          </ul>
+          <OptionWheel
+            items={TIMELINE_DATA.map((item) => String(item.year))}
+            defaultSelected={activeIndex}
+            onChange={(idx) => {
+              setActiveIndex(idx);
+              const cards = document.querySelectorAll('.film-card');
+              if (cards[idx]) {
+                cards[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }}
+            fontSize={2.1}
+            spacing={1.2}
+            tilt={10}
+            curve={1.2}
+            inset={50}
+            textColor="#7c8db5"
+            activeColor="#FFFFFF"
+          />
         </div>
 
         {/* Horizontal Row Clip for current event */}

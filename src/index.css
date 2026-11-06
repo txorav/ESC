@@ -439,7 +439,7 @@ nav a.cta:hover {
   bottom: 8px;
   width: 170px;
   height: 12px;
-  background: linear-gradient(90deg, #111, var(--br) 65%, #d8b248 85%, # silver 100%);
+  background: linear-gradient(90deg, #111, var(--br) 65%, #d8b248 85%, #c0c0c0 100%);
   transform: rotate(-32deg);
   border-radius: 6px;
   box-shadow: 6px 8px 10px rgba(0, 0, 0, 0.4);
@@ -1248,133 +1248,127 @@ nav a.cta:hover {
   margin: 0 auto 40px;
 }
 
-.lanyards-container {
+/* ============================================================
+   9. BOARD MEMBERS: REACTBITS 3D LANYARDS (TRIO: 1 TOP, 2 SIDES)
+   ============================================================ */
+.board-trio-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  max-width: 1100px;
+  margin: 30px auto 0;
+  width: 100%;
+}
+
+.board-trio-top {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  gap: 3vw;
-  flex-wrap: wrap;
-  margin-top: 20px;
+  width: 100%;
 }
 
-.lanyard {
-  width: 200px;
-  transform-origin: 50% 0;
-  animation: lanyard-sway 4.5s ease-in-out infinite alternate;
-  animation-delay: var(--delay, 0s);
-  transition: transform 0.3s ease;
-}
-.lanyard:hover {
-  animation-play-state: paused;
-  transform: translateY(-8px) scale(1.05);
-}
-.lanyard.lead {
-  width: 250px;
-}
-@keyframes lanyard-sway {
-  0% { transform: rotate(-5deg); }
-  100% { transform: rotate(5deg); }
-}
-
-.lanyard-strap {
-  width: 18px;
-  height: 110px;
-  margin: 0 auto;
-  background: repeating-linear-gradient(
-    180deg,
-    var(--red) 0 10px,
-    var(--rb) 10px 20px,
-    var(--dr) 20px 30px
-  );
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  position: relative;
-}
-.lanyard-strap::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(90deg, transparent 0 2px, rgba(0, 0, 0, 0.15) 2px 4px);
-}
-.lanyard-clasp {
-  width: 28px;
-  height: 18px;
-  margin: 0 auto;
-  background: linear-gradient(135deg, #dcdcdc, #8e8e8e);
-  border-radius: 0 0 6px 6px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  position: relative;
-}
-.lanyard-clasp::after {
-  content: "";
-  position: absolute;
-  top: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 10px;
-  height: 4px;
-  background: #333;
-  border-radius: 2px;
-}
-
-.badge-card {
-  background: var(--white);
-  color: var(--navy);
-  border-radius: 18px;
-  padding: 20px 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  position: relative;
-  overflow: hidden;
-}
-.badge-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: linear-gradient(90deg, var(--rb), var(--br));
-}
-.badge-avatar {
-  width: 86px;
-  height: 86px;
-  border-radius: 50%;
-  margin: 0 auto 12px;
+.board-trio-sides {
   display: grid;
-  place-items: center;
-  font-family: 'Fraunces', serif;
-  font-weight: 800;
-  font-size: 32px;
-  color: var(--white);
-  background: linear-gradient(135deg, var(--rb), var(--peri));
-  box-shadow: 0 6px 16px rgba(40, 63, 195, 0.35);
-  border: 3px solid var(--white);
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  width: 100%;
+  max-width: 960px;
 }
-.lanyard.lead .badge-avatar {
-  width: 104px;
-  height: 104px;
-  font-size: 40px;
+
+@media (max-width: 768px) {
+  .board-trio-sides {
+    grid-template-columns: 1fr;
+  }
 }
-.badge-name {
-  font-family: 'Fraunces', serif;
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--navy);
-  margin-bottom: 2px;
+
+.lanyard-stage-card {
+  background: rgba(17, 23, 68, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  backdrop-filter: blur(12px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  width: 100%;
+  max-width: 440px;
 }
-.badge-role {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--br);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+
+.lanyard-stage-card.lead {
+  max-width: 520px;
+  border-color: rgba(241, 196, 15, 0.35);
+  background: rgba(17, 23, 68, 0.82);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 30px rgba(241, 196, 15, 0.15);
 }
-.badge-club {
-  margin-top: 10px;
+
+.lanyard-stage-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(78, 85, 211, 0.45);
+}
+
+.lanyard-3d-box {
+  width: 100%;
+  height: 400px;
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  background: radial-gradient(circle at center, rgba(40, 63, 195, 0.15), transparent 70%);
+}
+
+.lanyard-stage-card.lead .lanyard-3d-box {
+  height: 440px;
+}
+
+.board-info-pill {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-top: 14px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.board-role-tag {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
   font-size: 11px;
-  color: #666;
-  border-top: 1px solid #eee;
-  padding-top: 8px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.board-role-tag.president {
+  background: linear-gradient(135deg, #F39C12, #E67E22);
+  color: #111744;
+}
+
+.board-role-tag.vp {
+  background: linear-gradient(135deg, #283FC3, #4E55D3);
+  color: #ffffff;
+}
+
+.board-role-tag.sg {
+  background: linear-gradient(135deg, #BF2026, #CD202A);
+  color: #ffffff;
+}
+
+.board-name {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+
+.board-bio {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 /* ============================================================
@@ -1387,86 +1381,57 @@ nav a.cta:hover {
 
 .folders-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 40px;
   max-width: 1200px;
   margin: 40px auto 0;
-  perspective: 900px;
+  justify-items: center;
 }
 
-.folder-item {
-  position: relative;
-  height: 230px;
-  cursor: pointer;
-  perspective: 800px;
-  user-select: none;
+.folder-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(17, 23, 68, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 24px 16px 18px;
+  width: 100%;
+  max-width: 360px;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
-.folder-tab {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100px;
-  height: 24px;
-  background: #1e2254;
-  border-radius: 10px 10px 0 0;
+.folder-card-wrapper:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
-.folder-back {
-  position: absolute;
-  inset: 20px 0 0;
-  background: #1e2254;
-  border-radius: 0 16px 16px 16px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+.folder-component-box {
+  width: 100%;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.folder-doc {
-  position: absolute;
-  left: 16px;
-  right: 16px;
-  top: 36px;
-  height: 165px;
-  background: var(--white);
-  color: var(--navy);
-  border-radius: 10px;
-  padding: 16px;
-  font-size: 13.5px;
-  line-height: 1.45;
-  text-align: left;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+.folder-caption {
+  margin-top: 14px;
+  text-align: center;
 }
-.folder-doc b {
-  display: block;
+
+.folder-caption-title {
   font-family: 'Fraunces', serif;
-  font-size: 17px;
-  color: var(--navy);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
   margin-bottom: 4px;
 }
 
-.folder-front {
-  position: absolute;
-  inset: 48px 0 0;
-  background: linear-gradient(135deg, var(--peri), var(--rb));
-  border-radius: 14px;
-  transform-origin: bottom center;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-  display: grid;
-  place-items: center;
-  font-family: 'Fraunces', serif;
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--white);
-  padding: 14px;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-}
-
-.folder-item.open .folder-front {
-  transform: rotateX(-75deg);
-}
-.folder-item.open .folder-doc {
-  transform: translateY(-38px);
+.folder-caption-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.4;
 }
 
 /* ============================================================
