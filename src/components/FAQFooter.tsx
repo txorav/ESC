@@ -1,31 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 
 export const FAQFooter: React.FC = () => {
-  const footerRef = useRef<HTMLElement | null>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-        }
-      },
-      { threshold: 0.15 }
-    );
-
-    if (footerRef.current) {
-      observer.observe(footerRef.current);
-    }
-    return () => observer.disconnect();
-  }, []);
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const scrollToFooter = () => {
-    footerRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -60,108 +37,27 @@ export const FAQFooter: React.FC = () => {
             </div>
           </details>
         </div>
-
-        {/* Scrolling Transition Bridge between FAQ and the Full-Page Footer */}
-        <div className="faq-to-footer-transition" aria-hidden="true">
-          <button
-            type="button"
-            className="faq-transition-cue"
-            onClick={scrollToFooter}
-            aria-label="Scroll to footer"
-          >
-            <span className="cue-dot" />
-            <span className="cue-label">Connect with ESC</span>
-            <span className="cue-arrow">↓</span>
-          </button>
-          <svg className="faq-transition-svg" viewBox="0 0 1440 120" preserveAspectRatio="none">
-            <path
-              d="M0,120 C360,25 1080,25 1440,120 L1440,120 L0,120 Z"
-              fill="#0c1033"
-            />
-          </svg>
-        </div>
       </section>
 
-      {/* FULL-PAGE MINIMAL FOOTER */}
-      <footer
-        id="footer"
-        ref={footerRef}
-        className={`fullpage-footer ${inView ? 'is-visible' : ''}`}
-        data-bg="#0c1033"
-      >
-        <div className="footer-ambient-glow" aria-hidden="true" />
+      {/* FULL-PAGE FOOTER WITH BIG TEXTS */}
+      <footer id="footer" className="fullpage-footer" data-bg="#0c1033">
+        <div className="footer-big-content">
+          <h1 className="footer-huge-title">ENGLISH SPEAKING CLUB</h1>
 
-        {/* TOP BAR: Minimal Identity & Return to Top */}
-        <div className="footer-top-bar">
-          <div className="footer-brand-mono">
-            <span className="brand-dot" />
-            <span>ENGLISH SPEAKING CLUB</span>
-            <span className="brand-divider">/</span>
-            <span className="brand-year">EST. 2017</span>
-          </div>
-
-          <button
-            type="button"
-            className="footer-back-to-top"
-            onClick={scrollToTop}
-            aria-label="Back to top"
-          >
-            <span>Back to top</span>
-            <span className="top-arrow">↑</span>
-          </button>
-        </div>
-
-        {/* CENTER STAGE: Bold Minimal Headline & Clean Links */}
-        <div className="footer-main-stage">
-          <p className="footer-kicker">THE PODIUM AWAITS</p>
-          <h2 className="footer-main-title">
-            Where Voices Rise.
-          </h2>
-          <p className="footer-main-sub">
-            A sanctuary for articulate minds, fearless rhetoric, and timeless leadership.
-          </p>
-
-          <div className="footer-contact-wrap">
-            <a href="mailto:contact@esc-club.org" className="footer-direct-mail">
-              <span>contact@esc-club.org</span>
-              <span className="mail-arrow">↗</span>
-            </a>
-          </div>
-
-          {/* Minimalist Social Links */}
-          <div className="footer-minimal-socials" aria-label="Social Links">
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <span className="dot-sep" aria-hidden="true">·</span>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
-            <span className="dot-sep" aria-hidden="true">·</span>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-            <span className="dot-sep" aria-hidden="true">·</span>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
-            <span className="dot-sep" aria-hidden="true">·</span>
-            <a href="https://discord.com" target="_blank" rel="noopener noreferrer">Discord</a>
-          </div>
-
-          {/* Minimal Navigation Anchors */}
-          <nav className="footer-minimal-nav" aria-label="Quick Navigation">
-            <a href="#home">Home</a>
-            <a href="#intro">About</a>
-            <a href="#tl">Events</a>
-            <a href="#board">DG</a>
-            <a href="#dept">Activities</a>
-            <a href="#faq">FAQ</a>
+          <nav className="footer-big-links" aria-label="Social and Contact Links">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">INSTAGRAM</a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">FACEBOOK</a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LINKEDIN</a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">YOUTUBE</a>
+            <a href="https://discord.com" target="_blank" rel="noopener noreferrer">DISCORD</a>
+            <a href="mailto:contact@esc-club.org" className="footer-big-email">CONTACT@ESC-CLUB.ORG</a>
           </nav>
-        </div>
 
-        {/* BOTTOM BAR: Quiet Minimal Fine-Print */}
-        <div className="footer-bottom-bar">
-          <div className="footer-copy">
-            © 2017–2026 English Speaking Club. All rights reserved.
-          </div>
-          <div className="footer-location">
-            Room 304 · Old Humanities Wing
-          </div>
-          <div className="footer-motto">
-            Debate · Rhetoric · Leadership
+          <div className="footer-big-bottom">
+            <span>© 2017–2026 ESC</span>
+            <button type="button" onClick={scrollToTop} className="footer-back-to-top-btn">
+              BACK TO TOP ↑
+            </button>
           </div>
         </div>
       </footer>

@@ -487,7 +487,7 @@ export const Timeline: React.FC = () => {
             layers={10}
             curve="bezier"
             exponential
-            tint="radial-gradient(ellipse at 0% 25%, rgba(145, 175, 255, 0.28) 0%, rgba(40, 63, 195, 0.42) 36%, rgba(14, 18, 52, 0.65) 70%, transparent 100%)"
+            tint="rgba(14, 18, 52, 0.45)"
             zIndex={25}
             style={{
               width: '100%',
