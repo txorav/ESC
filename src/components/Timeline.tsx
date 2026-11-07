@@ -480,6 +480,9 @@ export const Timeline: React.FC = () => {
             LEFT SIDE: THE YEAR STAGE (Untouched Visual Styling & Progressive Blur)
             ================================================================= */}
         <aside className="timeline-year-stage" aria-label="Historical Year Selector">
+          {/* Progressive Blur Layer: Strongly blurred in the corner, fading to clear */}
+          <div className="timeline-progressive-blur" aria-hidden="true" />
+
           <div className="year-wheel-clean">
             <OptionWheel
               items={years.map((y) => String(y))}
@@ -491,8 +494,8 @@ export const Timeline: React.FC = () => {
                   handleSelectYear(targetYear);
                 }
               }}
-              fontSize={4.2}
-              spacing={1.3}
+              fontSize={5.4}
+              spacing={1.35}
               tilt={8}
               curve={1.1}
               inset={0}
