@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from 'react';
+import ScrambledText from './reactbits/ScrambledText';
+import TextLoop from './reactbits/TextLoop';
 
 interface CloudPuffSpec {
   ox: number; // X offset (%)
@@ -285,6 +287,10 @@ export const IntroClouds: React.FC = () => {
           </div>
         </div>
 
+        <div className="esc-intro-textloop" aria-hidden="true">
+          <TextLoop text="ESC introduction" shape="wave" speed={60} fontSize={56} fontWeight={800} curviness={46} tilt={-5} ribbonColor="#CD202A" ribbonWidth={96} color="#ffffff" edgeFade={0.25} separator="✦" />
+        </div>
+
         {/*
           3. CONCISE INTRODUCTION (PURE TEXT ONLY, NOT TOO LONG, NO CUTOFF)
         */}
@@ -294,9 +300,9 @@ export const IntroClouds: React.FC = () => {
               EST. 2017 · THE ENGLISH SPEAKING CLUB
             </p>
 
-            <h2 className="esc-pure-hero-title">
+            <ScrambledText className="esc-pure-hero-title" radius={110} duration={1.2} speed={0.5} scrambleChars=".:" scrambleColor="#CD202A">
               Where Voices Rise &amp; Leaders Are Forged.
-            </h2>
+            </ScrambledText>
 
             <p className="esc-pure-lead-paragraph">
               Founded in the autumn of <strong>2017</strong>, the <strong>English Speaking Club (ESC)</strong> was created with a bold, enduring mission: to break the paralyzing fear of the stage and offer an empowering sanctuary where every speaker discovers clarity, conviction, and resonance. Through parliamentary debate, speech workshops, and studio recordings, we forge articulate minds who speak with courage and shape the future.

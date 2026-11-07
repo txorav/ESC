@@ -1998,7 +1998,7 @@ html {
   height: 100%;
   z-index: 12;
   pointer-events: none;
-  will-change: transform, opacity;
+  will-change: transform;
 }
 
 /* Left Leader Tail that visually emerges from under the Left Year Stage into the aperture */
@@ -2659,3 +2659,5 @@ footer p.footer-sub {
     width: 440px;
   }
 }
+
+.esc-intro-textloop{position:absolute;right:1vw;bottom:2vh;width:min(420px,70vw);z-index:20;pointer-events:none}

@@ -337,6 +337,7 @@ export const Timeline: React.FC = () => {
     let rafId = 0;
     const smoothedProgress = TIMELINE_EVENTS.map(() => 0);
     const smoothedEntry = TIMELINE_EVENTS.map(() => 0);
+    const smoothedExit = TIMELINE_EVENTS.map(() => 0);
 
     const updateScrollChoreography = () => {
       const vh = window.innerHeight || 1;
@@ -403,10 +404,18 @@ export const Timeline: React.FC = () => {
           const frameDividerWidth = 18;
           const stepStridePx = apertureWidth + frameDividerWidth;
 
-          // 1. Slide horizontal film housing in from the left side (under the Year Stage)
-          const entryOffsetPx = (1 - nextE) * -(apertureWidth * 0.65);
-          clipShellEl.style.transform = `translate3d(${entryOffsetPx.toFixed(1)}px, 0, 0)`;
-          clipShellEl.style.opacity = clamp(nextE * 1.25, 0, 1).toFixed(3);
+          // 1. The clip travels in from beyond the screen's left edge (passing under the
+          //    year stage, z-index 30) and, once the gallery is done, keeps travelling right
+          //    over the frame and out. Pure transform: no opacity at any point.
+          const leaderPx = 240;
+          const apertureLeft = apertureEl.getBoundingClientRect().left;
+          const rawExit = clamp((vh - rect.bottom) / (vh * 0.45), 0, 1);
+          const prevX = smoothedExit[i];
+          const nextX = Math.abs(rawExit - prevX) < 0.0004 ? rawExit : prevX + (rawExit - prevX) * 0.18;
+          smoothedExit[i] = nextX;
+          const inOffsetPx = -(1 - nextE) * (Math.max(apertureLeft, 0) + apertureWidth + leaderPx);
+          const outOffsetPx = nextX * (apertureWidth + leaderPx + Math.max(window.innerWidth - apertureLeft - apertureWidth, 0));
+          clipShellEl.style.transform = `translate3d(${(inOffsetPx + outOffsetPx).toFixed(1)}px, 0, 0)`;
 
           // 2. Drive horizontal photo frames leftwards across the aperture window
           const continuousFrameIndex = nextP * (photoCount - 1);
