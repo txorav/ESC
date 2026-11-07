@@ -2335,97 +2335,60 @@ html {
 }
 
 /* ============================================================
-   8. PINNED NUMBERS EXPERIENCE: 3D GLOSSY PILL & ALL-SIDES TELEMETRY
+   8. MEASURES & SCALE: POX COLOR-SHIFTING SECTIONS WITH 3D PILL
    ============================================================ */
-.stats-pin-container {
-  position: relative;
-  height: 380vh;
+.stats-master-flow {
   width: 100%;
-  background-color: var(--esc-bg, #111744);
-  transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: visible;
+  position: relative;
 }
 
-.stats-sticky-stage {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 100%;
+.measure-section {
+  min-height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: calc(env(safe-area-inset-top, 0px) + 70px) clamp(20px, 3.5vw, 60px) 40px;
+  padding: clamp(110px, 15vh, 190px) 24px;
   box-sizing: border-box;
-  overflow: hidden;
-  user-select: none;
-  font-family: Arial, Helvetica, sans-serif;
   position: relative;
-}
-
-/* Ambient Watermark Background */
-.stats-ambient-watermark {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  overflow: visible !important;
   font-family: Arial, Helvetica, sans-serif !important;
-  font-size: clamp(200px, 36vw, 480px);
-  font-weight: 900;
-  line-height: 1;
-  color: #FFFFFF;
-  opacity: 0.035;
-  pointer-events: none;
-  user-select: none;
-  z-index: 1;
-  letter-spacing: -10px;
-  will-change: transform;
 }
 
-/* Center Stage */
-.stats-center-stage {
-  position: relative;
-  z-index: 5;
+.measure-content-wrap {
+  width: 100%;
+  max-width: 840px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 760px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(44px) scale(0.97);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Outside Writing (Top Eyebrow) */
-.stat-outside-eyebrow-wrap {
-  min-height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: clamp(10px, 1.8vh, 20px);
+.measure-content-wrap.in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
-.stat-outside-eyebrow {
+/* Outside Writing: Top Eyebrow */
+.measure-outside-eyebrow {
   font-family: Arial, Helvetica, sans-serif !important;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.25em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.65);
+  margin-bottom: clamp(16px, 2.8vh, 32px);
   display: block;
-  animation: statEyebrowEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes statEyebrowEnter {
-  0% {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0ms,
+              opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0ms;
 }
 
 /* 3D Catchy Pill Stage */
-.stats-3d-pill-wrapper {
+.measure-pill-stage {
   position: relative;
   width: min(580px, 88vw);
   height: min(290px, 44vw);
@@ -2434,28 +2397,32 @@ html {
   justify-content: center;
   perspective: 1200px;
   margin: 0 auto;
+  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) 90ms,
+              opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1) 90ms;
 }
 
-.stats-3d-pill-canvas-container {
+.measure-pill-canvas-container {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   cursor: grab;
-  filter: drop-shadow(0 28px 55px rgba(0, 0, 0, 0.65));
+  touch-action: pan-y;
+  filter: drop-shadow(0 28px 60px rgba(0, 0, 0, 0.7));
 }
 
-.stats-3d-pill-canvas-container:active {
+.measure-pill-canvas-container:active {
   cursor: grabbing;
 }
 
-.stats-3d-pill-canvas {
+.measure-pill-canvas {
   width: 100% !important;
   height: 100% !important;
   display: block;
 }
 
-.stats-3d-pill-overlay {
+/* Inside the 3D Pill: Number & Label */
+.measure-pill-overlay {
   position: absolute;
   inset: 0;
   display: flex;
@@ -2468,7 +2435,7 @@ html {
   text-align: center;
 }
 
-.stat-pill-number-anim {
+.measure-pill-number {
   font-family: Arial, Helvetica, sans-serif !important;
   font-size: clamp(56px, 9.5vw, 120px);
   font-weight: 900;
@@ -2476,11 +2443,11 @@ html {
   color: #FFFFFF;
   letter-spacing: -2px;
   display: block;
-  text-shadow: 0 4px 22px rgba(0, 0, 0, 0.55);
-  animation: statNumEnter 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
 }
 
-.stat-pill-label-anim {
+.measure-pill-tagline {
   font-family: Arial, Helvetica, sans-serif !important;
   font-size: clamp(12px, 1.8vw, 17px);
   font-weight: 700;
@@ -2490,320 +2457,18 @@ html {
   color: rgba(255, 255, 255, 0.95);
   display: block;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
-  animation: statLabelEnter 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes statNumEnter {
-  0% {
-    opacity: 0;
-    transform: translateY(28px) scale(0.9);
-    filter: blur(4px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0px);
-  }
-}
-
-@keyframes statLabelEnter {
-  0% {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Outside Writing (Bottom Subtitle) */
-.stat-outside-subheading-wrap {
-  min-height: 54px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: clamp(16px, 2.5vh, 28px);
-}
-
-.stat-outside-subheading {
+/* Outside Writing: Bottom Subheading */
+.measure-outside-subheading {
   font-family: Arial, Helvetica, sans-serif !important;
-  font-size: clamp(15px, 2vw, 20px);
+  font-size: clamp(16px, 2.2vw, 22px);
   font-weight: 500;
   max-width: 640px;
-  margin: 0 auto;
+  margin: clamp(24px, 3.5vh, 44px) auto 0;
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.5;
   text-align: center;
-  animation: statSubheadingEnter 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes statSubheadingEnter {
-  0% {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Step Controllers */
-.stats-steps-nav {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  margin-top: clamp(18px, 2.8vh, 32px);
-  z-index: 10;
-}
-
-.stats-step-btn {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  outline: none;
-  background: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.7);
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 6px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.stats-step-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  color: #FFFFFF;
-  transform: translateY(-1px);
-}
-
-.stats-step-btn.active {
-  background: #FFFFFF;
-  color: #111744;
-  font-weight: 800;
-  border-color: #FFFFFF;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-  transform: scale(1.08);
-}
-
-/* ============================================================
-   ALL-SIDES TELEMETRY & ARCHITECTURAL RAILS
-   ============================================================ */
-.stats-side-rail {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 6;
-  pointer-events: auto;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* Left Rail */
-.stats-rail-left {
-  left: clamp(24px, 4vw, 60px);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.stats-rail-header {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stats-rail-eyebrow {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.stats-rail-live-tag {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.15em;
-  color: #CD202A;
-}
-
-.stats-rail-items {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  position: relative;
-  padding-left: 14px;
-}
-
-.stats-rail-item {
-  border: none;
-  background: none;
-  outline: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 4px 0;
-  text-align: left;
-  transition: transform 0.25s ease, opacity 0.25s ease;
-  opacity: 0.45;
-}
-
-.stats-rail-item:hover {
-  opacity: 0.85;
-  transform: translateX(3px);
-}
-
-.stats-rail-item.active {
-  opacity: 1;
-  transform: translateX(6px);
-}
-
-.stats-rail-step {
-  font-size: 11px;
-  font-weight: 900;
-  color: #FFFFFF;
-  letter-spacing: 0.1em;
-}
-
-.stats-rail-tag {
-  font-size: 11px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.85);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.stats-rail-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: transparent;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.stats-rail-item.active .stats-rail-dot {
-  background: #CD202A;
-  box-shadow: 0 0 10px #CD202A;
-}
-
-.stats-rail-track-line {
-  position: absolute;
-  left: 0;
-  top: 40px;
-  bottom: 0;
-  width: 2px;
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.stats-rail-progress-fill {
-  width: 100%;
-  background: #CD202A;
-  transition: height 0.15s ease-out;
-  border-radius: 2px;
-}
-
-/* Right Rail (Telemetry & Impact Monitor) */
-.stats-rail-right {
-  right: clamp(24px, 4vw, 60px);
-}
-
-.stats-telemetry-box {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 18px;
-  padding: 20px 22px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 200px;
-}
-
-.stats-telemetry-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.stats-telemetry-beacon {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #283FC3;
-  box-shadow: 0 0 10px #283FC3;
-  animation: telemetryPulse 2s infinite ease-in-out;
-}
-
-@keyframes telemetryPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.4); opacity: 0.6; }
-}
-
-.stats-telemetry-title {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.85);
-  text-transform: uppercase;
-}
-
-.stats-telemetry-metric {
-  display: flex;
-  flex-direction: column;
-}
-
-.stats-telemetry-num {
-  font-size: 38px;
-  font-weight: 900;
-  line-height: 1;
-  color: #FFFFFF;
-  letter-spacing: -1px;
-}
-
-.stats-telemetry-sub {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 4px;
-}
-
-.stats-telemetry-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.stats-telemetry-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-}
-
-.stats-telemetry-row span {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.stats-telemetry-row strong {
-  color: #FFFFFF;
-  font-weight: 700;
-}
-
-@media (max-width: 1100px) {
-  .stats-side-rail {
-    display: none;
-  }
 }
 
 /* ============================================================
