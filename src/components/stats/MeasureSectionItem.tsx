@@ -39,9 +39,9 @@ export const MeasureSectionItem: React.FC<MeasureSectionItemProps> = ({
     >
       <div className={`measure-content-wrap ${isInView ? 'in' : ''}`}>
         {/* Outside Writing: Eyebrow */}
-        <div className="measure-outside-eyebrow">
+        <h2 className="measure-outside-eyebrow">
           <span>{measure.eyebrow}</span>
-        </div>
+        </h2>
 
         {/* 3D Catchy Pill Stage */}
         <div className="measure-pill-stage">
@@ -58,7 +58,7 @@ export const MeasureSectionItem: React.FC<MeasureSectionItemProps> = ({
                 active={isInView}
               />
             </span>
-            <span className="measure-pill-tagline">{measure.label}</span>
+            <h3 className="measure-pill-tagline">{measure.label}</h3>
           </div>
         </div>
 
