@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import OptionWheel from './reactbits/OptionWheel';
+import GradualBlur from './reactbits/GradualBlur';
 
 export interface FilmPhotoFrame {
   id: string;
@@ -475,9 +476,26 @@ export const Timeline: React.FC = () => {
       className="tl-archive-section"
       aria-label="English Speaking Club Historical 35mm Film Timeline"
     >
-      {/* Full Left-Side Section-Bounded Progressive Blur (Starts at section edges, zero card bounds) */}
-      <div className="timeline-section-progressive-blur" aria-hidden="true">
-        <div className="timeline-section-progressive-blur-inner" />
+      {/* Full Left-Side Section-Bounded Gradual Blur from React Bits (behind year stage, zero card bounds) */}
+      <div className="timeline-section-blur-container" aria-hidden="true">
+        <GradualBlur
+          position="left"
+          width="100%"
+          height="100%"
+          strength={3}
+          layers={8}
+          curve="bezier"
+          exponential
+          tint="rgba(12, 16, 45, 0.45)"
+          zIndex={25}
+          style={{
+            position: 'sticky',
+            top: 0,
+            height: '100vh',
+            width: '100%',
+            borderRadius: 0,
+          }}
+        />
       </div>
 
       <div className="tl-split-layout">
