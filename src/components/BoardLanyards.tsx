@@ -18,9 +18,9 @@ export const BoardLanyards: React.FC = () => {
               cardColor="#1C1E4B"
               strapColor="#283FC3"
               finish="glossy"
-              size={0.82}
+              size={0.78}
               gravity={0.9}
-              breeze={0.25}
+              breeze={0.14}
             />
           </div>
           <div className="board-info-pure">
@@ -40,9 +40,9 @@ export const BoardLanyards: React.FC = () => {
               cardColor="#111744"
               strapColor="#BF2026"
               finish="glossy"
-              size={1.05}
+              size={1.0}
               gravity={0.9}
-              breeze={0.3}
+              breeze={0.18}
             />
           </div>
           <div className="board-info-pure">
@@ -62,9 +62,9 @@ export const BoardLanyards: React.FC = () => {
               cardColor="#1C1E4B"
               strapColor="#4E55D3"
               finish="glossy"
-              size={0.82}
+              size={0.78}
               gravity={0.9}
-              breeze={0.25}
+              breeze={0.14}
             />
           </div>
           <div className="board-info-pure">

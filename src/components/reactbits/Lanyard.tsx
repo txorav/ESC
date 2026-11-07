@@ -1082,25 +1082,37 @@ const Lanyard = ({
     const frameView = () => {
       const s = settingsRef.current!;
       const aspect = view.width / view.height;
-      const strapDrop = mix(0.1, 0.35, clamp(s.strapLength, 0, 1));
-      const requiredHeight = (layout.height / (1 - strapDrop)) * 1.35;
-      const scaleFactor = clamp(s.size, 0.2, 1.2);
-      let viewHeight = Math.max(requiredHeight, (layout.height / scaleFactor) * 1.4);
-      const minimumWidth = (layout.width / 0.72) * 1.2;
-      if (viewHeight * aspect < minimumWidth) viewHeight = minimumWidth / aspect;
+      const diagonal = Math.hypot(layout.width, layout.height);
+      const scale = clamp(s.size, 0.25, 1.4);
+
+      // Generous clearance for diagonal tilt + physics swinging motion
+      const strapDrop = mix(0.1, 0.32, clamp(s.strapLength, 0, 1));
+      const totalSpanY = layout.height * 1.35 + diagonal * 0.55;
+      const totalSpanX = diagonal + 1.4;
+
+      let viewHeight = (totalSpanY / scale) / (1 - strapDrop);
+      const minimumWidth = (totalSpanX / scale);
+
+      if (viewHeight * aspect < minimumWidth) {
+        viewHeight = minimumWidth / aspect;
+      }
       const viewWidth = viewHeight * aspect;
+
       camera.aspect = aspect;
       camera.position.set(0, 0, viewHeight / 2 / Math.tan((FOV * Math.PI) / 360));
       camera.lookAt(0, 0, 0);
       camera.updateProjectionMatrix();
       camera.updateMatrixWorld();
+
       foilUniforms.foilKey.value.set(-2.5, 4, 6).normalize().transformDirection(camera.matrixWorldInverse);
       foilUniforms.foilFill.value.set(3, -1, 4).normalize().transformDirection(camera.matrixWorldInverse);
       foilUniforms.foilTop.value.set(0.5, 4.5, 8).normalize().transformDirection(camera.matrixWorldInverse);
+
       const anchorX = ((ANCHORS[s.anchor] ?? 0.5) - 0.5) * viewWidth;
-      const anchorY = viewHeight / 2 + 0.15;
+      const anchorY = viewHeight / 2 + 0.1;
       const cardTop = viewHeight / 2 - viewHeight * strapDrop;
       const hangTop = cardTop + (layout.hangY - layout.height / 2);
+
       sim.anchor.set(anchorX, anchorY, 0);
       configureSimulation(sim, layout, anchorY - hangTop);
       sim.nodes[0].copy(sim.anchor);
