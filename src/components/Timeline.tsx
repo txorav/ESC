@@ -475,14 +475,16 @@ export const Timeline: React.FC = () => {
       className="tl-archive-section"
       aria-label="English Speaking Club Historical 35mm Film Timeline"
     >
+      {/* Full Left-Side Section-Bounded Progressive Blur (Starts at section edges, zero card bounds) */}
+      <div className="timeline-section-progressive-blur" aria-hidden="true">
+        <div className="timeline-section-progressive-blur-inner" />
+      </div>
+
       <div className="tl-split-layout">
         {/* =================================================================
-            LEFT SIDE: THE YEAR STAGE (Untouched Visual Styling & Progressive Blur)
+            LEFT SIDE: THE YEAR STAGE (Zero Card Bounds, Pure Floating Typography)
             ================================================================= */}
         <aside className="timeline-year-stage" aria-label="Historical Year Selector">
-          {/* Progressive Blur Layer: Strongly blurred in the corner, fading to clear */}
-          <div className="timeline-progressive-blur" aria-hidden="true" />
-
           <div className="year-wheel-clean">
             <OptionWheel
               items={years.map((y) => String(y))}
