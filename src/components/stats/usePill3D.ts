@@ -4,7 +4,7 @@
  * Ensures rigorous memory teardown, GPU resource release, and offscreen performance pausing.
  */
 
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import * as THREE from 'three';
 
 interface UsePill3DParams {
@@ -14,6 +14,7 @@ interface UsePill3DParams {
 interface UsePill3DReturn {
   containerRef: RefObject<HTMLDivElement | null>;
   canvasRef: RefObject<HTMLCanvasElement | null>;
+  isWebGLSupported: boolean;
 }
 
 /**
@@ -36,11 +37,12 @@ function isWebGLAvailable(): boolean {
  * of the Three.js 3D Capsule Pill scene.
  *
  * @param params - Contains pill coloration and visual options.
- * @returns Object with containerRef and canvasRef to bind to JSX elements.
+ * @returns Object with containerRef, canvasRef, and isWebGLSupported status.
  */
 export function usePill3D({ color }: UsePill3DParams): UsePill3DReturn {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [isWebGLSupported, setIsWebGLSupported] = useState<boolean>(true);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -48,6 +50,7 @@ export function usePill3D({ color }: UsePill3DParams): UsePill3DReturn {
     if (!container || !canvas) return;
 
     if (!isWebGLAvailable()) {
+      setIsWebGLSupported(false);
       return;
     }
 
@@ -238,7 +241,7 @@ export function usePill3D({ color }: UsePill3DParams): UsePill3DReturn {
     };
   }, [color]);
 
-  return { containerRef, canvasRef };
+  return { containerRef, canvasRef, isWebGLSupported };
 }
 
 export default usePill3D;

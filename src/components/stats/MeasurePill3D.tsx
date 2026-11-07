@@ -17,13 +17,21 @@ export const MeasurePill3D: React.FC<MeasurePill3DProps> = ({
   className = '',
   style,
 }) => {
-  const { containerRef, canvasRef } = usePill3D({ color });
+  const { containerRef, canvasRef, isWebGLSupported } = usePill3D({ color });
+
+  const fallbackStyle: React.CSSProperties = !isWebGLSupported
+    ? {
+        background: color,
+        borderRadius: '9999px',
+        boxShadow: '0 24px 60px rgba(0, 0, 0, 0.7)',
+      }
+    : {};
 
   return (
     <div
       ref={containerRef}
-      className={`measure-pill-canvas-container ${className}`.trim()}
-      style={style}
+      className={`measure-pill-canvas-container ${!isWebGLSupported ? 'fallback-capsule' : ''} ${className}`.trim()}
+      style={{ ...fallbackStyle, ...style }}
       aria-hidden="true"
     >
       <canvas ref={canvasRef} className="measure-pill-canvas" />
