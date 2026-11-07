@@ -1,22 +1,91 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import GooeyNav from './reactbits/GooeyNav';
+import type { GooeyNavItem } from './reactbits/GooeyNav';
 
 interface NavbarProps {
   hidden?: boolean;
+  activeSection?: string;
+  theme?: 'dark' | 'light';
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ hidden = false }) => {
+const NAV_ITEMS: GooeyNavItem[] = [
+  { label: 'Home', href: '#home' },
+  { label: 'About', href: '#intro' },
+  { label: 'Events', href: '#tl' },
+  { label: 'DG', href: '#board' },
+  { label: 'Activities', href: '#dept' },
+  { label: 'Contact', href: '#faq' },
+];
+
+const SECTION_MAP: Record<string, number> = {
+  home: 0,
+  intro: 1,
+  tl: 2,
+  stats: 2,
+  board: 3,
+  dept: 4,
+  faq: 5,
+};
+
+export const Navbar: React.FC<NavbarProps> = ({
+  hidden = false,
+  activeSection = 'home',
+  theme = 'dark',
+}) => {
+  const targetIndex = SECTION_MAP[activeSection] ?? 0;
+  const [activeIndex, setActiveIndex] = useState(targetIndex);
+
+  useEffect(() => {
+    setActiveIndex(targetIndex);
+  }, [targetIndex]);
+
   return (
-    <nav className={`top-paper-nav ${hidden ? 'nav-hidden' : 'nav-visible'}`}>
-      <div className="paper-bar">
-        <a href="#home">Home</a>
-        <a href="#intro">About</a>
-        <a href="#tl">Events</a>
-        <a href="#board">DG</a>
-        <a href="#dept">Activities</a>
-        <a href="#faq">Contact us</a>
-        <a className="cta" href="#footer">Follow us</a>
+    <header className={`esc-navbar-wrapper ${hidden ? 'nav-hidden' : 'nav-visible'}`}>
+      <div className="esc-navbar-inner">
+        {/* Left: Logo */}
+        <a href="#home" className="esc-navbar-brand" aria-label="ESC Home">
+          <img src="/logo.svg" alt="ESC Logo" className="esc-navbar-logo-img" />
+          <span className="esc-navbar-brand-name">ESC</span>
+        </a>
+
+        {/* Center: GooeyNav */}
+        <div className="esc-navbar-center">
+          <GooeyNav
+            items={NAV_ITEMS}
+            activeIndex={activeIndex}
+            theme={theme}
+            color="#CD202A"
+            activeTextColor="#FFFFFF"
+            colors={['#CD202A', '#283FC3']}
+            size="md"
+            frame={true}
+            particleCount={15}
+            spread={56}
+            animationTime={600}
+            timeVariance={300}
+            gooeyness={0.5}
+            wobble={0.5}
+            hoverEffect={true}
+            onChange={(index, item) => {
+              setActiveIndex(index);
+              if (item.href?.startsWith('#')) {
+                const el = document.querySelector(item.href);
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth' });
+                }
+              }
+            }}
+          />
+        </div>
+
+        {/* Right: CTA */}
+        <div className="esc-navbar-right">
+          <a href="#footer" className="esc-navbar-cta">
+            Follow us
+          </a>
+        </div>
       </div>
-    </nav>
+    </header>
   );
 };
 

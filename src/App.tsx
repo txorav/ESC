@@ -15,6 +15,8 @@ export const App: React.FC = () => {
   const [activeModal, setActiveModal] = useState<ModalContent | null>(null);
   const [toastMessage, setToastMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [activeSection, setActiveSection] = useState<string>('home');
+  const [navTheme, setNavTheme] = useState<'dark' | 'light'>('dark');
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -33,17 +35,19 @@ export const App: React.FC = () => {
           if (entry.isIntersecting) {
             const el = entry.target as HTMLElement;
             const bg = el.dataset.bg;
-            const theme = el.dataset.theme || (bg?.toLowerCase() === '#ffffff' ? 'light' : 'dark');
+            const theme = (el.dataset.theme || (bg?.toLowerCase() === '#ffffff' ? 'light' : 'dark')) as 'dark' | 'light';
 
             if (bg) {
               document.body.style.setProperty('--esc-bg', bg);
               document.body.style.backgroundColor = bg;
             }
             document.body.dataset.theme = theme;
+            setNavTheme(theme);
 
             // Highlight active navigation link
             const id = el.id;
             if (id) {
+              setActiveSection(id);
               document.querySelectorAll('.paper-bar a').forEach((a) => {
                 const href = a.getAttribute('href');
                 if (href === `#${id}`) {
@@ -103,7 +107,7 @@ export const App: React.FC = () => {
         <i />
       </div>
 
-      <Navbar hidden={isLoading} />
+      <Navbar hidden={isLoading} activeSection={activeSection} theme={navTheme} />
       <HeroDesk
         onOpenModal={setActiveModal}
         onShowToast={showToast}
