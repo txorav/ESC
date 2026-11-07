@@ -476,26 +476,26 @@ export const Timeline: React.FC = () => {
       className="tl-archive-section"
       aria-label="English Speaking Club Historical 35mm Film Timeline"
     >
-      {/* Full Left-Side Section-Bounded Gradual Blur from React Bits (behind year stage, zero card bounds) */}
-      <div className="timeline-section-blur-container" aria-hidden="true">
-        <GradualBlur
-          position="left"
-          width="100%"
-          height="100%"
-          strength={3}
-          layers={8}
-          curve="bezier"
-          exponential
-          tint="rgba(12, 16, 45, 0.45)"
-          zIndex={25}
-          style={{
-            position: 'sticky',
-            top: 0,
-            height: '100vh',
-            width: '100%',
-            borderRadius: 0,
-          }}
-        />
+      {/* Full Left-Side Section-Bounded Persistent Gradual Blur from React Bits (behind year stage, zero card bounds) */}
+      <div className="timeline-persistent-blur-wrap" aria-hidden="true">
+        <div className="timeline-persistent-blur-sticky">
+          <GradualBlur
+            position="left"
+            width="100%"
+            height="100%"
+            strength={3.5}
+            layers={10}
+            curve="bezier"
+            exponential
+            tint="radial-gradient(ellipse at 0% 25%, rgba(145, 175, 255, 0.28) 0%, rgba(40, 63, 195, 0.42) 36%, rgba(14, 18, 52, 0.65) 70%, transparent 100%)"
+            zIndex={25}
+            style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: 0,
+            }}
+          />
+        </div>
       </div>
 
       <div className="tl-split-layout">

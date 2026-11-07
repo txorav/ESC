@@ -115,8 +115,14 @@ export const GradualBlur: React.FC<GradualBlurProps> = ({
       const to = level((i + 1) / count);
       const radius = Math.sqrt(Math.max(to * to - from * from, 0));
       const filter = [
-        `blur(calc(${radius.toFixed(3)}px * var(--gradual-blur-reveal, 1) * var(--gradual-blur-hover, 1)))`,
-        boost !== 1 ? `saturate(calc(1 + ${(boost - 1).toFixed(4)} * var(--gradual-blur-reveal, 1)))` : ''
+        autoHide || hoverIntensity !== 1
+          ? `blur(calc(${radius.toFixed(3)}px * var(--gradual-blur-reveal, 1) * var(--gradual-blur-hover, 1)))`
+          : `blur(${radius.toFixed(3)}px)`,
+        boost !== 1
+          ? autoHide || hoverIntensity !== 1
+            ? `saturate(calc(1 + ${(boost - 1).toFixed(4)} * var(--gradual-blur-reveal, 1)))`
+            : `saturate(${boost.toFixed(4)})`
+          : ''
       ]
         .filter(Boolean)
         .join(' ');
@@ -149,7 +155,9 @@ export const GradualBlur: React.FC<GradualBlurProps> = ({
             background: tint,
             maskImage: tintMask,
             WebkitMaskImage: tintMask,
-            opacity: 'calc(var(--gradual-blur-reveal, 1) * min(var(--gradual-blur-hover, 1), 1))' as unknown as number,
+            opacity: autoHide || hoverIntensity !== 1
+              ? ('calc(var(--gradual-blur-reveal, 1) * min(var(--gradual-blur-hover, 1), 1))' as unknown as number)
+              : opacity,
             transition: `opacity ${fade}`
           }
         : null;
@@ -261,7 +269,7 @@ export const GradualBlur: React.FC<GradualBlurProps> = ({
     bottom: edge === 'top' ? undefined : 0,
     left: edge === 'right' ? undefined : 0,
     right: edge === 'left' ? undefined : 0,
-    height: vertical ? depth : undefined,
+    height: vertical ? depth : (height != null ? toLength(height) : '100%'),
     width: vertical ? (span ?? undefined) : depth,
     marginInline: span ? 'auto' : undefined,
     ...style

@@ -1579,43 +1579,28 @@ html {
   }
 }
 
-/* Individual Volumetric Cumulus Puffs inside each Cloud Actor */
-.esc-cloud-puff {
-  position: absolute;
-  display: block;
-  border-radius: 56% 44% 62% 38% / 52% 58% 42% 48%;
+.esc-cloud-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   pointer-events: none;
+  user-select: none;
+  display: block;
 }
 
-/* Sunlit zenith crown puff */
-.esc-cloud-puff--crown {
-  background: #ffffff;
-  filter: blur(4px);
+.esc-cloud-actor--canopy .esc-cloud-image {
+  filter: brightness(1.05) drop-shadow(0 25px 45px rgba(0, 0, 0, 0.42));
+  opacity: 1;
 }
 
-/* Warm side-lit cumulus lobe */
-.esc-cloud-puff--lit {
-  background: #f5f8fc;
-  filter: blur(5px);
+.esc-cloud-actor--mid .esc-cloud-image {
+  filter: brightness(0.97) drop-shadow(0 15px 30px rgba(0, 0, 0, 0.3));
+  opacity: 0.95;
 }
 
-/* Volumetric mid-body shadow lobe */
-.esc-cloud-puff--mid {
-  background: #dbe7f5;
-  filter: blur(6px);
-}
-
-/* Dense atmospheric cloud base with silver-indigo underbelly */
-.esc-cloud-puff--base {
-  background: #b8ccdf;
-  filter: blur(8px);
-}
-
-/* Soft outer vapor mist halo unifying the puffs */
-.esc-cloud-puff--vapor {
-  background: #ffffff;
-  opacity: 0.35;
-  filter: blur(14px);
+.esc-cloud-actor--deep .esc-cloud-image {
+  filter: brightness(0.88) saturate(0.92);
+  opacity: 0.88;
 }
 
 /* ==========================================================================
@@ -1801,19 +1786,29 @@ html {
   align-items: start;
 }
 
-/* Full Left-Side Section-Bounded Gradual Blur from React Bits (Zero Card Bounds) */
-.timeline-section-blur-container {
+/* Full Left-Side Section-Bounded Persistent Gradual Blur from React Bits (Zero Card Bounds) */
+.timeline-persistent-blur-wrap {
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
-  width: clamp(400px, 50vw, 840px);
+  width: clamp(440px, 52vw, 880px);
   pointer-events: none;
   z-index: 25;
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  overflow: hidden;
+  overflow: visible !important;
+}
+
+.timeline-persistent-blur-sticky {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+  overflow: visible !important;
 }
 
 /* 1. LEFT SIDE: THE YEAR STAGE (Zero Card Bounds, Pure Floating Typography) */
@@ -2187,7 +2182,7 @@ html {
 }
 
 @media (max-width: 960px) {
-  .timeline-section-blur-container {
+  .timeline-persistent-blur-wrap {
     display: none;
   }
 

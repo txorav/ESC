@@ -26,7 +26,7 @@ interface CloudActorSpec {
   gatherY: number;     // Target Y in vh when clouds gather back in Phase 4
   gatherScale: number;
   seed: number;
-  puffs: CloudPuffSpec[];
+  puffs?: CloudPuffSpec[];
 }
 
 const PUFF_PRESETS: CloudPuffSpec[][] = [
@@ -333,25 +333,18 @@ export const IntroClouds: React.FC = () => {
               className={`esc-cloud-actor esc-cloud-actor--${cloud.layer}`}
               style={{
                 width: `${cloud.widthVw}vw`,
-                height: `${cloud.heightVw}vw`,
+                height: `${cloud.widthVw}vw`,
                 marginLeft: `${-cloud.widthVw / 2}vw`,
-                marginTop: `${-cloud.heightVw / 2}vw`,
+                marginTop: `${-cloud.widthVw / 2}vw`,
               }}
             >
               <div className="esc-cloud-inner-breathe" style={{ animationDelay: `${-cloud.seed}s` }}>
-                {cloud.puffs.map((puff, pIdx) => (
-                  <span
-                    key={`${cloud.id}-puff-${pIdx}`}
-                    className={`esc-cloud-puff esc-cloud-puff--${puff.tone}`}
-                    style={{
-                      width: `${puff.w}%`,
-                      height: `${puff.h}%`,
-                      left: `${50 + puff.ox - puff.w / 2}%`,
-                      top: `${50 + puff.oy - puff.h / 2}%`,
-                      transform: `rotate(${puff.rot}deg)`,
-                    }}
-                  />
-                ))}
+                <img
+                  src="/cloud.png"
+                  alt=""
+                  className="esc-cloud-image"
+                  draggable={false}
+                />
               </div>
             </div>
           ))}
