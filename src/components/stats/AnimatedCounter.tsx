@@ -37,10 +37,16 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   const animatedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    if (!active || animatedRef.current) return;
+    if (!active) return;
+
+    if (animatedRef.current) {
+      setVal(target);
+      return;
+    }
 
     if (checkPrefersReducedMotion() || duration <= 0) {
       animatedRef.current = true;
+      setVal(target);
       return;
     }
 
@@ -87,7 +93,13 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   const formattedValue = formatter ? formatter(val) : val.toLocaleString();
 
   return (
-    <span className={className}>
+    <span
+      className={className}
+      style={{
+        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontVariantNumeric: 'tabular-nums',
+      }}
+    >
       {prefix}
       {formattedValue}
       {suffix}

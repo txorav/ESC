@@ -137,9 +137,28 @@ export function usePill3D({ color }: UsePill3DParams): UsePill3DReturn {
     const ro = new ResizeObserver(handleResize);
     ro.observe(container);
 
-    // Pause rendering loop when off-screen for battery & performance savings
+    // Pause rendering loop completely when off-screen for battery & performance savings
+    const stopAnimation = () => {
+      if (state.rafId) {
+        cancelAnimationFrame(state.rafId);
+        state.rafId = 0;
+      }
+    };
+
+    const startAnimation = () => {
+      if (!state.rafId && state.isVisible) {
+        state.rafId = requestAnimationFrame(animate);
+      }
+    };
+
     const io = new IntersectionObserver(([entry]) => {
-      state.isVisible = Boolean(entry?.isIntersecting);
+      const visible = Boolean(entry?.isIntersecting);
+      state.isVisible = visible;
+      if (visible) {
+        startAnimation();
+      } else {
+        stopAnimation();
+      }
     });
     io.observe(container);
 
@@ -159,10 +178,14 @@ export function usePill3D({ color }: UsePill3DParams): UsePill3DReturn {
     container.addEventListener('pointermove', handlePointerMove, { passive: true });
     container.addEventListener('pointerleave', handlePointerReset, { passive: true });
     container.addEventListener('pointercancel', handlePointerReset, { passive: true });
+    container.addEventListener('pointerup', handlePointerReset, { passive: true });
 
     const animate = () => {
+      if (!state.isVisible) {
+        state.rafId = 0;
+        return;
+      }
       state.rafId = requestAnimationFrame(animate);
-      if (!state.isVisible) return;
 
       if (!prefersReducedMotion) {
         state.clock += 0.02;
@@ -180,17 +203,18 @@ export function usePill3D({ color }: UsePill3DParams): UsePill3DReturn {
       renderer.render(scene, camera);
     };
 
-    animate();
+    startAnimation();
 
     // Comprehensive memory leak prevention and GPU cleanup
     return () => {
-      cancelAnimationFrame(state.rafId);
+      stopAnimation();
       ro.disconnect();
       io.disconnect();
 
       container.removeEventListener('pointermove', handlePointerMove);
       container.removeEventListener('pointerleave', handlePointerReset);
       container.removeEventListener('pointercancel', handlePointerReset);
+      container.removeEventListener('pointerup', handlePointerReset);
 
       // Geometry and Material release
       geom.dispose();

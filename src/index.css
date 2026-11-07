@@ -2310,31 +2310,6 @@ html {
 }
 
 /* ============================================================
-   8. STATS SECTION: 3D GLOWING PILL
-   ============================================================ */
-#stats {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: transparent !important;
-  position: relative;
-  overflow: hidden;
-  padding: clamp(90px, 12vh, 140px) clamp(24px, 4vw, 64px);
-}
-
-.stats-layout {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 5vw;
-  align-items: center;
-  max-width: 1250px;
-  width: 100%;
-  z-index: 5;
-}
-
-/* ============================================================
    8. MEASURES & SCALE: POX COLOR-SHIFTING SECTIONS WITH 3D PILL
    ============================================================ */
 .stats-master-flow {
@@ -2347,11 +2322,19 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(110px, 15vh, 190px) 24px;
+  padding: clamp(100px, 14vh, 180px) 24px;
   box-sizing: border-box;
   position: relative;
   overflow: visible !important;
   font-family: Arial, Helvetica, sans-serif !important;
+  background: var(--esc-bg, #111744);
+  transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#stats.measure-section {
+  min-height: 90vh;
+  padding: clamp(100px, 14vh, 180px) 24px;
+  background: transparent !important;
 }
 
 .measure-content-wrap {
@@ -2391,7 +2374,7 @@ html {
 .measure-pill-stage {
   position: relative;
   width: min(580px, 88vw);
-  height: min(290px, 44vw);
+  height: min(290px, 52vw);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2437,7 +2420,7 @@ html {
 
 .measure-pill-number {
   font-family: Arial, Helvetica, sans-serif !important;
-  font-size: clamp(56px, 9.5vw, 120px);
+  font-size: clamp(38px, 8.5vw, 120px);
   font-weight: 900;
   line-height: 1;
   color: #FFFFFF;
@@ -3115,12 +3098,6 @@ details.faq-item[open] summary.faq-q::after {
   }
   .wheel-container {
     height: 120px;
-  }
-  .stats-layout {
-    grid-template-columns: 1fr;
-  }
-  .pill-3d {
-    padding: 40px 30px;
   }
   .dict-book {
     width: 440px;
