@@ -227,6 +227,8 @@ export const IntroClouds: React.FC = () => {
     <section
       id="intro"
       ref={sectionRef}
+      data-bg="#111744"
+      data-theme="dark"
       className="esc-intro-section"
       aria-label="English Speaking Club Sky Transition and Moving Introduction"
     >

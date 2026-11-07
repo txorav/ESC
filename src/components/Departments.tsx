@@ -73,13 +73,17 @@ const DEPARTMENTS: DeptData[] = [
 
 export const Departments: React.FC = () => {
   return (
-    <section className="sec" id="dept" data-bg="#2C3076">
-      <h2 className="sec-heading">Our Departments</h2>
-      <p className="sec-subheading">
-        Explore ESC’s specialized teams. Click or hover any folder to inspect documents and projects.
-      </p>
+    <section className="sec" id="dept" data-bg="#2C3076" data-theme="dark">
+      <div className="sec-divider esc-reveal" />
+      <div className="sec-head-wrap esc-reveal">
+        <span className="sec-eyebrow">04 / GUILDS &amp; DEPARTMENTS</span>
+        <h2 className="sec-heading">Our Departments</h2>
+        <p className="sec-subheading">
+          Explore ESC’s specialized teams. Click or hover any folder to inspect documents and projects.
+        </p>
+      </div>
 
-      <div className="folders-grid">
+      <div className="folders-grid esc-reveal">
         {DEPARTMENTS.map((d) => (
           <div key={d.name} className="folder-card-wrapper">
             <div className="folder-component-box">

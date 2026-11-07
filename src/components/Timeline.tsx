@@ -468,12 +468,24 @@ export const Timeline: React.FC = () => {
   const isVintage = currentEvent.year <= 2021;
   const currentBg = isVintage ? '#1C1E4B' : '#283FC3';
 
+  useEffect(() => {
+    const tl = document.getElementById('tl');
+    if (!tl) return;
+    const rect = tl.getBoundingClientRect();
+    const mid = window.innerHeight / 2;
+    if (rect.top <= mid && rect.bottom >= mid) {
+      document.body.style.setProperty('--esc-bg', currentBg);
+      document.body.style.backgroundColor = currentBg;
+    }
+  }, [currentBg]);
+
   return (
     <section
       id="tl"
       style={{ '--film-bg': currentBg } as React.CSSProperties}
       data-bg={currentBg}
-      className="tl-archive-section"
+      data-theme="dark"
+      className="tl-archive-section sec"
       aria-label="English Speaking Club Historical 35mm Film Timeline"
     >
       {/* Full Left-Side Section-Bounded Persistent Gradual Blur from React Bits (behind year stage, zero card bounds) */}

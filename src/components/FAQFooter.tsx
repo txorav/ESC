@@ -8,10 +8,15 @@ export const FAQFooter: React.FC = () => {
   return (
     <>
       {/* FAQ SECTION */}
-      <section className="sec" id="faq" data-bg="#FFFFFF">
-        <h2 className="sec-heading" style={{ color: 'var(--navy)' }}>Frequently Asked Questions</h2>
-        <p className="sec-subheading" style={{ color: '#666' }}>Everything you need to know about joining ESC.</p>
-        <div className="faq-container">
+      <section className="sec" id="faq" data-bg="#FFFFFF" data-theme="light">
+        <div className="sec-divider esc-reveal" />
+        <div className="sec-head-wrap esc-reveal">
+          <span className="sec-eyebrow" style={{ color: 'rgba(17, 23, 68, 0.65)' }}>05 / INQUIRIES &amp; ADMISSIONS</span>
+          <h2 className="sec-heading" style={{ color: 'var(--navy)' }}>Frequently Asked Questions</h2>
+          <p className="sec-subheading" style={{ color: '#555' }}>Everything you need to know about joining ESC.</p>
+        </div>
+
+        <div className="faq-container esc-reveal">
           <details className="faq-item" open>
             <summary className="faq-q">Who is eligible to join ESC?</summary>
             <div className="faq-a">
@@ -40,11 +45,15 @@ export const FAQFooter: React.FC = () => {
       </section>
 
       {/* FULL-PAGE FOOTER WITH BIG TEXTS */}
-      <footer id="footer" className="fullpage-footer" data-bg="#0c1033">
+      <footer id="footer" className="fullpage-footer" data-bg="#0c1033" data-theme="dark">
         <div className="footer-big-content">
-          <h1 className="footer-huge-title">ENGLISH SPEAKING CLUB</h1>
+          <div className="sec-divider esc-reveal" style={{ opacity: 0.15 }} />
+          <span className="sec-eyebrow esc-reveal" style={{ color: 'rgba(255, 255, 255, 0.45)', margin: '0 auto clamp(16px, 2vh, 24px) 0' }}>
+            06 / GLOBAL DIRECTORY &amp; SOCIALS
+          </span>
+          <h1 className="footer-huge-title esc-reveal">ENGLISH SPEAKING CLUB</h1>
 
-          <nav className="footer-big-links" aria-label="Social and Contact Links">
+          <nav className="footer-big-links esc-reveal" aria-label="Social and Contact Links">
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">INSTAGRAM</a>
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">FACEBOOK</a>
             <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LINKEDIN</a>
@@ -53,7 +62,7 @@ export const FAQFooter: React.FC = () => {
             <a href="mailto:contact@esc-club.org" className="footer-big-email">CONTACT@ESC-CLUB.ORG</a>
           </nav>
 
-          <div className="footer-big-bottom">
+          <div className="footer-big-bottom esc-reveal">
             <span>© 2017–2026 ESC</span>
             <button type="button" onClick={scrollToTop} className="footer-back-to-top-btn">
               BACK TO TOP ↑

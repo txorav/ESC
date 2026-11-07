@@ -444,7 +444,13 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
   };
 
   return (
-    <section id="home" ref={homeRef} onPointerDown={handlePanStart}>
+    <section
+      id="home"
+      ref={homeRef}
+      data-bg="#111744"
+      data-theme="dark"
+      onPointerDown={handlePanStart}
+    >
       {/* 1. SOLID COLOR LOADING CURTAIN (#111744 - NO GRADIENT, NO PROGRESS BAR) */}
       <div
         id="loader-curtain"

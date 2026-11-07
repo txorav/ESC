@@ -61,8 +61,15 @@ export const StatsSection: React.FC = () => {
   }, []);
 
   return (
-    <section className="sec" id="stats" data-bg="#A71017" ref={sectionRef}>
-      <div className="stats-layout">
+    <section className="sec" id="stats" data-bg="#A71017" data-theme="dark" ref={sectionRef}>
+      <div className="sec-divider esc-reveal" />
+      <div className="sec-head-wrap esc-reveal">
+        <span className="sec-eyebrow">02 / SCALE &amp; IMPACT</span>
+        <h2 className="sec-heading">Our Numbers Speak</h2>
+        <p className="sec-subheading">A vibrant community driven by passion, debate, and human connection.</p>
+      </div>
+
+      <div className="stats-layout esc-reveal">
         <div className="stat-col">
           <div className="stat-badge">
             <div className="stat-number">{counts.events}</div>

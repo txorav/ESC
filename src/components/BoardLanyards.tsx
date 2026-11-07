@@ -3,13 +3,17 @@ import Lanyard from './reactbits/Lanyard';
 
 export const BoardLanyards: React.FC = () => {
   return (
-    <section className="sec" id="board" data-bg="#1C1E4B">
-      <h2 className="sec-heading">Board Members</h2>
-      <p className="sec-subheading">
-        Three visionary leaders orchestrating our debate tournaments, podcasts, and cultural exchanges.
-      </p>
+    <section className="sec" id="board" data-bg="#1C1E4B" data-theme="dark">
+      <div className="sec-divider esc-reveal" />
+      <div className="sec-head-wrap esc-reveal">
+        <span className="sec-eyebrow">03 / EXECUTIVE LEADERSHIP</span>
+        <h2 className="sec-heading">Board Members</h2>
+        <p className="sec-subheading">
+          Three visionary leaders orchestrating our debate tournaments, podcasts, and cultural exchanges.
+        </p>
+      </div>
 
-      <div className="board-podium-layout">
+      <div className="board-podium-layout esc-reveal">
         {/* LEFT: VICE PRESIDENT (Scaled down) */}
         <div className="board-member-item board-member-side board-member-left">
           <div className="lanyard-3d-box">

@@ -26,13 +26,23 @@ html {
 }
 
 body {
+  --esc-bg: #111744;
+  --esc-fg: #FFFFFF;
+  --esc-accent: #CD202A;
   font-family: Arial, Helvetica, sans-serif;
-  background: var(--navy);
-  color: var(--white);
-  transition: background 0.8s ease-in-out;
+  background-color: var(--esc-bg);
+  color: var(--esc-fg);
+  transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   overflow-x: hidden;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+}
+
+body[data-theme="light"] {
+  --esc-fg: #111744;
+  --esc-accent: #283FC3;
+  color: var(--esc-fg);
 }
 
 #root {
@@ -143,7 +153,19 @@ nav .paper-bar {
     45% 89%, 39% 100%, 33% 88%, 27% 100%, 21% 89%,
     15% 100%, 9% 88%, 3% 100%, 0 89%
   );
-  transition: transform 0.2s ease;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+nav.scrolled .paper-bar {
+  padding: 8px 24px 12px;
+  transform: rotate(0deg) scale(0.98);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+body[data-theme="light"] nav .paper-bar {
+  box-shadow: 0 14px 34px rgba(17, 23, 68, 0.28);
 }
 
 nav .paper-bar:hover {
@@ -158,8 +180,24 @@ nav a {
 }
 
 nav a:hover {
-  color: var(--rb);
+  color: var(--br);
   transform: translateY(-1px);
+}
+
+nav a.active {
+  color: var(--br) !important;
+  font-weight: 700;
+}
+
+nav a.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 2px;
+  background: var(--br);
+  border-radius: 2px;
 }
 
 nav a.cta {
@@ -1436,8 +1474,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #111744;
-  will-change: background;
+  background: transparent;
+  will-change: transform;
 }
 
 /* ==========================================================================
@@ -1787,8 +1825,8 @@ html {
   width: 100%;
   min-height: 100vh;
   padding: 6vh clamp(16px, 2.5vw, 40px) 16vh;
-  background-color: var(--film-bg, #1C1E4B);
-  transition: background-color 0.6s ease;
+  background-color: transparent !important;
+  transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: visible;
 }
 
@@ -2227,11 +2265,13 @@ html {
 #stats {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--dr);
+  background: transparent !important;
   position: relative;
   overflow: hidden;
+  padding: clamp(90px, 12vh, 140px) clamp(24px, 4vw, 64px);
 }
 
 .stats-layout {
@@ -2320,9 +2360,9 @@ html {
    ============================================================ */
 #board {
   text-align: center;
-  background: var(--ind);
+  background: transparent !important;
   overflow: visible !important;
-  padding: 90px 24px 110px;
+  padding: clamp(90px, 12vh, 140px) 24px clamp(110px, 14vh, 160px);
 }
 
 .sec-heading {
@@ -2517,9 +2557,9 @@ html {
    10. DEPARTMENTS: REACTBITS 3D FOLDERS
    ============================================================ */
 #dept {
-  background: var(--ind2);
+  background: transparent !important;
   text-align: center;
-  padding: 90px 24px 110px;
+  padding: clamp(90px, 12vh, 140px) 24px clamp(110px, 14vh, 160px);
 }
 
 .folders-grid {
@@ -2581,9 +2621,9 @@ html {
    11. FAQ & SOCIAL MEDIA FOOTER
    ============================================================ */
 #faq {
-  background: var(--white);
+  background: transparent !important;
   color: var(--navy);
-  padding: 100px 24px 110px;
+  padding: clamp(100px, 13vh, 150px) 24px clamp(110px, 14vh, 160px);
   text-align: center;
   position: relative;
   z-index: 2;
@@ -2661,7 +2701,7 @@ details.faq-item[open] summary.faq-q::after {
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #0c1033; /* Pure solid color - NO gradient */
+  background: transparent !important;
   color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -2888,3 +2928,113 @@ details.faq-item[open] summary.faq-q::after {
 }
 
 .esc-intro-textloop{position:absolute;right:1vw;bottom:2vh;width:min(420px,70vw);z-index:20;pointer-events:none}
+
+/* ============================================================
+   POX-INSPIRED BESPOKE SCROLL EXPERIENCE: ARCHITECTURAL TRANSITIONS,
+   PROGRESSIVE TOP BLUR, REVEALS & MINIMALIST SELECTIVE FOCUS
+   ============================================================ */
+
+/* Top Progressive Blur (adapts dynamically to active section background) */
+.esc-top-blur {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: clamp(80px, 12vh, 120px);
+  z-index: 450;
+  pointer-events: none;
+}
+.esc-top-blur i {
+  position: absolute;
+  inset: 0;
+}
+.esc-top-blur .blur-tint {
+  background: var(--esc-bg, #111744);
+  opacity: 0.72;
+  transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-mask-image: linear-gradient(to bottom, #000 20%, transparent);
+  mask-image: linear-gradient(to bottom, #000 20%, transparent);
+}
+.esc-top-blur i:nth-child(2) {
+  -webkit-backdrop-filter: blur(1.5px);
+  backdrop-filter: blur(1.5px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 50%, transparent);
+  mask-image: linear-gradient(to bottom, #000 0, #000 50%, transparent);
+}
+.esc-top-blur i:nth-child(3) {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 30%, transparent 75%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 30%, transparent 75%);
+}
+.esc-top-blur i:nth-child(4) {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 15%, transparent 55%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 15%, transparent 55%);
+}
+
+/* Minimal Architectural Section Dividers (drawing line across on scroll) */
+.sec-divider {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto clamp(24px, 4.5vh, 44px);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.18;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sec-divider.in {
+  transform: scaleX(1);
+}
+
+.sec-head-wrap {
+  text-align: center;
+  margin-bottom: clamp(32px, 5vh, 56px);
+  width: 100%;
+}
+
+.sec-eyebrow {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.65;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* Subtle Scroll Entrance Reveals */
+.esc-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.esc-reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Minimal Selective Focus on Interactive Layouts */
+@media (hover: hover) and (pointer: fine) {
+  .folders-grid:hover .folder-card-wrapper:not(:hover) {
+    opacity: 0.45;
+    transform: scale(0.985);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .board-podium-layout:hover .board-member-item:not(:hover) {
+    opacity: 0.55;
+    transition: opacity 0.35s ease;
+  }
+
+  .faq-container:hover .faq-item:not(:hover) {
+    opacity: 0.55;
+    transition: opacity 0.3s ease;
+  }
+}
