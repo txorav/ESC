@@ -3,11 +3,13 @@ import * as THREE from 'three';
 
 export interface MeasureItem {
   id: string;
+  stepCode: string;
   target: number;
   suffix: string;
   eyebrow: string;
   label: string;
   subheading: string;
+  tag: string;
   bg: string;
   pillColor: string;
 }
@@ -15,74 +17,111 @@ export interface MeasureItem {
 export const MEASURES: MeasureItem[] = [
   {
     id: 'members',
+    stepCode: '01',
     target: 1250,
     suffix: '+',
     eyebrow: '02.1 / COMMUNITY SCALE',
     label: 'Active Members Since 2017',
     subheading: 'A vibrant community driven by passion, debate, and human connection across campuses.',
+    tag: 'SCALE & REACH',
     bg: '#111744',
     pillColor: '#CD202A',
   },
   {
     id: 'events',
+    stepCode: '02',
     target: 120,
     suffix: '+',
     eyebrow: '02.2 / EXCELLENCE & IMPACT',
     label: 'Major Events & Tournaments',
     subheading: 'Inter-university debate championships, cultural summits, and speech competitions organized.',
+    tag: 'TOURNAMENTS',
     bg: '#1C1E4B',
     pillColor: '#283FC3',
   },
   {
     id: 'workshops',
+    stepCode: '03',
     target: 48,
     suffix: '+',
     eyebrow: '02.3 / CONTINUOUS MASTERY',
     label: 'Intensive Speaking Workshops',
     subheading: 'Empowering club members with public speaking, rhetoric, leadership, and stage presence.',
+    tag: 'WORKSHOPS',
     bg: '#0F1226',
     pillColor: '#CD202A',
   },
   {
     id: 'awards',
+    stepCode: '04',
     target: 15,
     suffix: '+',
     eyebrow: '02.4 / HONORS & RECOGNITION',
     label: 'National Debate Awards',
     subheading: 'Recognized trophies and top speaker titles earned in prestigious national tournaments.',
+    tag: 'RECOGNITION',
     bg: '#111744',
     pillColor: '#A71017',
   },
   {
     id: 'partners',
+    stepCode: '05',
     target: 9,
     suffix: '+',
     eyebrow: '02.5 / STRATEGIC ALLIANCES',
-    label: 'Partner University Scientific Clubs',
+    label: 'Partner University Clubs',
     subheading: 'Collaborative events, mutual mentorships, and joint intellectual symposiums nationwide.',
+    tag: 'ALLIANCES',
     bg: '#1C1E4B',
     pillColor: '#283FC3',
   },
 ];
 
 /* -------------------------------------------------------------
-   THREE.JS 3D GLOSSY PILL CANVAS WITH REAL-TIME LIGHTING & SPRING
+   THREE.JS 3D GLOSSY PILL CANVAS WITH CONTINUOUS SCROLL PHYSICS
    ------------------------------------------------------------- */
-const StatsPill3DCanvas: React.FC<{
+interface Pill3DCanvasProps {
   color: string;
   triggerKey: number;
-}> = ({ color, triggerKey }) => {
+  scrollProgress: number;
+  scrollVelocity: number;
+}
+
+const StatsPill3DCanvas: React.FC<Pill3DCanvasProps> = ({
+  color,
+  triggerKey,
+  scrollProgress,
+  scrollVelocity,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<{
-    material: THREE.MeshPhysicalMaterial;
-    mesh: THREE.Mesh;
-    targetColor: THREE.Color;
-    wobbleAmp: number;
-    wobblePhase: number;
-    mouseX: number;
-    mouseY: number;
-  } | null>(null);
+
+  const stateRef = useRef({
+    material: null as THREE.MeshPhysicalMaterial | null,
+    mesh: null as THREE.Mesh | null,
+    keyLight: null as THREE.DirectionalLight | null,
+    specularLight: null as THREE.PointLight | null,
+    targetColor: new THREE.Color(color),
+    wobbleAmp: 0,
+    wobblePhase: 0,
+    mouseX: 0,
+    mouseY: 0,
+    scrollProgress: 0,
+    scrollVelocity: 0,
+  });
+
+  // Sync props to stateRef every frame without re-instantiating scene
+  useEffect(() => {
+    stateRef.current.scrollProgress = scrollProgress;
+    stateRef.current.scrollVelocity = scrollVelocity;
+  }, [scrollProgress, scrollVelocity]);
+
+  useEffect(() => {
+    const s = stateRef.current;
+    s.targetColor.set(color);
+    s.wobbleAmp = 0.35;
+    s.wobblePhase = 0;
+  }, [color, triggerKey]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -102,11 +141,11 @@ const StatsPill3DCanvas: React.FC<{
     const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
     camera.position.set(0, 0, 6.2);
 
-    // 3D Capsule Geometry (horizontal pill: radius 1.16, length 2.25)
+    // 3D Capsule Pill Geometry: horizontal orientation
     const geom = new THREE.CapsuleGeometry(1.16, 2.25, 32, 64);
     geom.rotateZ(Math.PI / 2);
 
-    const targetColor = new THREE.Color(color);
+    const targetColor = stateRef.current.targetColor;
     const material = new THREE.MeshPhysicalMaterial({
       color: targetColor.clone(),
       roughness: 0.12,
@@ -119,7 +158,7 @@ const StatsPill3DCanvas: React.FC<{
     const mesh = new THREE.Mesh(geom, material);
     scene.add(mesh);
 
-    // Studio Lighting setup
+    // Studio lighting with moving specular light linked to scroll
     const keyLight = new THREE.DirectionalLight(0xffffff, 3.4);
     keyLight.position.set(4, 5, 5);
     scene.add(keyLight);
@@ -128,23 +167,17 @@ const StatsPill3DCanvas: React.FC<{
     rimLight.position.set(-4, -3, -3);
     scene.add(rimLight);
 
-    const specularLight = new THREE.PointLight(0xffffff, 2.6, 14);
+    const specularLight = new THREE.PointLight(0xffffff, 2.8, 14);
     specularLight.position.set(0, 3, 3.5);
     scene.add(specularLight);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
     scene.add(ambientLight);
 
-    const state = {
-      material,
-      mesh,
-      targetColor,
-      wobbleAmp: 0,
-      wobblePhase: 0,
-      mouseX: 0,
-      mouseY: 0,
-    };
-    sceneRef.current = state;
+    stateRef.current.material = material;
+    stateRef.current.mesh = mesh;
+    stateRef.current.keyLight = keyLight;
+    stateRef.current.specularLight = specularLight;
 
     const resize = () => {
       if (!container) return;
@@ -164,13 +197,13 @@ const StatsPill3DCanvas: React.FC<{
       const rect = container.getBoundingClientRect();
       const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const ny = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-      state.mouseX = nx;
-      state.mouseY = ny;
+      stateRef.current.mouseX = nx;
+      stateRef.current.mouseY = ny;
     };
 
     const handlePointerLeave = () => {
-      state.mouseX = 0;
-      state.mouseY = 0;
+      stateRef.current.mouseX = 0;
+      stateRef.current.mouseY = 0;
     };
 
     container.addEventListener('pointermove', handlePointerMove);
@@ -178,29 +211,43 @@ const StatsPill3DCanvas: React.FC<{
 
     let raf = 0;
     let clock = 0;
+    let smoothProgress = 0;
+    let smoothVelocity = 0;
 
     const animate = () => {
       raf = requestAnimationFrame(animate);
       clock += 0.02;
+      const s = stateRef.current;
+
+      // Smooth dampening for continuous scroll reactivity
+      smoothProgress += (s.scrollProgress - smoothProgress) * 0.12;
+      smoothVelocity += (s.scrollVelocity - smoothVelocity) * 0.15;
 
       // Smooth color lerping
-      material.color.lerp(state.targetColor, 0.08);
+      material.color.lerp(s.targetColor, 0.08);
 
-      // Mouse interactive tilt
-      const targetRotY = state.mouseX * 0.45;
-      const targetRotX = -state.mouseY * 0.35;
+      // Mouse interactive tilt + continuous scroll momentum tilt
+      const targetRotY = s.mouseX * 0.42 + (smoothProgress - 0.5) * 0.8 + smoothVelocity * 0.025;
+      const targetRotX = -s.mouseY * 0.32 - smoothVelocity * 0.035;
+
       mesh.rotation.y += (targetRotY - mesh.rotation.y) * 0.08;
       mesh.rotation.x += (targetRotX - mesh.rotation.x) * 0.08;
 
-      // Floating gentle motion
-      mesh.position.y = Math.sin(clock * 1.5) * 0.06;
+      // Ambient floating & dynamic scroll breathing
+      mesh.position.y = Math.sin(clock * 1.5) * 0.06 - smoothVelocity * 0.015;
 
-      // Spring wobble on step change
-      if (state.wobbleAmp > 0.001) {
-        state.wobblePhase += 0.28;
-        state.wobbleAmp *= 0.91;
-        const wobble = Math.sin(state.wobblePhase) * state.wobbleAmp;
-        mesh.rotation.z = Math.sin(state.wobblePhase * 0.8) * state.wobbleAmp * 0.35;
+      // Move specular glint light dynamically across pill as scroll progresses
+      if (specularLight) {
+        specularLight.position.x = Math.sin(smoothProgress * Math.PI * 2) * 3.5;
+        specularLight.position.y = 2.5 + Math.cos(smoothProgress * Math.PI * 2) * 1.0;
+      }
+
+      // Spring wobble on step transition
+      if (s.wobbleAmp > 0.001) {
+        s.wobblePhase += 0.28;
+        s.wobbleAmp *= 0.91;
+        const wobble = Math.sin(s.wobblePhase) * s.wobbleAmp;
+        mesh.rotation.z = Math.sin(s.wobblePhase * 0.8) * s.wobbleAmp * 0.35;
         mesh.scale.set(1 + wobble * 0.15, 1 - wobble * 0.12, 1 + wobble * 0.08);
       } else {
         mesh.rotation.z += (0 - mesh.rotation.z) * 0.1;
@@ -220,18 +267,8 @@ const StatsPill3DCanvas: React.FC<{
       geom.dispose();
       material.dispose();
       renderer.dispose();
-      sceneRef.current = null;
     };
   }, []);
-
-  // When color or triggerKey changes, trigger 3D impulse & color update
-  useEffect(() => {
-    if (sceneRef.current) {
-      sceneRef.current.targetColor.set(color);
-      sceneRef.current.wobbleAmp = 0.38;
-      sceneRef.current.wobblePhase = 0;
-    }
-  }, [color, triggerKey]);
 
   return (
     <div ref={containerRef} className="stats-3d-pill-canvas-container">
@@ -253,7 +290,7 @@ const AnimatedCounter: React.FC<{
     let raf: number;
     const startTime = performance.now();
     const duration = 650;
-    const startVal = Math.round(target * 0.4);
+    const startVal = Math.round(target * 0.45);
 
     const step = (now: number) => {
       const p = Math.min(1, (now - startTime) / duration);
@@ -279,14 +316,19 @@ const AnimatedCounter: React.FC<{
 };
 
 /* -------------------------------------------------------------
-   MAIN PINNED STATS EXPERIENCE (PINNED SCROLL, NOT CLASSIC SCROLL)
+   EXCEPTIONAL PINNED SCROLL STATS EXPERIENCE WITH ALL-SIDES TELEMETRY
    ------------------------------------------------------------- */
 export const StatsSection: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [progressVal, setProgressVal] = useState(0);
+  const [scrollVelocity, setScrollVelocity] = useState(0);
+  const lastScrollY = useRef(0);
+  const lastTime = useRef(performance.now());
 
   useEffect(() => {
     let ticking = false;
+
     const handleScroll = () => {
       if (ticking) return;
       ticking = true;
@@ -294,16 +336,30 @@ export const StatsSection: React.FC = () => {
         ticking = false;
         const track = trackRef.current;
         if (!track) return;
+
         const rect = track.getBoundingClientRect();
         const totalScrollable = rect.height - window.innerHeight;
         if (totalScrollable <= 0) return;
 
-        // Progress from 0 to 1 through the pinned section
+        // Current scroll velocity
+        const now = performance.now();
+        const dt = Math.max(16, now - lastTime.current);
+        const currentY = window.scrollY;
+        const delta = currentY - lastScrollY.current;
+        const velocity = (delta / dt) * 16; // velocity in px per frame
+        lastScrollY.current = currentY;
+        lastTime.current = now;
+        setScrollVelocity(Math.max(-30, Math.min(30, velocity)));
+
+        // Continuous progress through the pinned track (0 to 1)
         const progress = Math.min(1, Math.max(0, -rect.top / totalScrollable));
+        setProgressVal(progress);
+
+        // Map to active index
         const index = Math.min(MEASURES.length - 1, Math.floor(progress * MEASURES.length));
         setActiveIndex(index);
 
-        // Synchronize section background with active measure color
+        // Update body background smoothly to active measure color
         const currentBg = MEASURES[index].bg;
         document.body.style.setProperty('--esc-bg', currentBg);
         document.body.style.backgroundColor = currentBg;
@@ -317,15 +373,22 @@ export const StatsSection: React.FC = () => {
 
   const goToIndex = (index: number) => {
     setActiveIndex(index);
+    setProgressVal(index / (MEASURES.length - 1));
     const track = trackRef.current;
     if (!track) return;
-    const trackTop = track.getBoundingClientRect().top + window.scrollY;
+    const rect = track.getBoundingClientRect();
+    const trackTop = rect.top + window.scrollY;
     const totalScrollable = track.offsetHeight - window.innerHeight;
-    const targetY = trackTop + (index / (MEASURES.length - 1)) * totalScrollable + 15;
-    window.scrollTo({ top: targetY, behavior: 'smooth' });
+    const targetY = trackTop + (index / MEASURES.length) * totalScrollable + 20;
+    try {
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    } catch {
+      window.scrollTo(0, targetY);
+    }
   };
 
   const current = MEASURES[activeIndex];
+  const percentDisplay = Math.round(progressVal * 100);
 
   return (
     <section
@@ -336,53 +399,139 @@ export const StatsSection: React.FC = () => {
       data-theme="dark"
     >
       <div className="stats-sticky-stage">
-        {/* WRITING OUTSIDE (TOP EYEBROW) */}
-        <div className="stat-outside-eyebrow-wrap">
-          <span key={current.id} className="stat-outside-eyebrow">
-            {current.eyebrow}
-          </span>
+        {/* PARALLAX WATERMARK NUMERAL IN BACKGROUND */}
+        <div
+          className="stats-ambient-watermark"
+          aria-hidden="true"
+          style={{
+            transform: `translate3d(0, ${(0.5 - progressVal) * 80}px, 0) scale(${1 + (progressVal % 0.2) * 0.3})`,
+          }}
+        >
+          {current.stepCode}
         </div>
 
-        {/* 3D CATCHY PILL CONTAINER */}
-        <div className="stats-3d-pill-wrapper">
-          {/* THREE.JS GLOSSY 3D PILL */}
-          <StatsPill3DCanvas
-            color={current.pillColor}
-            triggerKey={activeIndex}
-          />
+        {/* ========================================================
+            LEFT SIDE: ARCHITECTURAL INDEX RAIL & SCRUB TRACK
+            ======================================================== */}
+        <aside className="stats-side-rail stats-rail-left" aria-label="Measures Index">
+          <div className="stats-rail-header">
+            <span className="stats-rail-eyebrow">ESC INDEX</span>
+            <div className="stats-rail-live-tag">LIVE TELEMETRY</div>
+          </div>
 
-          {/* TEXT INSIDE THE 3D PILL */}
-          <div className="stats-3d-pill-overlay">
-            <div key={`num-${current.id}`} className="stat-pill-number-anim">
-              <AnimatedCounter target={current.target} suffix={current.suffix} />
+          <div className="stats-rail-items">
+            {MEASURES.map((m, idx) => {
+              const isActive = idx === activeIndex;
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  className={`stats-rail-item ${isActive ? 'active' : ''}`}
+                  onClick={() => goToIndex(idx)}
+                >
+                  <span className="stats-rail-step">{m.stepCode}</span>
+                  <span className="stats-rail-tag">{m.tag}</span>
+                  <span className="stats-rail-dot" />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Continuous vertical progress fill line */}
+          <div className="stats-rail-track-line">
+            <div
+              className="stats-rail-progress-fill"
+              style={{ height: `${Math.max(4, Math.min(100, progressVal * 100))}%` }}
+            />
+          </div>
+        </aside>
+
+        {/* ========================================================
+            CENTER STAGE: EYEBROW + 3D PILL + SUBTITLE
+            ======================================================== */}
+        <div className="stats-center-stage">
+          {/* Top Eyebrow */}
+          <div className="stat-outside-eyebrow-wrap">
+            <span key={current.id} className="stat-outside-eyebrow">
+              {current.eyebrow}
+            </span>
+          </div>
+
+          {/* 3D Catchy Pill Stage */}
+          <div className="stats-3d-pill-wrapper">
+            {/* THREE.JS GLOSSY 3D PILL CANVAS */}
+            <StatsPill3DCanvas
+              color={current.pillColor}
+              triggerKey={activeIndex}
+              scrollProgress={progressVal}
+              scrollVelocity={scrollVelocity}
+            />
+
+            {/* TEXT INSIDE THE 3D PILL */}
+            <div className="stats-3d-pill-overlay">
+              <div key={`num-${current.id}`} className="stat-pill-number-anim">
+                <AnimatedCounter target={current.target} suffix={current.suffix} />
+              </div>
+              <div key={`lbl-${current.id}`} className="stat-pill-label-anim">
+                {current.label}
+              </div>
             </div>
-            <div key={`lbl-${current.id}`} className="stat-pill-label-anim">
-              {current.label}
-            </div>
+          </div>
+
+          {/* Bottom Subtitle */}
+          <div className="stat-outside-subheading-wrap">
+            <p key={`sub-${current.id}`} className="stat-outside-subheading">
+              {current.subheading}
+            </p>
+          </div>
+
+          {/* Interactive Bottom Step Buttons */}
+          <div className="stats-steps-nav">
+            {MEASURES.map((m, idx) => (
+              <button
+                key={m.id}
+                type="button"
+                className={`stats-step-btn ${idx === activeIndex ? 'active' : ''}`}
+                onClick={() => goToIndex(idx)}
+                aria-label={`Jump to ${m.label}`}
+              >
+                0{idx + 1}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* WRITING OUTSIDE (BOTTOM SUBTITLE) */}
-        <div className="stat-outside-subheading-wrap">
-          <p key={`sub-${current.id}`} className="stat-outside-subheading">
-            {current.subheading}
-          </p>
-        </div>
+        {/* ========================================================
+            RIGHT SIDE: LIVE AUDIT & KINETIC CLUB METRICS
+            ======================================================== */}
+        <aside className="stats-side-rail stats-rail-right" aria-label="Section Telemetry">
+          <div className="stats-telemetry-box">
+            <div className="stats-telemetry-head">
+              <span className="stats-telemetry-beacon" />
+              <span className="stats-telemetry-title">IMPACT MONITOR</span>
+            </div>
 
-        {/* STEP CONTROLLERS */}
-        <div className="stats-steps-nav">
-          {MEASURES.map((m, idx) => (
-            <button
-              key={m.id}
-              type="button"
-              className={`stats-step-btn ${idx === activeIndex ? 'active' : ''}`}
-              onClick={() => goToIndex(idx)}
-              aria-label={`Go to ${m.label}`}
-            >
-              0{idx + 1}
-            </button>
-          ))}
-        </div>
+            <div className="stats-telemetry-metric">
+              <span className="stats-telemetry-num">{percentDisplay}%</span>
+              <span className="stats-telemetry-sub">SCRUB DEPTH</span>
+            </div>
+
+            <div className="stats-telemetry-meta">
+              <div className="stats-telemetry-row">
+                <span>EPOCH</span>
+                <strong>EST. 2017</strong>
+              </div>
+              <div className="stats-telemetry-row">
+                <span>AUDIT</span>
+                <strong>CONFIRMED</strong>
+              </div>
+              <div className="stats-telemetry-row">
+                <span>ACTIVE</span>
+                <strong>{current.label.slice(0, 16)}...</strong>
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
     </section>
   );
