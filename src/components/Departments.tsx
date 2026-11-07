@@ -74,7 +74,6 @@ const DEPARTMENTS: DeptData[] = [
 export const Departments: React.FC = () => {
   return (
     <section className="sec" id="dept" data-bg="#2C3076" data-theme="dark">
-      <div className="sec-divider esc-reveal" />
       <div className="sec-head-wrap esc-reveal">
         <span className="sec-eyebrow">04 / GUILDS &amp; DEPARTMENTS</span>
         <h2 className="sec-heading">Our Departments</h2>

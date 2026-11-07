@@ -4,7 +4,6 @@ import Lanyard from './reactbits/Lanyard';
 export const BoardLanyards: React.FC = () => {
   return (
     <section className="sec" id="board" data-bg="#1C1E4B" data-theme="dark">
-      <div className="sec-divider esc-reveal" />
       <div className="sec-head-wrap esc-reveal">
         <span className="sec-eyebrow">03 / EXECUTIVE LEADERSHIP</span>
         <h2 className="sec-heading">Board Members</h2>

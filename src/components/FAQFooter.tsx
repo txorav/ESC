@@ -9,7 +9,6 @@ export const FAQFooter: React.FC = () => {
     <>
       {/* FAQ SECTION */}
       <section className="sec" id="faq" data-bg="#FFFFFF" data-theme="light">
-        <div className="sec-divider esc-reveal" />
         <div className="sec-head-wrap esc-reveal">
           <span className="sec-eyebrow" style={{ color: 'rgba(17, 23, 68, 0.65)' }}>05 / INQUIRIES &amp; ADMISSIONS</span>
           <h2 className="sec-heading" style={{ color: 'var(--navy)' }}>Frequently Asked Questions</h2>

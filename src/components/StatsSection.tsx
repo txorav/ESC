@@ -1,104 +1,185 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-export const StatsSection: React.FC = () => {
-  const [counts, setCounts] = useState({
-    events: 0,
-    workshops: 0,
-    members: 0,
-    awards: 0,
-    partners: 0
-  });
+interface MeasureData {
+  id: string;
+  target: number;
+  suffix?: string;
+  eyebrow: string;
+  label: string;
+  subheading: string;
+  bg: string;
+  pillColor: string;
+}
 
+const MEASURES: MeasureData[] = [
+  {
+    id: 'stats',
+    target: 1250,
+    suffix: '+',
+    eyebrow: '02.1 / COMMUNITY SCALE',
+    label: 'Active Members Since 2017',
+    subheading: 'A vibrant community driven by passion, debate, and human connection across universities.',
+    bg: '#A71017',
+    pillColor: '#CD202A',
+  },
+  {
+    id: 'stats-events',
+    target: 120,
+    suffix: '+',
+    eyebrow: '02.2 / EXCELLENCE & IMPACT',
+    label: 'Major Events & Tournaments',
+    subheading: 'Inter-university debate championships, cultural summits, and speech competitions organized.',
+    bg: '#1C1E4B',
+    pillColor: '#283FC3',
+  },
+  {
+    id: 'stats-workshops',
+    target: 48,
+    suffix: '+',
+    eyebrow: '02.3 / CONTINUOUS MASTERY',
+    label: 'Intensive Speaking Workshops',
+    subheading: 'Empowering club members with public speaking, rhetoric, leadership, and stage presence.',
+    bg: '#CD202A',
+    pillColor: '#111744',
+  },
+  {
+    id: 'stats-awards',
+    target: 15,
+    suffix: '+',
+    eyebrow: '02.4 / HONORS & RECOGNITION',
+    label: 'National Debate Awards',
+    subheading: 'Recognized trophies and top speaker titles earned in prestigious national tournaments.',
+    bg: '#111744',
+    pillColor: '#CD202A',
+  },
+  {
+    id: 'stats-partners',
+    target: 9,
+    suffix: '+',
+    eyebrow: '02.5 / STRATEGIC ALLIANCES',
+    label: 'Partner University Scientific Clubs',
+    subheading: 'Collaborative events, mutual mentorships, and joint intellectual symposiums nationwide.',
+    bg: '#2C3076',
+    pillColor: '#283FC3',
+  },
+];
+
+interface MeasureSectionProps {
+  measure: MeasureData;
+  floatVariant: number;
+}
+
+const MeasureSection: React.FC<MeasureSectionProps> = ({ measure, floatVariant }) => {
+  const [count, setCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const animatedRef = useRef(false);
 
   useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    let rafId: number = 0;
+    let timerId: ReturnType<typeof setTimeout>;
+
+    const trigger = () => {
+      setIsVisible(true);
+      if (!animatedRef.current) {
+        animatedRef.current = true;
+        const startTime = performance.now();
+        const duration = 1600;
+
+        const step = (now: number) => {
+          const progress = Math.min(1, (now - startTime) / duration);
+          const easeOut = 1 - Math.pow(1 - progress, 3);
+          setCount(Math.round(measure.target * easeOut));
+
+          if (progress < 1) {
+            rafId = requestAnimationFrame(step);
+          } else {
+            setCount(measure.target);
+          }
+        };
+
+        rafId = requestAnimationFrame(step);
+        timerId = setTimeout(() => {
+          setCount(measure.target);
+        }, duration + 50);
+      }
+    };
+
+    const checkVisibility = () => {
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (rect.top < vh * 0.85 && rect.bottom > 0) {
+        trigger();
+      }
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && !animatedRef.current) {
-            animatedRef.current = true;
-            const startTime = performance.now();
-            const duration = 1800;
-
-            const targets = {
-              events: 120,
-              workshops: 48,
-              members: 1250,
-              awards: 15,
-              partners: 9
-            };
-
-            const step = (now: number) => {
-              const progress = Math.min(1, (now - startTime) / duration);
-              const easeOut = progress * (2 - progress);
-
-              setCounts({
-                events: Math.round(targets.events * easeOut),
-                workshops: Math.round(targets.workshops * easeOut),
-                members: Math.round(targets.members * easeOut),
-                awards: Math.round(targets.awards * easeOut),
-                partners: Math.round(targets.partners * easeOut)
-              });
-
-              if (progress < 1) {
-                requestAnimationFrame(step);
-              }
-            };
-
-            requestAnimationFrame(step);
+          if (entry.isIntersecting) {
+            trigger();
           }
         });
       },
-      { threshold: 0.4 }
+      { threshold: 0.1 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    observer.observe(el);
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+    checkVisibility();
 
-    return () => observer.disconnect();
-  }, []);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', checkVisibility);
+      cancelAnimationFrame(rafId);
+      clearTimeout(timerId);
+    };
+  }, [measure.target]);
 
   return (
-    <section className="sec" id="stats" data-bg="#A71017" data-theme="dark" ref={sectionRef}>
-      <div className="sec-divider esc-reveal" />
-      <div className="sec-head-wrap esc-reveal">
-        <span className="sec-eyebrow">02 / SCALE &amp; IMPACT</span>
-        <h2 className="sec-heading">Our Numbers Speak</h2>
-        <p className="sec-subheading">A vibrant community driven by passion, debate, and human connection.</p>
-      </div>
+    <section
+      className="sec stat-measure-sec"
+      id={measure.id}
+      data-bg={measure.bg}
+      data-theme="dark"
+      ref={sectionRef}
+    >
+      <div className={`stat-measure-content ${isVisible ? 'in' : ''}`}>
+        <span className="stat-measure-eyebrow">{measure.eyebrow}</span>
 
-      <div className="stats-layout esc-reveal">
-        <div className="stat-col">
-          <div className="stat-badge">
-            <div className="stat-number">{counts.events}</div>
-            <div className="stat-label">Major Events &amp; Tournaments</div>
-          </div>
-          <div className="stat-badge">
-            <div className="stat-number">{counts.workshops}</div>
-            <div className="stat-label">Intensive Speaking Workshops</div>
+        <div className="stat-pill-wrap">
+          <div
+            className={`stat-pill-3d stat-pill-float-${floatVariant}`}
+            style={{ backgroundColor: measure.pillColor }}
+          >
+            <span className="stat-pill-number">
+              {count.toLocaleString()}{measure.suffix}
+            </span>
+            <div className="stat-pill-label">{measure.label}</div>
           </div>
         </div>
 
-        <div className="pill-3d-wrap">
-          <div className="pill-3d">
-            <span className="pill-huge-num">{counts.members.toLocaleString()}</span>
-            <div className="pill-caption">Active Members Since 2017</div>
-          </div>
-        </div>
-
-        <div className="stat-col">
-          <div className="stat-badge">
-            <div className="stat-number">{counts.awards}</div>
-            <div className="stat-label">National Debate Awards</div>
-          </div>
-          <div className="stat-badge">
-            <div className="stat-number">{counts.partners}</div>
-            <div className="stat-label">Partner University Scientific Clubs</div>
-          </div>
-        </div>
+        <p className="stat-measure-subheading">{measure.subheading}</p>
       </div>
     </section>
   );
 };
+
+export const StatsSection: React.FC = () => {
+  return (
+    <div className="stats-measures-container">
+      {MEASURES.map((m, idx) => (
+        <MeasureSection
+          key={m.id}
+          measure={m}
+          floatVariant={(idx % 3) + 1}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default StatsSection;
