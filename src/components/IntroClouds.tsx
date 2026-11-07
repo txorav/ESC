@@ -254,7 +254,7 @@ export const IntroClouds: React.FC = () => {
             </div>
             <div className="esc-table-brass-inlay-center">
               <span className="esc-brass-rivet" />
-              <span className="esc-brass-engraving">ARCHIVE TABLE NO. IV  •  EST. MMXVII</span>
+              <span className="esc-brass-engraving">{'ESC Infinite Table 1 <2017>'}</span>
               <span className="esc-brass-rivet" />
             </div>
             <div className="esc-table-brass-corner esc-table-brass-corner--right">
