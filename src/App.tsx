@@ -68,7 +68,7 @@ export const App: React.FC = () => {
       window.requestAnimationFrame(() => {
         ticking = false;
         const y = window.scrollY;
-        const nav = document.querySelector('nav');
+        const nav = document.querySelector('nav.top-paper-nav');
         if (nav) {
           nav.classList.toggle('scrolled', y > 36);
         }

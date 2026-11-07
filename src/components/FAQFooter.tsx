@@ -47,22 +47,18 @@ export const FAQFooter: React.FC = () => {
       {/* FULL-PAGE FOOTER WITH BIG TEXTS */}
       <footer id="footer" className="fullpage-footer" data-bg="#0c1033" data-theme="dark">
         <div className="footer-big-content">
-          <div className="sec-divider esc-reveal" style={{ opacity: 0.15 }} />
-          <span className="sec-eyebrow esc-reveal" style={{ color: 'rgba(255, 255, 255, 0.45)', margin: '0 auto clamp(16px, 2vh, 24px) 0' }}>
-            06 / GLOBAL DIRECTORY &amp; SOCIALS
-          </span>
-          <h1 className="footer-huge-title esc-reveal">ENGLISH SPEAKING CLUB</h1>
+          <h1 className="footer-huge-title">ENGLISH SPEAKING CLUB</h1>
 
-          <nav className="footer-big-links esc-reveal" aria-label="Social and Contact Links">
+          <div className="footer-big-links" aria-label="Social and Contact Links">
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">INSTAGRAM</a>
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">FACEBOOK</a>
             <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LINKEDIN</a>
             <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">YOUTUBE</a>
             <a href="https://discord.com" target="_blank" rel="noopener noreferrer">DISCORD</a>
             <a href="mailto:contact@esc-club.org" className="footer-big-email">CONTACT@ESC-CLUB.ORG</a>
-          </nav>
+          </div>
 
-          <div className="footer-big-bottom esc-reveal">
+          <div className="footer-big-bottom">
             <span>© 2017–2026 ESC</span>
             <button type="button" onClick={scrollToTop} className="footer-back-to-top-btn">
               BACK TO TOP ↑

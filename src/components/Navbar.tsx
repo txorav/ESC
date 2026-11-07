@@ -6,7 +6,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ hidden = false }) => {
   return (
-    <nav className={hidden ? 'nav-hidden' : 'nav-visible'}>
+    <nav className={`top-paper-nav ${hidden ? 'nav-hidden' : 'nav-visible'}`}>
       <div className="paper-bar">
         <a href="#home">Home</a>
         <a href="#intro">About</a>
