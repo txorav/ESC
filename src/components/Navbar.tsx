@@ -14,7 +14,7 @@ export const Navbar: React.FC<NavbarProps> = ({ hidden = false }) => {
         <a href="#board">DG</a>
         <a href="#dept">Activities</a>
         <a href="#faq">Contact us</a>
-        <a className="cta" href="#faq">Follow us</a>
+        <a className="cta" href="#footer">Follow us</a>
       </div>
     </nav>
   );
