@@ -69,8 +69,19 @@ export function usePill3D({ color }: UsePill3DParams): UsePill3DReturn {
         powerPreference: 'high-performance',
       });
     } catch {
+      setIsWebGLSupported(false);
       return;
     }
+
+    const onContextLost = (e: Event) => {
+      e.preventDefault();
+      setIsWebGLSupported(false);
+      if (state.rafId) {
+        cancelAnimationFrame(state.rafId);
+        state.rafId = 0;
+      }
+    };
+    canvas.addEventListener('webglcontextlost', onContextLost);
 
     const dpr = Math.min(typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1, 2);
     renderer.setPixelRatio(dpr);
@@ -230,6 +241,8 @@ export function usePill3D({ color }: UsePill3DParams): UsePill3DReturn {
       scene.remove(specularLight);
       scene.remove(ambientLight);
       scene.clear();
+
+      canvas.removeEventListener('webglcontextlost', onContextLost);
 
       // Force WebGL context release
       try {
