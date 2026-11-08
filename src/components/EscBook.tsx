@@ -70,6 +70,31 @@ export const EscBook: React.FC<EscBookProps> = ({
   const finishedRef = useRef(false);
   const startedRef = useRef(false);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // react-pageflip attaches NATIVE mousedown/touchstart on its wrapper and mousemove/touchmove on window,
+  // so React's stopPropagation can't stop it. Intercept in the capture phase instead:
+  // - anything pressed inside a grabbable zone never reaches the flip engine
+  // - while an item is being dragged, window-level move events never reach it either
+  useEffect(() => {
+    const el = containerRef.current;
+    const blockGrab = (e: Event) => {
+      if ((e.target as HTMLElement | null)?.closest?.('.book-grabbable-zone')) e.stopPropagation();
+    };
+    const blockWhileGrabbing = (e: Event) => {
+      if ((window as any).__escGrabbing) e.stopImmediatePropagation();
+    };
+    el?.addEventListener('mousedown', blockGrab, true);
+    el?.addEventListener('touchstart', blockGrab, true);
+    const evs = ['mousemove', 'touchmove', 'mouseup', 'touchend'];
+    evs.forEach((t) => window.addEventListener(t, blockWhileGrabbing, true));
+    return () => {
+      el?.removeEventListener('mousedown', blockGrab, true);
+      el?.removeEventListener('touchstart', blockGrab, true);
+      evs.forEach((t) => window.removeEventListener(t, blockWhileGrabbing, true));
+    };
+  }, []);
+
   // Expose instance and ensure mouse events are ALWAYS active
   useEffect(() => {
     (window as any).__escBookRef = bookRef.current;
@@ -220,7 +245,7 @@ export const EscBook: React.FC<EscBookProps> = ({
   };
 
   return (
-    <div className={`esc-book-container ${isLoaderMode ? 'loader-book' : 'desk-book'}`}>
+    <div ref={containerRef} className={`esc-book-container ${isLoaderMode ? 'loader-book' : 'desk-book'}`}>
       {/* Decorative Book Ribbon Bookmark */}
       <div className="book-spine-ribbon" aria-hidden="true"></div>
 

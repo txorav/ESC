@@ -141,14 +141,8 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
     e.stopPropagation();
 
     // Temporarily pause book mouse tracking so grabbing the item never triggers a page fold/flip
-    try {
-      const pf = (window as any).__escBookRef?.pageFlip();
-      if (pf) {
-        pf.getSettings().useMouseEvents = false;
-        pf.getFlipController()?.stopMove();
-        pf.getFlipController()?.reset();
-      }
-    } catch {}
+    (window as any).__escGrabbing = true; // blocks page-flip's native listeners
+    try { (window as any).__escBookRef?.pageFlip()?.getFlipController()?.reset(); } catch {}
 
     // Spawn at cursor position translated to table world coordinates
     const tableX = Math.round(e.clientX - pan.x - 70);
@@ -186,14 +180,8 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
       setWarningActive(false);
 
       // Re-enable book mouse tracking when done dragging
-      try {
-        const pf = (window as any).__escBookRef?.pageFlip();
-        if (pf) {
-          pf.getSettings().useMouseEvents = true;
-          pf.getFlipController()?.stopMove();
-          pf.getFlipController()?.reset();
-        }
-      } catch {}
+      (window as any).__escGrabbing = false; // blocks page-flip's native listeners
+      try { (window as any).__escBookRef?.pageFlip()?.getFlipController()?.reset(); } catch {}
 
       setItems((prev) => {
         const item = prev.find((it) => it.instanceId === newInstanceId);
@@ -215,14 +203,8 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
     e.stopPropagation();
 
     // Temporarily pause book mouse tracking while dragging desk items
-    try {
-      const pf = (window as any).__escBookRef?.pageFlip();
-      if (pf) {
-        pf.getSettings().useMouseEvents = false;
-        pf.getFlipController()?.stopMove();
-        pf.getFlipController()?.reset();
-      }
-    } catch {}
+    (window as any).__escGrabbing = true; // blocks page-flip's native listeners
+    try { (window as any).__escBookRef?.pageFlip()?.getFlipController()?.reset(); } catch {}
 
     const current = items.find((it) => it.instanceId === instanceId);
     if (!current) return;
@@ -251,14 +233,8 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
       setWarningActive(false);
 
       // Re-enable book mouse tracking when done dragging
-      try {
-        const pf = (window as any).__escBookRef?.pageFlip();
-        if (pf) {
-          pf.getSettings().useMouseEvents = true;
-          pf.getFlipController()?.stopMove();
-          pf.getFlipController()?.reset();
-        }
-      } catch {}
+      (window as any).__escGrabbing = false; // blocks page-flip's native listeners
+      try { (window as any).__escBookRef?.pageFlip()?.getFlipController()?.reset(); } catch {}
 
       setItems((prev) => {
         const item = prev.find((it) => it.instanceId === instanceId);

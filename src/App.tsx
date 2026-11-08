@@ -72,6 +72,8 @@ export const App: React.FC = () => {
       window.requestAnimationFrame(() => {
         ticking = false;
         const y = window.scrollY;
+        const bar = document.getElementById('esc-progress');
+        if (bar) bar.style.transform = `scaleX(${Math.min(1, y / Math.max(1, document.documentElement.scrollHeight - window.innerHeight)).toFixed(4)})`;
         const nav = document.querySelector('nav.top-paper-nav');
         if (nav) {
           nav.classList.toggle('scrolled', y > 36);
@@ -107,6 +109,7 @@ export const App: React.FC = () => {
         <i />
       </div>
 
+      <div id="esc-progress" aria-hidden="true" />
       <Navbar hidden={isLoading} activeSection={activeSection} theme={navTheme} />
       <HeroDesk
         onOpenModal={setActiveModal}
