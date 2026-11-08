@@ -276,13 +276,13 @@ export const IntroClouds: React.FC = () => {
             <div ref={marqueeBridgeRef} className="esc-marquee-scroll-bridge">
               <div className="esc-single-marquee-continuous">
                 <span className="esc-marquee-phrase">
-                  ✦ ENGLISH SPEAKING CLUB ✦ EST. 2017 ✦ WHERE VOICES RISE ✦ RHETORIC · DEBATE · LEADERSHIP ✦ CONQUER THE STAGE ✦ DISCOVER YOUR VOICE ✦
+                  / ENGLISH SPEAKING CLUB / EST. 2017 / WHERE VOICES RISE / RHETORIC · DEBATE · LEADERSHIP / CONQUER THE STAGE / DISCOVER YOUR VOICE /
                 </span>
                 <span className="esc-marquee-phrase">
-                  ✦ ENGLISH SPEAKING CLUB ✦ EST. 2017 ✦ WHERE VOICES RISE ✦ RHETORIC · DEBATE · LEADERSHIP ✦ CONQUER THE STAGE ✦ DISCOVER YOUR VOICE ✦
+                  / ENGLISH SPEAKING CLUB / EST. 2017 / WHERE VOICES RISE / RHETORIC · DEBATE · LEADERSHIP / CONQUER THE STAGE / DISCOVER YOUR VOICE /
                 </span>
                 <span className="esc-marquee-phrase">
-                  ✦ ENGLISH SPEAKING CLUB ✦ EST. 2017 ✦ WHERE VOICES RISE ✦ RHETORIC · DEBATE · LEADERSHIP ✦ CONQUER THE STAGE ✦ DISCOVER YOUR VOICE ✦
+                  / ENGLISH SPEAKING CLUB / EST. 2017 / WHERE VOICES RISE / RHETORIC · DEBATE · LEADERSHIP / CONQUER THE STAGE / DISCOVER YOUR VOICE /
                 </span>
               </div>
             </div>
@@ -290,7 +290,7 @@ export const IntroClouds: React.FC = () => {
         </div>
 
         <div className="esc-intro-textloop" aria-hidden="true">
-          <TextLoop text="ESC introduction" shape="wave" speed={60} fontSize={56} fontWeight={800} curviness={46} tilt={-5} ribbonColor="#CD202A" ribbonWidth={96} color="#ffffff" edgeFade={0.25} separator="✦" />
+          <TextLoop text="ESC introduction" shape="wave" speed={60} fontSize={56} fontWeight={800} curviness={46} tilt={-5} ribbonColor="#CD202A" ribbonWidth={96} color="#ffffff" edgeFade={0.25} separator="/" />
         </div>
 
         {/*
@@ -312,11 +312,11 @@ export const IntroClouds: React.FC = () => {
 
             <div className="esc-pure-milestones">
               <span className="esc-milestone-item"><strong>8+</strong> Years of Legacy</span>
-              <span className="esc-milestone-bullet">✦</span>
+              <span className="esc-milestone-bullet">/</span>
               <span className="esc-milestone-item"><strong>50+</strong> Championships</span>
-              <span className="esc-milestone-bullet">✦</span>
+              <span className="esc-milestone-bullet">/</span>
               <span className="esc-milestone-item"><strong>1,200+</strong> Mastered Speeches</span>
-              <span className="esc-milestone-bullet">✦</span>
+              <span className="esc-milestone-bullet">/</span>
               <span className="esc-milestone-item"><strong>850+</strong> Transformed Orators</span>
             </div>
           </div>

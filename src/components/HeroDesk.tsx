@@ -360,7 +360,8 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
               })
             }
           >
-            <div className="mic-head"></div>
+            <div className="mic-head"><i className="mic-mesh"></i><i className="mic-ring"></i></div>
+            <div className="mic-neck"></div>
             <div className="mic-stem"></div>
             <div className="mic-base"></div>
           </div>
@@ -369,7 +370,7 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
       case 'pen':
         return (
           <div
-            className="paper-sheet pen-note obj type"
+            className="notepad obj"
             onPointerEnter={(e) => showItemTooltip('Classes', 'Masterclasses, speech lab, and accent refinement.', e)}
             onPointerLeave={hideItemTooltip}
             onDoubleClick={() =>
@@ -380,14 +381,19 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
               })
             }
           >
-            ESC is the best english club ever
-            <div className="fountain-pen"></div>
+            <div className="notepad-binding"></div>
+            <div className="notepad-sheet">ESC is the best english club ever</div>
+            <div className="pen-real" aria-hidden="true">
+              <i className="pen-nib"></i><i className="pen-grip"></i><i className="pen-body"></i>
+              <i className="pen-band"></i><i className="pen-clip"></i><i className="pen-end"></i>
+            </div>
           </div>
         );
 
       case 'dict':
         return (
           <div className="dict-book obj">
+            <div className="dict-ribbon" aria-hidden="true"></div>
             <div className="dict-page">
               <div className="dict-tag">ESC DICTIONARY · WORD OF THE DAY</div>
               <h3 className="dict-word">{wordData.word}</h3>
@@ -407,11 +413,10 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
 
       case 'gram':
         return (
-          <div className="paper-sheet gram-note obj type">
-            <b style={{ color: 'var(--br)', display: 'block', marginBottom: '6px' }}>
-              Grammar Rule of the Day
-            </b>
-            {wordData.rule}
+          <div className="index-card gram-note obj">
+            <span className="index-card-tape" aria-hidden="true"></span>
+            <b className="index-card-title">Grammar Rule of the Day</b>
+            <span className="index-card-text">{wordData.rule}</span>
           </div>
         );
 
@@ -419,7 +424,7 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
         return (
           <div className="prn-box obj">
             <div className="radio-card" style={{ width: '170px', height: '110px' }}>
-              <div className="radio-dial" style={{ width: '46px', height: '46px' }}>VOICE</div>
+              <div className="radio-dial" style={{ width: '46px', height: '46px' }}><i></i></div>
               <div className="radio-grill" style={{ width: '58px', height: '60px' }}></div>
             </div>
             <button

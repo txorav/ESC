@@ -67,11 +67,11 @@ h1, h2, h3, h4, h5, h6,
 summary.faq-q,
 .film-cell-headline,
 .esc-pure-hero-title {
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .type {
-  font-family: 'Special Elite', 'Courier New', monospace;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 /* ============================================================
@@ -96,7 +96,7 @@ summary.faq-q,
 }
 
 .loader-title-clean {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
   letter-spacing: 3px;
   color: #F1C40F;
@@ -529,7 +529,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
 
 /* Pen and Paper Item (Right Side) */
 .paper-sheet {
-  background: #fdf8ed url("/paper-texture.jpg") center/cover;
+  background: #fbfaf6;
   color: #3a2a14;
   padding: 24px 22px;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -545,7 +545,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   font-weight: 700;
   color: var(--navy);
   position: relative;
-  font-family: 'Special Elite', cursive, serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 .fountain-pen {
   position: absolute;
@@ -585,7 +585,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   background: #ece0c3;
 }
 .dict-tag {
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 11px;
   letter-spacing: 1.5px;
   color: var(--dr);
@@ -594,7 +594,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   margin-bottom: 6px;
 }
 .dict-word {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 38px;
   font-weight: 800;
   color: var(--navy);
@@ -602,7 +602,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   margin-bottom: 4px;
 }
 .dict-phonetic {
-  font-family: 'Work Sans', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   color: var(--rb);
   font-weight: 600;
   font-size: 14px;
@@ -768,7 +768,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   object-fit: contain;
 }
 .cover-title {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 21px;
   font-weight: 900;
   letter-spacing: 2px;
@@ -790,7 +790,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   margin-bottom: 10px;
 }
 .cover-year {
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   letter-spacing: 3px;
   color: #A8B4D8;
@@ -802,7 +802,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   letter-spacing: 1px;
 }
 .back-cover-title {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 18px;
   font-weight: 800;
   color: #FFFFFF;
@@ -834,7 +834,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
 
 /* Soft Parchment Pages */
 .book-page-sheet {
-  background: #fdfaf3 url("/paper-texture.jpg") center/cover no-repeat;
+  background: #fbfaf6;
   box-shadow: inset 18px 0 25px -12px rgba(0, 0, 0, 0.2);
   border: 1px solid #c9b48b;
   height: 100%;
@@ -847,7 +847,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   flex-direction: column;
   box-sizing: border-box;
   position: relative;
-  font-family: 'Special Elite', monospace, serif;
+  font-family: Arial, Helvetica, sans-serif;
   color: #2e2112;
 }
 .parchment-border {
@@ -871,7 +871,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   text-align: center;
 }
 .parchment-heading {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 20px;
   font-weight: 800;
   color: #111744;
@@ -892,7 +892,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   margin-bottom: 8px;
 }
 .drop-cap::first-letter {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 36px;
   float: left;
   line-height: 0.8;
@@ -938,14 +938,14 @@ body[data-theme="light"] .esc-navbar-brand-name {
   padding-bottom: 6px;
 }
 .word-headline {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 26px;
   font-weight: 900;
   color: #111744;
   line-height: 1.1;
 }
 .word-phonetics {
-  font-family: 'Work Sans', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   color: #283FC3;
   font-weight: 600;
@@ -974,7 +974,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
 }
 .rule-accent {
   color: #BF2026;
-  font-family: 'Work Sans', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 10px;
   letter-spacing: 1px;
   display: block;
@@ -994,7 +994,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   letter-spacing: 1px;
 }
 .pronounce-target {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 22px;
   font-weight: 800;
   color: #111744;
@@ -1057,7 +1057,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   font-size: 13px;
 }
 .grab-text {
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 10.5px;
   font-weight: 600;
   color: #2e2112;
@@ -1093,14 +1093,14 @@ body[data-theme="light"] .esc-navbar-brand-name {
   justify-content: center;
 }
 .mini-dict-label {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   font-weight: 800;
   color: #F1C40F;
   letter-spacing: 1px;
 }
 .mini-dict-sub {
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 8.5px;
   color: #d8c29d;
   letter-spacing: 0.5px;
@@ -1125,14 +1125,14 @@ body[data-theme="light"] .esc-navbar-brand-name {
   background: #d6c39a;
 }
 .mini-paper-title {
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 11px;
   font-weight: 700;
   color: #BF2026;
   margin-bottom: 2px;
 }
 .mini-paper-body {
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 10px;
   color: #3b2a15;
   line-height: 1.35;
@@ -1242,7 +1242,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   transform: rotate(1deg);
 }
 .mini-script-line {
-  font-family: 'Special Elite', cursive, serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   color: #111744;
   font-weight: 700;
@@ -1284,7 +1284,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   object-fit: contain;
 }
 .logo-club-name {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 19px;
   font-weight: 900;
   color: #111744;
@@ -1330,7 +1330,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   transform: translateX(-50%);
   font-size: 9.5px;
   color: #8c6a2b;
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 /* Desk Recenter Controls Bar */
@@ -1341,7 +1341,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   z-index: 100;
 }
 .recenter-btn {
-  font-family: 'Work Sans', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   font-weight: 700;
   background: rgba(17, 23, 68, 0.88);
@@ -1406,7 +1406,7 @@ body[data-theme="light"] .esc-navbar-brand-name {
   line-height: 1.45;
 }
 #tip .tip-title {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-weight: 800;
   font-size: 16px;
   color: var(--navy);
@@ -1609,7 +1609,7 @@ html {
 }
 
 .esc-brass-engraving {
-  font-family: 'Cinzel', 'Georgia', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.24em;
@@ -1754,7 +1754,7 @@ html {
 .esc-marquee-phrase {
   display: inline-block;
   padding-right: 48px;
-  font-family: 'Fraunces', 'Cinzel', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(1.25rem, 2.2vw, 2.2rem);
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -1795,7 +1795,7 @@ html {
 
 .esc-pure-kicker {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(0.72rem, 0.95vw, 0.95rem);
   font-weight: 700;
   letter-spacing: 0.35em;
@@ -1806,7 +1806,7 @@ html {
 
 .esc-pure-hero-title {
   margin: 0;
-  font-family: 'Fraunces', 'Playfair Display', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(2rem, 4.2vw, 4rem);
   font-weight: 800;
   line-height: 1.12;
@@ -1817,7 +1817,7 @@ html {
 
 .esc-pure-lead-paragraph {
   margin: 0;
-  font-family: 'Work Sans', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(1rem, 1.35vw, 1.25rem);
   font-weight: 400;
   line-height: 1.68;
@@ -1838,7 +1838,7 @@ html {
   justify-content: center;
   gap: 12px 20px;
   margin-top: 10px;
-  font-family: 'Work Sans', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(0.85rem, 1.05vw, 1.05rem);
   color: rgba(255, 255, 255, 0.88);
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
@@ -1846,7 +1846,7 @@ html {
 
 .esc-milestone-item strong {
   color: var(--esc-ink-gold);
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 1.2em;
   margin-right: 4px;
 }
@@ -1950,7 +1950,7 @@ html {
 }
 
 .year-wheel-clean .option-wheel__item {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-weight: 900;
   letter-spacing: -1px;
 }
@@ -2037,7 +2037,7 @@ html {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.8rem;
   letter-spacing: 0.2em;
   color: #d4a046;
@@ -2082,14 +2082,14 @@ html {
 
 .film-plate-stamp {
   align-self: flex-start;
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.75rem;
   letter-spacing: 0.2em;
   color: rgba(255, 248, 231, 0.7);
 }
 
 .film-plate-focal-title {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(1.4rem, 2.2vw, 2.2rem);
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -2100,7 +2100,7 @@ html {
 
 .film-plate-code {
   align-self: flex-end;
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.72rem;
   letter-spacing: 0.18em;
   color: #d4a046;
@@ -2140,7 +2140,7 @@ html {
   align-items: center;
   justify-content: flex-end;
   padding-right: 18px;
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.68rem;
   letter-spacing: 0.22em;
   color: rgba(212, 160, 70, 0.5);
@@ -2218,7 +2218,7 @@ html {
   padding: 3px 8px;
   background-color: #0b0a09;
   border: 1px solid rgba(212, 160, 70, 0.4);
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.68rem;
   letter-spacing: 0.18em;
   color: #d4a046;
@@ -2227,7 +2227,7 @@ html {
 /* Negative Frame Caption Line */
 .film-aperture-caption {
   margin: 10px 0 0 0;
-  font-family: 'Special Elite', monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.75rem;
   letter-spacing: 0.06em;
   color: #d4a046;
@@ -2253,7 +2253,7 @@ html {
 }
 
 .film-cell-location {
-  font-family: 'Work Sans', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -2262,7 +2262,7 @@ html {
 }
 
 .film-cell-subtitle {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-style: italic;
   font-size: 0.95rem;
   color: rgba(237, 226, 205, 0.75);
@@ -2270,7 +2270,7 @@ html {
 
 .film-cell-headline {
   margin: 0 0 8px 0;
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(1.45rem, 2.2vw, 2.1rem);
   font-weight: 700;
   line-height: 1.2;
@@ -2279,7 +2279,7 @@ html {
 
 .film-cell-story {
   margin: 0;
-  font-family: 'Work Sans', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(0.95rem, 1.1vw, 1.05rem);
   line-height: 1.6;
   color: rgba(237, 226, 205, 0.88);
@@ -2317,212 +2317,7 @@ html {
   position: relative;
 }
 
-.measure-section {
-  min-height: 90vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(100px, 14vh, 180px) 24px;
-  box-sizing: border-box;
-  position: relative;
-  overflow: visible !important;
-  font-family: Arial, Helvetica, sans-serif !important;
-  background: var(--esc-bg, #111744);
-  transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
 
-#stats.measure-section {
-  min-height: 90vh;
-  padding: clamp(100px, 14vh, 180px) 24px;
-  background: transparent !important;
-}
-
-.measure-content-wrap {
-  width: 100%;
-  max-width: 840px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  opacity: 0;
-  transform: translateY(44px) scale(0.97);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.measure-content-wrap.in {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-/* Outside Writing: Top Eyebrow */
-.measure-outside-eyebrow {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
-  margin-bottom: clamp(16px, 2.8vh, 32px);
-  display: block;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0ms,
-              opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0ms;
-}
-
-/* 3D Catchy Pill Stage */
-.measure-pill-stage {
-  position: relative;
-  width: min(580px, 88vw);
-  height: min(290px, 52vw);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  perspective: 1200px;
-  margin: 0 auto;
-  border-radius: 9999px;
-  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) 90ms,
-              opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1) 90ms;
-}
-
-.measure-pill-3d-capsule {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 9999px;
-  cursor: grab;
-  touch-action: pan-y;
-  will-change: transform;
-  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.3, 1);
-  transform-style: preserve-3d;
-}
-
-.measure-pill-3d-capsule:active {
-  cursor: grabbing;
-}
-
-.measure-pill-body {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 9999px;
-  overflow: hidden;
-}
-
-/* Curved glossy glass reflection across top */
-.measure-pill-clearcoat-sheen {
-  position: absolute;
-  top: 3%;
-  left: 3%;
-  right: 3%;
-  height: 48%;
-  border-radius: 9999px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.72) 0%,
-    rgba(255, 255, 255, 0.22) 42%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  pointer-events: none;
-  filter: blur(0.5px);
-}
-
-/* Elliptical hotspot reflection */
-.measure-pill-hotspot-glint {
-  position: absolute;
-  top: 8%;
-  left: 14%;
-  width: 32%;
-  height: 28%;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(255, 255, 255, 0.85) 0%,
-    rgba(255, 255, 255, 0.3) 40%,
-    rgba(255, 255, 255, 0) 75%
-  );
-  pointer-events: none;
-  transform: rotate(-6deg);
-}
-
-/* Bottom ambient bounce light from floor */
-.measure-pill-ambient-bounce {
-  position: absolute;
-  bottom: 2%;
-  left: 10%;
-  right: 10%;
-  height: 25%;
-  border-radius: 9999px;
-  background: radial-gradient(
-    ellipse at 50% 100%,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0) 70%
-  );
-  pointer-events: none;
-}
-
-/* Fallback legacy compatibility class */
-.measure-pill-canvas-container {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* Inside the 3D Pill: Number & Label */
-.measure-pill-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 5;
-  padding: 24px;
-  text-align: center;
-}
-
-.measure-pill-number {
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: clamp(38px, 8.5vw, 120px);
-  font-weight: 900;
-  line-height: 1;
-  color: #FFFFFF;
-  letter-spacing: -2px;
-  display: block;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
-}
-
-.measure-pill-tagline {
-  margin: 10px 0 0 0;
-  padding: 0;
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: clamp(12px, 1.8vw, 17px);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: rgba(255, 255, 255, 0.95);
-  display: block;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
-}
-
-/* Outside Writing: Bottom Subheading */
-.measure-outside-subheading {
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: clamp(16px, 2.2vw, 22px);
-  font-weight: 500;
-  max-width: 640px;
-  margin: clamp(24px, 3.5vh, 44px) auto 0;
-  color: rgba(255, 255, 255, 0.85);
-  line-height: 1.5;
-  text-align: center;
-}
 
 /* ============================================================
 /* ============================================================
@@ -2667,7 +2462,7 @@ html {
 }
 
 .board-name {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-weight: 800;
   color: var(--white);
   margin-bottom: 6px;
@@ -2774,7 +2569,7 @@ html {
 }
 
 .folder-caption-title {
-  font-family: 'Fraunces', serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: var(--white);
@@ -2828,7 +2623,7 @@ details.faq-item[open] {
 }
 
 summary.faq-q {
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 19.5px;
   font-weight: 800;
   cursor: pointer;
@@ -2880,12 +2675,12 @@ details.faq-item[open] summary.faq-q::after {
   box-sizing: border-box;
   overflow: hidden;
   z-index: 3;
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .fullpage-footer,
 .fullpage-footer * {
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .footer-big-content {
@@ -2906,7 +2701,7 @@ details.faq-item[open] summary.faq-q::after {
 }
 
 .footer-huge-title {
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: Arial, Helvetica, sans-serif;
   font-weight: 900;
   font-size: clamp(38px, 7vw, 100px);
   line-height: 0.95;
@@ -2940,7 +2735,7 @@ details.faq-item[open] summary.faq-q::after {
 }
 
 .footer-col-title {
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.16em;
@@ -3035,7 +2830,7 @@ details.faq-item[open] summary.faq-q::after {
   width: 100%;
   padding-top: 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.15);
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: Arial, Helvetica, sans-serif;
   font-weight: 700;
   font-size: clamp(12px, 1.1vw, 14px);
   letter-spacing: 0.06em;
@@ -3047,7 +2842,7 @@ details.faq-item[open] summary.faq-q::after {
   background: transparent;
   border: none;
   color: #ffffff;
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: Arial, Helvetica, sans-serif;
   font-weight: 800;
   font-size: clamp(12px, 1.1vw, 14px);
   letter-spacing: 0.08em;
@@ -3231,7 +3026,7 @@ details.faq-item[open] summary.faq-q::after {
 }
 
 .sec-eyebrow {
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.22em;

@@ -1,7 +1,7 @@
 .scrambled-text {
   margin: 7vw;
   max-width: 800px;
-  font-family: monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(14px, 4vw, 32px);
 }
 
