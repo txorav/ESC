@@ -1,5 +1,5 @@
 import React from 'react';
-import Lanyard from './reactbits/Lanyard';
+import UnifiedLanyard from './reactbits/UnifiedLanyard';
 
 export const BoardLanyards: React.FC = () => {
   return (
@@ -12,71 +12,42 @@ export const BoardLanyards: React.FC = () => {
         </p>
       </div>
 
-      <div className="board-podium-layout esc-reveal">
-        {/* LEFT: VICE PRESIDENT (Scaled down) */}
-        <div className="board-member-item board-member-side board-member-left">
-          <div className="lanyard-3d-box">
-            <Lanyard
-              frontImage="/badges/vp.svg"
-              cardColor="#1C1E4B"
-              strapColor="#283FC3"
-              finish="glossy"
-              size={0.78}
-              gravity={0.9}
-              breeze={0.14}
-            />
-          </div>
-          <div className="board-info-pure">
-            <span className="board-role-tag vp">VICE PRESIDENT</span>
-            <h3 className="board-name">Lina Haddad</h3>
-            <p className="board-bio">
-              Directing member development, workshop curriculums, and inter-university public speaking leagues.
-            </p>
-          </div>
+      {/* Unified 3D physics arena spanning full section width with badge-to-badge collisions */}
+      <div className="board-interactive-arena esc-reveal">
+        <UnifiedLanyard
+          gravity={0.9}
+          breeze={0.15}
+          elasticity={0.65}
+          damping={0.48}
+        />
+      </div>
+
+      <div className="board-podium-info-row esc-reveal">
+        {/* LEFT: VICE PRESIDENT */}
+        <div className="board-member-info-col board-member-left">
+          <span className="board-role-tag vp">VICE PRESIDENT</span>
+          <h3 className="board-name">Lina Haddad</h3>
+          <p className="board-bio">
+            Directing member development, workshop curriculums, and inter-university public speaking leagues.
+          </p>
         </div>
 
-        {/* CENTER: PRESIDENT (Bigger & elevated) */}
-        <div className="board-member-item board-member-center">
-          <div className="lanyard-3d-box">
-            <Lanyard
-              frontImage="/badges/president.svg"
-              cardColor="#111744"
-              strapColor="#BF2026"
-              finish="glossy"
-              size={1.0}
-              gravity={0.9}
-              breeze={0.18}
-            />
-          </div>
-          <div className="board-info-pure">
-            <span className="board-role-tag president">PRESIDENT</span>
-            <h3 className="board-name">Amine Belkacem</h3>
-            <p className="board-bio">
-              Leading club strategy, cross-faculty debate partnerships, and international speaking symposiums.
-            </p>
-          </div>
+        {/* CENTER: PRESIDENT */}
+        <div className="board-member-info-col board-member-center">
+          <span className="board-role-tag president">PRESIDENT</span>
+          <h3 className="board-name">Amine Belkacem</h3>
+          <p className="board-bio">
+            Leading club strategy, cross-faculty debate partnerships, and international speaking symposiums.
+          </p>
         </div>
 
-        {/* RIGHT: SECRETARY GENERAL (Scaled down) */}
-        <div className="board-member-item board-member-side board-member-right">
-          <div className="lanyard-3d-box">
-            <Lanyard
-              frontImage="/badges/sg.svg"
-              cardColor="#1C1E4B"
-              strapColor="#4E55D3"
-              finish="glossy"
-              size={0.78}
-              gravity={0.9}
-              breeze={0.14}
-            />
-          </div>
-          <div className="board-info-pure">
-            <span className="board-role-tag sg">SECRETARY GENERAL</span>
-            <h3 className="board-name">Yacine Mansouri</h3>
-            <p className="board-bio">
-              Overseeing official club communications, podcast studio logistics, and national tournament records.
-            </p>
-          </div>
+        {/* RIGHT: SECRETARY GENERAL */}
+        <div className="board-member-info-col board-member-right">
+          <span className="board-role-tag sg">SECRETARY GENERAL</span>
+          <h3 className="board-name">Yacine Mansouri</h3>
+          <p className="board-bio">
+            Overseeing official club communications, podcast studio logistics, and national tournament records.
+          </p>
         </div>
       </div>
     </section>
