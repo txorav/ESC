@@ -20,12 +20,7 @@ export const StatsSection: React.FC<StatsSectionProps> = ({
 }) => {
   const trackRef = useRef<HTMLDivElement>(null);
   const numRef = useRef<HTMLSpanElement>(null);
-  const ghostRef = useRef<HTMLSpanElement>(null);
-  const barRef = useRef<HTMLSpanElement>(null);
-  const eyebrowRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const subRefs = useRef<(HTMLParagraphElement | null)[]>([]);
-  const railRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const N = measures.length;
 
   useEffect(() => {
@@ -55,20 +50,12 @@ export const StatsSection: React.FC<StatsSectionProps> = ({
         numRef.current.style.transform = `translateY(${(-mid * 4).toFixed(2)}vh) scaleY(${(1 + mid * 0.08).toFixed(3)})`;
         numRef.current.style.filter = mid > 0.02 ? `blur(${(mid * 5).toFixed(1)}px)` : 'none';
       }
-      if (ghostRef.current) {
-        ghostRef.current.textContent = tr > 0.5 ? b.stepCode : a.stepCode;
-        ghostRef.current.style.transform = `translate(-50%, calc(-50% + ${(-tr * 12).toFixed(2)}vh))`;
-        ghostRef.current.style.opacity = String(0.9 * (1 - Math.sin(tr * Math.PI) * 0.8));
-      }
-      if (barRef.current) barRef.current.style.transform = `scaleY(${N > 1 ? (f / (N - 1)).toFixed(4) : 1})`;
 
       measures.forEach((_, i) => {
         // enter progress (from previous transition) and exit progress (own transition)
         const enter = i === 0 ? easeOut(entry) : i === i0 + 1 ? tr : i <= i0 ? 1 : 0;
         const exit = i === i0 ? tr : i < i0 ? 1 : 0;
         const vis = i === i0 || i === i0 + 1 || (i === 0 && i0 === 0);
-        const y = (1 - enter) * 105 - exit * 105; // % of mask height
-        const op = vis ? clamp(enter * (1 - exit)) : 0;
         const apply = (el: HTMLElement | null, lag: number, dist = 1) => {
           if (!el) return;
           const e2 = clamp(enter * (1 + lag) - lag);
@@ -76,15 +63,7 @@ export const StatsSection: React.FC<StatsSectionProps> = ({
           el.style.transform = `translateY(${((1 - e2) * 105 - x2 * 105 * dist).toFixed(2)}%)`;
           el.style.opacity = String(vis ? clamp(e2 * (1 - x2)) : 0);
         };
-        apply(eyebrowRefs.current[i], 0);
         apply(labelRefs.current[i], 0.25);
-        const sub = subRefs.current[i];
-        if (sub) {
-          sub.style.opacity = String(op);
-          sub.style.transform = `translateY(${(y * 0.18).toFixed(2)}px)`;
-        }
-        const rail = railRefs.current[i];
-        if (rail) rail.classList.toggle('on', i === (tr > 0.5 ? Math.min(N - 1, i0 + 1) : i0));
       });
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(render); };
@@ -115,23 +94,6 @@ export const StatsSection: React.FC<StatsSectionProps> = ({
         </div>
 
         <div className="stats-type-stage">
-          <span ref={ghostRef} className="stats-type-ghost" aria-hidden="true">{measures[0].stepCode}</span>
-
-          <div className="stats-type-rail" aria-hidden="true">
-            <span className="stats-type-rail-line"><span ref={barRef} /></span>
-            {measures.map((m, i) => (
-              <span key={m.id} ref={(el) => { railRefs.current[i] = el; }} className="stats-type-rail-n">{m.stepCode}</span>
-            ))}
-          </div>
-
-          <div className="stats-type-eyebrows">
-            {measures.map((m, i) => (
-              <span key={m.id} className="stats-type-mask">
-                <span ref={(el) => { eyebrowRefs.current[i] = el; }} className="stats-type-eyebrow">{m.eyebrow}</span>
-              </span>
-            ))}
-          </div>
-
           <h2 className="stats-type-number" aria-live="off">
             <span ref={numRef}>0</span>
           </h2>
@@ -141,12 +103,6 @@ export const StatsSection: React.FC<StatsSectionProps> = ({
               <span key={m.id} className="stats-type-mask">
                 <span ref={(el) => { labelRefs.current[i] = el; }} className="stats-type-label">{m.label}</span>
               </span>
-            ))}
-          </div>
-
-          <div className="stats-type-subs">
-            {measures.map((m, i) => (
-              <p key={m.id} ref={(el) => { subRefs.current[i] = el; }} className="stats-type-sub">{m.subheading}</p>
             ))}
           </div>
         </div>
