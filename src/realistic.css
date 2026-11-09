@@ -164,8 +164,6 @@
 .esc-curtain { position:absolute; inset:0; clip-path: inset(100% 0 0 0); will-change: clip-path; }
 .esc-concise-intro-stream > * { will-change: transform, opacity, filter; opacity: 0; }
 
-/* page scroll progress */
-#esc-progress { position:fixed; top:0; left:0; right:0; height:3px; z-index:9999; background: linear-gradient(90deg,#CD202A,#4E55D3,#fff); transform-origin:0 50%; transform: scaleX(0); pointer-events:none; }
 
 /* staggered children for every reveal group (animation w/ backwards fill so hover transforms still work afterwards) */
 @keyframes escRiseIn { from { opacity:0; transform: translateY(38px) scale(.96); filter: blur(6px); } to { opacity:1; transform:none; filter:none; } }
