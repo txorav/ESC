@@ -31,12 +31,17 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
     rule: "Present Perfect vs. Past Simple: Use Present Perfect for experiences without a specific past time ('I have attended three sessions')."
   });
 
+  // The desk is scaled down on narrow screens so the open book always fits the viewport.
+  const getScale = () => (typeof window === 'undefined' ? 1 : Math.min(1, Math.max(0.5, (window.innerWidth - 24) / 760)));
+  const [scale, setScale] = useState<number>(() => getScale());
+
   const getCenteredPan = () => {
     const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
     const h = typeof window !== 'undefined' ? window.innerHeight : 800;
+    const sc = getScale();
     return {
-      x: Math.round(w / 2 - 1400),
-      y: Math.round(h / 2 - 850)
+      x: Math.round(w / 2 - 1400 * sc),
+      y: Math.round(h / 2 - 850 * sc)
     };
   };
 
@@ -45,6 +50,9 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
   // Always reset viewport to center on the book on mount
   useEffect(() => {
     setPan(getCenteredPan());
+    const onResize = () => { setScale(getScale()); setPan(getCenteredPan()); };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   // Multi-instance desk items: initial set on desk + unlimited new items from book
@@ -122,8 +130,8 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
     const origY = pan.y;
 
     const onMove = (ev: PointerEvent) => {
-      const newX = Math.min(300, Math.max(window.innerWidth - TABLE_W - 300, origX + ev.clientX - startX));
-      const newY = Math.min(300, Math.max(window.innerHeight - TABLE_H - 300, origY + ev.clientY - startY));
+      const newX = Math.min(300, Math.max(window.innerWidth - TABLE_W * scale - 300, origX + (ev.clientX - startX) / scale));
+      const newY = Math.min(300, Math.max(window.innerHeight - TABLE_H * scale - 300, origY + (ev.clientY - startY) / scale));
       setPan({ x: newX, y: newY });
     };
 
@@ -145,8 +153,8 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
     try { (window as any).__escBookRef?.pageFlip()?.getFlipController()?.reset(); } catch {}
 
     // Spawn at cursor position translated to table world coordinates
-    const tableX = Math.round(e.clientX - pan.x - 70);
-    const tableY = Math.round(e.clientY - pan.y - 60);
+    const tableX = Math.round((e.clientX - pan.x) / scale - 70);
+    const tableY = Math.round((e.clientY - pan.y) / scale - 60);
 
     const newInstanceId = `${type}-${Date.now()}`;
     const newItem: DeskItemInstance = {
@@ -166,8 +174,8 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
     const origY = tableY;
 
     const onMove = (ev: PointerEvent) => {
-      const curX = origX + (ev.clientX - startX);
-      const curY = origY + (ev.clientY - startY);
+      const curX = origX + (ev.clientX - startX) / scale;
+      const curY = origY + (ev.clientY - startY) / scale;
       setItems((prev) =>
         prev.map((it) => (it.instanceId === newInstanceId ? { ...it, x: curX, y: curY } : it))
       );
@@ -218,8 +226,8 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
     el.classList.add('drag');
 
     const onMove = (ev: PointerEvent) => {
-      const curX = origX + (ev.clientX - startX);
-      const curY = origY + (ev.clientY - startY);
+      const curX = origX + (ev.clientX - startX) / scale;
+      const curY = origY + (ev.clientY - startY) / scale;
       setItems((prev) =>
         prev.map((it) => (it.instanceId === instanceId ? { ...it, x: curX, y: curY } : it))
       );
@@ -314,7 +322,7 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
             }
           >
             <img
-              src="/vintage-radio.avif"
+              src="/vintage-radio.png"
               alt="Vintage Radio"
               className="vintage-radio-desk-img"
               draggable={false}
@@ -447,7 +455,7 @@ export const HeroDesk: React.FC<HeroDeskProps> = ({
       <div
         id="world"
         ref={worldRef}
-        style={{ transform: `translate3d(${pan.x}px, ${pan.y}px, 0)` }}
+        style={{ transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${scale})`, transformOrigin: '0 0' }}
       >
         {/* Vintage Wooden Table Top: dissolves in smoothly underneath the book */}
         <div
