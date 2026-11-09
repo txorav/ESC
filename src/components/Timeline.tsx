@@ -405,12 +405,12 @@ export const Timeline: React.FC = () => {
           const frameDividerWidth = 18;
           const stepStridePx = apertureWidth + frameDividerWidth;
 
-          // Three-phase timeline for the multi-photo horizontal runway:
-          // Phase 1 (p: 0 -> 0.60): Horizontal track glides smoothly from frame 1 to the last frame.
-          // Phase 2 (p: 0.60 -> 0.85): FREEZE at the last picture so viewer has generous scroll space to view it completely.
-          // Phase 3 (p: 0.85 -> 1.00): Entire horizontal clip glides completely off-frame to the right.
-          // Once the clip is completely off-frame (p = 1.0), the card unpins and natural vertical page scroll continues down.
-          const slideProgress = clamp(nextP / 0.60, 0, 1);
+          // Four-phase timeline for the multi-photo horizontal runway:
+          // Phase 1 (p: 0.00 -> 0.18): FREEZE on Frame 1 so viewer has generous time to view it completely before any sliding begins.
+          // Phase 2 (p: 0.18 -> 0.65): Horizontal track glides smoothly from Frame 1 through to the last frame.
+          // Phase 3 (p: 0.65 -> 0.88): FREEZE at the last picture so viewer has generous time to view it completely.
+          // Phase 4 (p: 0.88 -> 1.00): Entire horizontal clip glides completely off-frame to the right before the row unpins/collapses.
+          const slideProgress = clamp((nextP - 0.18) / (0.65 - 0.18), 0, 1);
           const continuousFrameIndex = slideProgress * (photoCount - 1);
           const trackShiftPx = -continuousFrameIndex * stepStridePx;
           trackEl.style.transform = `translate3d(${trackShiftPx.toFixed(1)}px, 0, 0)`;
@@ -420,12 +420,12 @@ export const Timeline: React.FC = () => {
           const apertureLeft = apertureEl.getBoundingClientRect().left;
           const inOffsetPx = -(1 - nextE) * (Math.max(apertureLeft, 0) + apertureWidth + leaderPx);
 
-          // Exit begins strictly in Phase 3 after the freeze concludes
-          const exitProgress = clamp((nextP - 0.85) / 0.15, 0, 1);
+          // Exit begins strictly in Phase 4 after the final freeze concludes
+          const exitProgress = clamp((nextP - 0.88) / 0.12, 0, 1);
           const prevX = smoothedExit[i];
-          const nextX = Math.abs(exitProgress - prevX) < 0.0004 ? exitProgress : prevX + (exitProgress - prevX) * 0.22;
+          const nextX = Math.abs(exitProgress - prevX) < 0.0004 ? exitProgress : prevX + (exitProgress - prevX) * 0.24;
           smoothedExit[i] = nextX;
-          const totalExitDistance = apertureWidth + leaderPx + Math.max(window.innerWidth - apertureLeft - apertureWidth, 0) + 120;
+          const totalExitDistance = apertureWidth + leaderPx + Math.max(window.innerWidth - apertureLeft - apertureWidth, 0) + 140;
           const outOffsetPx = nextX * totalExitDistance;
 
           clipShellEl.style.transform = `translate3d(${(inOffsetPx + outOffsetPx).toFixed(1)}px, 0, 0)`;
@@ -562,7 +562,7 @@ export const Timeline: React.FC = () => {
             {TIMELINE_EVENTS.map((event, index) => {
               const isMultiPhoto = event.photos.length > 1;
               const runwayStyle: React.CSSProperties = isMultiPhoto
-                ? { height: `calc(100vh + ${(event.photos.length - 1) * 85 + 75}vh)` }
+                ? { height: `calc(100vh + ${(event.photos.length - 1) * 110 + 130}vh)` }
                 : {};
 
               const primaryPhoto = event.photos[0];
